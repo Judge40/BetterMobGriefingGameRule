@@ -1,6 +1,7 @@
 # Better mobGriefing GameRule
 
-![Minecraft 1.7.10](https://img.shields.io/badge/Minecraft-1.7.10-lightgrey.svg)  
+![Minecraft 1.7.10](https://img.shields.io/badge/Minecraft-1.7.10-lightgrey.svg)
+![Forge 1.7.10-10.13.4.1558](https://img.shields.io/badge/Forge-1.7.10--10.13.4.1558-lightgrey.svg)  
 [![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## About

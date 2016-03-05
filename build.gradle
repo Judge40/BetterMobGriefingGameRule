@@ -37,6 +37,15 @@ minecraft {
     }
 }
 
+dependencies {
+    // JMockit dependency
+    testCompile "org.jmockit:jmockit:1.19"
+    // JMockit Coverage dependency
+    testCompile "org.jmockit:jmockit-coverage:1.19"
+    // JUnit dependency
+    testCompile "junit:junit:4.12"
+}
+
 processResources {
     // this will ensure that this task is redone when the versions
     // change.
@@ -56,4 +65,8 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
     }
+}
+
+test {
+    systemProperties["jmockit-coverage-metrics"] = "all"
 }

@@ -9,6 +9,18 @@
 "mobGriefing" game rule, allowing separate values to be specified for
 individual types of entity.
 
+## Features
+The below game rules can be used to override the mobGriefing behaviour
+for the associated entity type, the value of these rules will be used
+instead of the original "mobGriefing" game rule.
+
+| Entity  | GameRule           |
+| ------- | ------------------ |
+| Creeper | mobGriefingCreeper |
+
+Full details of the effects of each game rule can be found in this
+projects wiki.
+
 ## Versioning
 The versioning used for this project uses a combination of the target
 Minecraft version and [SemVer](http://semver.org) in the format

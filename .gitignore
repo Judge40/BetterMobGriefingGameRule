@@ -30,3 +30,12 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
+
+#-----------------------------------------------------------------------
+# Project Specific
+#-----------------------------------------------------------------------
+# Minecraft
+run/
+
+# JMockit Coverage
+coverage-report/

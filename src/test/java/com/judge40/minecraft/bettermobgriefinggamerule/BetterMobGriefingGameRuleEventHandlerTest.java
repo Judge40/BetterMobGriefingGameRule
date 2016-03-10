@@ -18,8 +18,6 @@
  */
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
-import static com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule.ORIGINAL;
-
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 
@@ -91,7 +89,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
       }
     };
 
-    gameRules.setOrCreateGameRule(ORIGINAL, "true");
+    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "true");
     gameRules.setOrCreateGameRule("betterMobGriefing", "true");
 
     Explosion explosion = Deencapsulation.newUninitializedInstance(Explosion.class);
@@ -121,7 +119,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
       }
     };
 
-    gameRules.setOrCreateGameRule(ORIGINAL, "true");
+    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "true");
     gameRules.setOrCreateGameRule("betterMobGriefing", "false");
 
     Explosion explosion = Deencapsulation.newUninitializedInstance(Explosion.class);
@@ -151,7 +149,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
       }
     };
 
-    gameRules.setOrCreateGameRule(ORIGINAL, "false");
+    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "false");
     gameRules.setOrCreateGameRule("betterMobGriefing", "true");
 
     Explosion explosion = Deencapsulation.newUninitializedInstance(Explosion.class);
@@ -180,7 +178,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
       }
     };
 
-    gameRules.setOrCreateGameRule(ORIGINAL, "false");
+    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "false");
     gameRules.setOrCreateGameRule("betterMobGriefing", "false");
 
     Explosion explosion = Deencapsulation.newUninitializedInstance(Explosion.class);
@@ -223,7 +221,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
       }
     };
 
-    gameRules.setOrCreateGameRule(ORIGINAL, "true");
+    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "true");
     gameRules.setOrCreateGameRule("betterMobGriefing", "false");
 
     Explosion explosion = Deencapsulation.newUninitializedInstance(Explosion.class);

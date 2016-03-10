@@ -14,9 +14,10 @@ The below game rules can be used to override the mobGriefing behaviour
 for the associated entity type, the value of these rules will be used
 instead of the original "mobGriefing" game rule.
 
-| Entity  | GameRule           |
-| ------- | ------------------ |
-| Creeper | mobGriefingCreeper |
+| Entity   | GameRule            |
+| -------- | ------------------- |
+| Creeper  | mobGriefingCreeper  |
+| Enderman | mobGriefingEnderman |
 
 Full details of the effects of each game rule can be found in this
 projects wiki.
@@ -27,7 +28,8 @@ Minecraft version and [SemVer](http://semver.org) in the format
 "MCVERSION-MAJOR.MINOR.PATCH".
 
 Each target Minecraft version is contained within it's own separate
-branches using the [GitFlow](https://github.com/nvie/gitflow) branching
+branches using the
+[GitFlow](https://github.com/petervanderdoes/gitflow-avh) branching
 model. Ensure that the correct branch is selected before using any code
 from this repository.
 

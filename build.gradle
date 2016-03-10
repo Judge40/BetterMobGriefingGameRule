@@ -46,6 +46,13 @@ dependencies {
     testCompile "junit:junit:4.12"
 }
 
+jar {
+    manifest {
+        attributes "FMLCorePlugin":"com.judge40.minecraft.bettermobgriefinggamerulecore.BetterMobGriefingGameRuleIFMLLoadingPlugin",
+            "FMLCorePluginContainsFMLMod":"true"
+    }
+}
+
 processResources {
     // this will ensure that this task is redone when the versions
     // change.

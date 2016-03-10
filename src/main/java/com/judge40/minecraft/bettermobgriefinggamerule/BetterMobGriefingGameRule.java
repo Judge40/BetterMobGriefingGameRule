@@ -27,6 +27,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
@@ -46,8 +47,9 @@ public class BetterMobGriefingGameRule {
   // Constants for the mobGriefing rules
   public static final String ORIGINAL = "mobGriefing";
   public static final String CREEPER = "mobGriefingCreeper";
+  public static final String ENDERMAN = "mobGriefingEnderman";
 
-  public static final List<String> MOBGRIEFING_GAME_RULES = Arrays.asList(CREEPER);
+  public static final List<String> MOBGRIEFING_GAME_RULES = Arrays.asList(CREEPER, ENDERMAN);
 
   /**
    * On initialisation registers the event handler
@@ -105,12 +107,17 @@ public class BetterMobGriefingGameRule {
    * @return The mobGriefing rule for the entity
    */
   public static String getMobGriefingRule(GameRules gameRules, EntityLivingBase entity) {
-    String mobGriefingRule = BetterMobGriefingGameRule.ORIGINAL;
+    String mobGriefingRule = null;
 
-    // If the entity is an instance of a supported entity and the rule is defined then override the
-    // original rule
-    if (entity instanceof EntityCreeper && gameRules.hasRule(BetterMobGriefingGameRule.CREEPER)) {
+    if (entity instanceof EntityCreeper) {
       mobGriefingRule = BetterMobGriefingGameRule.CREEPER;
+    } else if (entity instanceof EntityEnderman) {
+      mobGriefingRule = BetterMobGriefingGameRule.ENDERMAN;
+    }
+
+    // If non-supported entity or rule does not exist then default back to the original rule
+    if (mobGriefingRule == null || !gameRules.hasRule(mobGriefingRule)) {
+      mobGriefingRule = BetterMobGriefingGameRule.ORIGINAL;
     }
 
     return mobGriefingRule;

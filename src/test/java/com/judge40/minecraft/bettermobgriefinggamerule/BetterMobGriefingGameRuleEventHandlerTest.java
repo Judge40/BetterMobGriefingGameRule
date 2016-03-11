@@ -18,9 +18,6 @@
  */
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
-import java.io.PrintStream;
-import java.lang.reflect.Field;
-
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Assert;
@@ -192,50 +189,5 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
         explosion.affectedBlockPositions.size(), CoreMatchers.is(0));
     Assert.assertThat("isSmoking should be false",
         (Boolean) Deencapsulation.getField(explosion, "isSmoking"), CoreMatchers.is(false));
-  }
-
-  /**
-   * Test that when an exception is thrown the mobGriefing behaviour reverts to the original
-   * behaviour
-   */
-  @Test
-  public void testOnDetonateEvent_mobGriefingTrueBetterMobGriefingFalseException_blockDamage() {
-    new MockUp<BetterMobGriefingGameRule>() {
-      @Mock
-      String getMobGriefingRule(GameRules gameRules, EntityLivingBase entity) {
-        return "betterMobGriefing";
-      }
-    };
-
-    new MockUp<Field>() {
-      @Mock
-      void setBoolean(Object obj, boolean z) throws IllegalAccessException {
-        throw new IllegalAccessException();
-      }
-    };
-
-    new MockUp<PrintStream>() {
-      @Mock(invocations = 1)
-      PrintStream printf(String format, Object... args) {
-        return null;
-      }
-    };
-
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "true");
-    gameRules.setOrCreateGameRule("betterMobGriefing", "false");
-
-    Explosion explosion = Deencapsulation.newUninitializedInstance(Explosion.class);
-    Deencapsulation.setField(explosion, "exploder",
-        Deencapsulation.newUninitializedInstance(EntityLivingBase.class));
-    Deencapsulation.setField(explosion, "affectedBlockPositions", Lists.newArrayList("dummyData"));
-    Deencapsulation.setField(explosion, "isSmoking", true);
-
-    Detonate detonateEvent = new Detonate(world, explosion, null);
-    eventHandler.onDetonateEvent(detonateEvent);
-
-    Assert.assertThat("Affected block position list size should be 1.",
-        explosion.affectedBlockPositions.size(), CoreMatchers.is(1));
-    Assert.assertThat("isSmoking should be true",
-        (Boolean) Deencapsulation.getField(explosion, "isSmoking"), CoreMatchers.is(true));
   }
 }

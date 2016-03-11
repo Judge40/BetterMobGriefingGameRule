@@ -18,10 +18,10 @@
  */
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
-import java.lang.reflect.Field;
-
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.event.world.ExplosionEvent.Detonate;
 
@@ -29,9 +29,6 @@ import net.minecraftforge.event.world.ExplosionEvent.Detonate;
  * Event handler for all EVENT_BUS events
  */
 public class BetterMobGriefingGameRuleEventHandler {
-
-  private static final String errorOverridingBehaviour =
-      "%s - Unable to override mobGriefing behaviour, entity type \"%s\" will use original behavior%n";
 
   /**
    * On the explosion detonate event check whether mobGriefing is enabled for a specific entity and
@@ -50,21 +47,16 @@ public class BetterMobGriefingGameRuleEventHandler {
 
     boolean mobGriefingOriginal =
         gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
-    try {
-      // If better mobGriefing has overridden the default value then update relevant flag
-      if (mobGriefingEnabled != mobGriefingOriginal) {
-        Field isSmokingField = detonateEvent.explosion.getClass().getDeclaredField("isSmoking");
-        isSmokingField.setAccessible(true);
-        isSmokingField.setBoolean(detonateEvent.explosion, mobGriefingEnabled);
-      }
 
-      // If mobGriefing is not enabled then clear down the affected blocks
-      if (!mobGriefingEnabled) {
-        detonateEvent.getAffectedBlocks().clear();
-      }
-    } catch (IllegalAccessException | NoSuchFieldException e) {
-      System.out.printf(errorOverridingBehaviour, e.getLocalizedMessage(),
-          entity.getClass().getSimpleName());
+    // If better mobGriefing has overridden the default value then update relevant flag
+    if (mobGriefingEnabled != mobGriefingOriginal) {
+      ObfuscationReflectionHelper.setPrivateValue(Explosion.class, detonateEvent.explosion,
+          mobGriefingEnabled, "isSmoking", "field_82755_b");
+    }
+
+    // If mobGriefing is not enabled then clear down the affected blocks
+    if (!mobGriefingEnabled) {
+      detonateEvent.getAffectedBlocks().clear();
     }
   }
 }

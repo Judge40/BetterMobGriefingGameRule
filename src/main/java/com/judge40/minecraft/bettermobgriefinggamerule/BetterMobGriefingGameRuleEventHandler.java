@@ -20,7 +20,9 @@ package com.judge40.minecraft.bettermobgriefinggamerule;
 
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.event.world.ExplosionEvent.Detonate;
@@ -40,8 +42,29 @@ public class BetterMobGriefingGameRuleEventHandler {
   public void onDetonateEvent(Detonate detonateEvent) {
     GameRules gameRules = detonateEvent.world.getGameRules();
 
-    // Get whether mobGriefing is enabled for this entity
+    // Get explosion source entity
     EntityLivingBase entity = detonateEvent.explosion.getExplosivePlacedBy();
+
+    // If entity is null then the explosion source might be a fireball, check the affected entities
+    // for a matching fireball and retrieve the entity from it
+    if (entity == null) {
+      for (Entity affectedEntity : detonateEvent.getAffectedEntities()) {
+        if (affectedEntity instanceof EntityFireball) {
+          EntityFireball entityFireball = (EntityFireball) affectedEntity;
+
+          // Compare the fireball and explosion positions to determine if the fireball is the source
+          // of the explosion
+          if (entityFireball.posX == detonateEvent.explosion.explosionX
+              && entityFireball.posY == detonateEvent.explosion.explosionY
+              && entityFireball.posZ == detonateEvent.explosion.explosionZ) {
+            entity = entityFireball.shootingEntity;
+            break;
+          }
+        }
+      }
+    }
+
+    // Get whether mobGriefing is enabled for this entity
     String mobGriefingRule = BetterMobGriefingGameRule.getMobGriefingRule(gameRules, entity);
     boolean mobGriefingEnabled = gameRules.getGameRuleBooleanValue(mobGriefingRule);
 

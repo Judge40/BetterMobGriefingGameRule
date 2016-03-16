@@ -28,6 +28,7 @@ import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
@@ -48,8 +49,9 @@ public class BetterMobGriefingGameRule {
   public static final String ORIGINAL = "mobGriefing";
   public static final String CREEPER = "mobGriefingCreeper";
   public static final String ENDERMAN = "mobGriefingEnderman";
+  public static final String GHAST = "mobGriefingGhast";
 
-  public static final List<String> MOBGRIEFING_GAME_RULES = Arrays.asList(CREEPER, ENDERMAN);
+  public static final List<String> MOBGRIEFING_GAME_RULES = Arrays.asList(CREEPER, ENDERMAN, GHAST);
 
   /**
    * On initialisation registers the event handler
@@ -113,6 +115,8 @@ public class BetterMobGriefingGameRule {
       mobGriefingRule = BetterMobGriefingGameRule.CREEPER;
     } else if (entity instanceof EntityEnderman) {
       mobGriefingRule = BetterMobGriefingGameRule.ENDERMAN;
+    } else if (entity instanceof EntityGhast) {
+      mobGriefingRule = BetterMobGriefingGameRule.GHAST;
     }
 
     // If non-supported entity or rule does not exist then default back to the original rule

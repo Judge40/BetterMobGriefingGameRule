@@ -18,18 +18,27 @@
  */
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
 import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -74,6 +83,72 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
   }
 
   /**
+   * Test that the explosion's explosionPlacedBy field is used when it is populated
+   */
+  @Test
+  public void testOnDetonateEvent_explosionPlacedByEntityCreeper_entityCreeperUsed() {
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock
+      String getMobGriefingRule(GameRules gameRules, EntityLivingBase entity) {
+        Assert.assertThat("Entity passed as parameter does not match the expected type.", entity,
+            CoreMatchers.instanceOf(EntityCreeper.class));
+        return "betterMobGriefing";
+      }
+    };
+
+    Explosion explosion = new Explosion(null, new EntityCreeper(null), 0, 0, 0, 0);
+    explosion.affectedBlockPositions = new ArrayList<>(Collections.singleton("dummyData"));
+    explosion.isSmoking = false;
+
+    Detonate detonateEvent = new Detonate(world, explosion, null);
+    eventHandler.onDetonateEvent(detonateEvent);
+  }
+
+  /**
+   * Test that the explosion's explosionPlacedBy field is used when it is populated
+   */
+  @Test
+  public void testOnDetonateEvent_explosionPlacedByNullFireballShootingEntityGhast_entityGhastUsed() {
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock
+      String getMobGriefingRule(GameRules gameRules, EntityLivingBase entity) {
+        Assert.assertThat("Entity passed as parameter does not match the expected type.", entity,
+            CoreMatchers.instanceOf(EntityGhast.class));
+        return "betterMobGriefing";
+      }
+    };
+
+    Explosion explosion = new Explosion(null, null, 1, 1, 1, 0);
+    explosion.affectedBlockPositions = new ArrayList<>(Collections.singleton("dummyData"));
+    explosion.isSmoking = false;
+
+    EntityFireball fireball1 = new EntityLargeFireball(null,
+        Deencapsulation.newUninitializedInstance(EntityLiving.class), 0, 0, 0);
+    fireball1.posX = 0;
+
+    EntityFireball fireball2 = new EntityLargeFireball(null,
+        Deencapsulation.newUninitializedInstance(EntityLiving.class), 0, 0, 0);
+    fireball2.posX = 1;
+    fireball2.posY = 0;
+
+    EntityFireball fireball3 = new EntityLargeFireball(null,
+        Deencapsulation.newUninitializedInstance(EntityLiving.class), 0, 0, 0);
+    fireball3.posX = 1;
+    fireball3.posY = 1;
+    fireball3.posZ = 0;
+
+    EntityFireball fireball4 = new EntityLargeFireball(null, new EntityGhast(null), 0, 0, 0);
+    fireball4.posX = 1;
+    fireball4.posY = 1;
+    fireball4.posZ = 1;
+
+    List<Entity> entityList = Arrays.asList(fireball1, fireball2, fireball3, fireball4);
+
+    Detonate detonateEvent = new Detonate(world, explosion, entityList);
+    eventHandler.onDetonateEvent(detonateEvent);
+  }
+
+  /**
    * Test that explosion does damage blocks when original rule is true and entity specific rule is
    * true
    */
@@ -89,9 +164,9 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
     gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "true");
     gameRules.setOrCreateGameRule("betterMobGriefing", "true");
 
-    Explosion explosion = Deencapsulation.newUninitializedInstance(Explosion.class);
-    Deencapsulation.setField(explosion, "affectedBlockPositions", Lists.newArrayList("dummyData"));
-    Deencapsulation.setField(explosion, "isSmoking", true);
+    Explosion explosion = new Explosion(null, new EntityCreeper(null), 0, 0, 0, 0);
+    explosion.affectedBlockPositions = new ArrayList<>(Collections.singleton("dummyData"));
+    explosion.isSmoking = true;
 
     Detonate detonateEvent = new Detonate(world, explosion, null);
     eventHandler.onDetonateEvent(detonateEvent);
@@ -99,8 +174,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
 
     Assert.assertThat("Affected block position list size should be 1.",
         explosion.affectedBlockPositions.size(), CoreMatchers.is(1));
-    Assert.assertThat("isSmoking should be true",
-        (Boolean) Deencapsulation.getField(explosion, "isSmoking"), CoreMatchers.is(true));
+    Assert.assertThat("isSmoking should be true", explosion.isSmoking, CoreMatchers.is(true));
   }
 
   /**
@@ -119,17 +193,16 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
     gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "true");
     gameRules.setOrCreateGameRule("betterMobGriefing", "false");
 
-    Explosion explosion = Deencapsulation.newUninitializedInstance(Explosion.class);
-    Deencapsulation.setField(explosion, "affectedBlockPositions", Lists.newArrayList("dummyData"));
-    Deencapsulation.setField(explosion, "isSmoking", true);
+    Explosion explosion = new Explosion(null, new EntityCreeper(null), 0, 0, 0, 0);
+    explosion.affectedBlockPositions = new ArrayList<>(Collections.singleton("dummyData"));
+    explosion.isSmoking = true;
 
     Detonate detonateEvent = new Detonate(world, explosion, null);
     eventHandler.onDetonateEvent(detonateEvent);
 
     Assert.assertThat("Affected block position list size should be 0.",
         explosion.affectedBlockPositions.size(), CoreMatchers.is(0));
-    Assert.assertThat("isSmoking should be false",
-        (Boolean) Deencapsulation.getField(explosion, "isSmoking"), CoreMatchers.is(false));
+    Assert.assertThat("isSmoking should be false", explosion.isSmoking, CoreMatchers.is(false));
 
   }
 
@@ -149,17 +222,16 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
     gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "false");
     gameRules.setOrCreateGameRule("betterMobGriefing", "true");
 
-    Explosion explosion = Deencapsulation.newUninitializedInstance(Explosion.class);
-    Deencapsulation.setField(explosion, "affectedBlockPositions", Lists.newArrayList("dummyData"));
-    Deencapsulation.setField(explosion, "isSmoking", false);
+    Explosion explosion = new Explosion(null, new EntityCreeper(null), 0, 0, 0, 0);
+    explosion.affectedBlockPositions = new ArrayList<>(Collections.singleton("dummyData"));
+    explosion.isSmoking = false;
 
     Detonate detonateEvent = new Detonate(world, explosion, null);
     eventHandler.onDetonateEvent(detonateEvent);
 
     Assert.assertThat("Affected block position list size should be 1.",
         explosion.affectedBlockPositions.size(), CoreMatchers.is(1));
-    Assert.assertThat("isSmoking should be true",
-        (Boolean) Deencapsulation.getField(explosion, "isSmoking"), CoreMatchers.is(true));
+    Assert.assertThat("isSmoking should be true", explosion.isSmoking, CoreMatchers.is(true));
   }
 
   /**
@@ -178,16 +250,15 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
     gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "false");
     gameRules.setOrCreateGameRule("betterMobGriefing", "false");
 
-    Explosion explosion = Deencapsulation.newUninitializedInstance(Explosion.class);
-    Deencapsulation.setField(explosion, "affectedBlockPositions", Lists.newArrayList("dummyData"));
-    Deencapsulation.setField(explosion, "isSmoking", false);
+    Explosion explosion = new Explosion(null, new EntityCreeper(null), 0, 0, 0, 0);
+    explosion.affectedBlockPositions = new ArrayList<>(Collections.singleton("dummyData"));
+    explosion.isSmoking = false;
 
     Detonate detonateEvent = new Detonate(world, explosion, null);
     eventHandler.onDetonateEvent(detonateEvent);
 
     Assert.assertThat("Affected block position list size should be 0.",
         explosion.affectedBlockPositions.size(), CoreMatchers.is(0));
-    Assert.assertThat("isSmoking should be false",
-        (Boolean) Deencapsulation.getField(explosion, "isSmoking"), CoreMatchers.is(false));
+    Assert.assertThat("isSmoking should be false", explosion.isSmoking, CoreMatchers.is(false));
   }
 }

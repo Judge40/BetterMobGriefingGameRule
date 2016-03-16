@@ -33,6 +33,7 @@ import mockit.MockUp;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -53,8 +54,6 @@ public class BetterMobGriefingGameRuleTest {
   public void setUp() throws Exception {
     betterMobGriefingGameRule = new BetterMobGriefingGameRule();
     gameRules = new GameRules();
-
-    setUpMocks();
   }
 
   /**
@@ -144,6 +143,16 @@ public class BetterMobGriefingGameRuleTest {
   }
 
   /**
+   * Test that the rule for EntityGhast is added to the GameRules
+   */
+  @Test
+  public void testAddMobGriefingGameRules_entityGhast_entityGhastRuleAdded() {
+    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
+    Assert.assertThat("The Ghast mobGriefing rule was not added to the GameRules",
+        gameRules.hasRule(BetterMobGriefingGameRule.GHAST), CoreMatchers.is(true));
+  }
+
+  /**
    * Test that a new rule is added with the correct default value when original is true
    */
   @Test
@@ -223,6 +232,13 @@ public class BetterMobGriefingGameRuleTest {
    */
   @Test
   public void testGetMobGriefingRule_entityEndermanRuleExists_endermanRule() {
+    new MockUp<EntityEnderman>() {
+      @Mock
+      void $clinit() {
+
+      }
+    };
+
     gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ENDERMAN, "true");
     String mobGriefingRule =
         BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityEnderman(null));
@@ -236,8 +252,40 @@ public class BetterMobGriefingGameRuleTest {
    */
   @Test
   public void testGetMobGriefingRule_entityEndermanRuleNotExists_originalRule() {
+    new MockUp<EntityEnderman>() {
+      @Mock
+      void $clinit() {
+
+      }
+    };
+
     String mobGriefingRule =
         BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityEnderman(null));
+    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
+        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
+  }
+
+  /**
+   * Test that when entity is an Enderman and the matching rule does exist that the Enderman
+   * mobGriefing rule is used
+   */
+  @Test
+  public void testGetMobGriefingRule_entityGhastRuleExists_ghastRule() {
+    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.GHAST, "true");
+    String mobGriefingRule =
+        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityGhast(null));
+    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
+        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.GHAST));
+  }
+
+  /**
+   * Test that when entity is an Enderman and the matching rule does not exist that the default
+   * mobGriefing rule is used
+   */
+  @Test
+  public void testGetMobGriefingRule_entityGhastRuleNotExists_originalRule() {
+    String mobGriefingRule =
+        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityGhast(null));
     Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
         mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
   }
@@ -262,29 +310,5 @@ public class BetterMobGriefingGameRuleTest {
     String mobGriefingRule = BetterMobGriefingGameRule.getMobGriefingRule(gameRules, null);
     Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
         mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
-  }
-
-  /**
-   * Set up mocks
-   */
-  public static void setUpMocks() {
-    new MockUp<EntityCreeper>() {
-      @Mock
-      void $init(World world) {
-
-      }
-    };
-
-    new MockUp<EntityEnderman>() {
-      @Mock
-      void $init(World world) {
-
-      }
-
-      @Mock
-      void $clinit() {
-
-      }
-    };
   }
 }

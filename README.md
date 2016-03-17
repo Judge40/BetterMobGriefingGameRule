@@ -18,6 +18,7 @@ instead of the original "mobGriefing" game rule.
 | -------- | ------------------- |
 | Creeper  | mobGriefingCreeper  |
 | Enderman | mobGriefingEnderman |
+| Ghast    | mobGriefingGhast    |
 
 Full details of the effects of each game rule can be found in this
 projects wiki.

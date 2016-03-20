@@ -18,13 +18,21 @@
  */
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
+import java.util.Iterator;
+
+import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIBreakDoor;
+
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.EntityAIBreakDoor;
+import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.ExplosionEvent.Detonate;
 
 /**
@@ -80,6 +88,49 @@ public class BetterMobGriefingGameRuleEventHandler {
     // If mobGriefing is not enabled then clear down the affected blocks
     if (!mobGriefingEnabled) {
       detonateEvent.getAffectedBlocks().clear();
+    }
+  }
+
+  /**
+   * When an Entity joins the world update the relevant fields and tasks to allow the new
+   * mobGriefing game rule to override the original rule
+   * 
+   * @param entityJoinWorldEvent The EntityJoinWorldEvent for the Entity to be updated
+   */
+  @SubscribeEvent
+  public void onEntityJoinWorldEvent(EntityJoinWorldEvent entityJoinWorldEvent) {
+    if (entityJoinWorldEvent.entity instanceof EntityZombie) {
+      EntityZombie entityZombie = (EntityZombie) entityJoinWorldEvent.entity;
+
+      // Get existing "BreakDoor" task
+      EntityAIBreakDoor entityAiBreakDoor = ObfuscationReflectionHelper
+          .getPrivateValue(EntityZombie.class, entityZombie, "field_146075_bs");
+
+      // Iterate through the entities tasks and get the priority of the "BreakDoor" task if it
+      // exists
+      Iterator<?> entityAiTaskEntryIterator = entityZombie.tasks.taskEntries.iterator();
+      int priority = -1;
+
+      while (entityAiTaskEntryIterator.hasNext()) {
+        EntityAITaskEntry entityAiTaskEntry = (EntityAITaskEntry) entityAiTaskEntryIterator.next();
+
+        if (entityAiTaskEntry.action == entityAiBreakDoor) {
+          priority = entityAiTaskEntry.priority;
+          break;
+        }
+      }
+
+      // Set the new "BreakDoor" task so that it gets populated instead of the original task
+      BetterMobGriefingGameRuleEntityAIBreakDoor betterMobGriefingGameRuleEntityAiBreakDoor =
+          new BetterMobGriefingGameRuleEntityAIBreakDoor(entityZombie);
+      ObfuscationReflectionHelper.setPrivateValue(EntityZombie.class, entityZombie,
+          betterMobGriefingGameRuleEntityAiBreakDoor, "field_146075_bs");
+
+      // If the task was already populated then remove it and add the new task
+      if (priority > -1) {
+        entityZombie.tasks.removeTask(entityAiBreakDoor);
+        entityZombie.tasks.addTask(priority, betterMobGriefingGameRuleEntityAiBreakDoor);
+      }
     }
   }
 }

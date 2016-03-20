@@ -34,6 +34,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -153,6 +154,16 @@ public class BetterMobGriefingGameRuleTest {
   }
 
   /**
+   * Test that the rule for EntityZombie is added to the GameRules
+   */
+  @Test
+  public void testAddMobGriefingGameRules_entityZombie_entityZombieRuleAdded() {
+    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
+    Assert.assertThat("The Zombie mobGriefing rule was not added to the GameRules",
+        gameRules.hasRule(BetterMobGriefingGameRule.ZOMBIE), CoreMatchers.is(true));
+  }
+
+  /**
    * Test that a new rule is added with the correct default value when original is true
    */
   @Test
@@ -266,7 +277,7 @@ public class BetterMobGriefingGameRuleTest {
   }
 
   /**
-   * Test that when entity is an Enderman and the matching rule does exist that the Enderman
+   * Test that when entity is an Ghast and the matching rule does exist that the Enderman
    * mobGriefing rule is used
    */
   @Test
@@ -279,13 +290,38 @@ public class BetterMobGriefingGameRuleTest {
   }
 
   /**
-   * Test that when entity is an Enderman and the matching rule does not exist that the default
+   * Test that when entity is an Ghast and the matching rule does not exist that the default
    * mobGriefing rule is used
    */
   @Test
   public void testGetMobGriefingRule_entityGhastRuleNotExists_originalRule() {
     String mobGriefingRule =
         BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityGhast(null));
+    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
+        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
+  }
+
+  /**
+   * Test that when entity is an Zombie and the matching rule does exist that the Zombie mobGriefing
+   * rule is used
+   */
+  @Test
+  public void testGetMobGriefingRule_entityZombieRuleExists_zombieRule() {
+    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ZOMBIE, "true");
+    String mobGriefingRule =
+        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityZombie(null));
+    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
+        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ZOMBIE));
+  }
+
+  /**
+   * Test that when entity is an Zombie and the matching rule does not exist that the default
+   * mobGriefing rule is used
+   */
+  @Test
+  public void testGetMobGriefingRule_entityZombieRuleNotExists_originalRule() {
+    String mobGriefingRule =
+        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityZombie(null));
     Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
         mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
   }

@@ -20,6 +20,7 @@ instead of the original "mobGriefing" game rule.
 | Enderman | mobGriefingEnderman |
 | Ghast    | mobGriefingGhast    |
 | Wither   | mobGriefingWither   |
+| Zombie   | mobGriefingZombie   |
 
 Full details of the effects of each game rule can be found in this
 projects wiki.

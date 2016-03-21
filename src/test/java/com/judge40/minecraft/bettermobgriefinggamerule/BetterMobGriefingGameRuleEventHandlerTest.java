@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIBreakDoor;
+import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour;
 
 import mockit.Deencapsulation;
 import mockit.Mock;
@@ -40,6 +41,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntityZombie;
@@ -93,7 +95,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
    * Test that the explosion's explosionPlacedBy field is used when it is populated
    */
   @Test
-  public void testOnDetonateEvent_explosionPlacedByEntityCreeper_entityCreeperUsed() {
+  public void testOnDetonateEvent_exploderIsEntityCreeper_entityCreeperUsed() {
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
       String getMobGriefingRule(GameRules gameRules, EntityLivingBase entity) {
@@ -112,10 +114,84 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
   }
 
   /**
+   * Test that the when exploder is a fireball and shooting entity is not null that the shooting
+   * entity is used.
+   */
+  @Test
+  public void testOnDetonateEvent_exploderIsFireballShootingEntityNotNull_shootingEntityUsed() {
+    EntityLiving shootingEntity = Deencapsulation.newUninitializedInstance(EntityLiving.class);
+
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock
+      String getMobGriefingRule(GameRules gameRules, EntityLivingBase entity) {
+        Assert.assertThat("Entity passed as parameter does not match the expected type.", entity,
+            CoreMatchers.is(shootingEntity));
+        return "betterMobGriefing";
+      }
+    };
+
+    EntityFireball fireball = Deencapsulation.newUninitializedInstance(EntityFireball.class);
+    fireball.shootingEntity = shootingEntity;
+
+    Explosion explosion = new Explosion(world, fireball, 0, 0, 0, 0);
+    explosion.affectedBlockPositions = new ArrayList<>(Collections.singleton("dummyData"));
+    explosion.isSmoking = false;
+
+    Detonate detonateEvent = new Detonate(world, explosion, null);
+    eventHandler.onDetonateEvent(detonateEvent);
+  }
+
+  /**
+   * Test that when the exploder is a fireball and the shooting entity is null the affected entities
+   * are checked for the source of the explosion
+   */
+  @Test
+  public void testOnDetonateEvent_exploderIsFireballShootingEntityNull_affectedEntitiesChecked() {
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock
+      String getMobGriefingRule(GameRules gameRules, EntityLivingBase entity) {
+        Assert.assertThat("Entity passed as parameter does not match the expected type.", entity,
+            CoreMatchers.instanceOf(EntityGhast.class));
+        return "betterMobGriefing";
+      }
+    };
+
+    Explosion explosion = new Explosion(world,
+        Deencapsulation.newUninitializedInstance(EntityFireball.class), 1, 1, 1, 0);
+    explosion.affectedBlockPositions = new ArrayList<>(Collections.singleton("dummyData"));
+    explosion.isSmoking = false;
+
+    EntityFireball fireball1 = new EntityLargeFireball(null,
+        Deencapsulation.newUninitializedInstance(EntityLiving.class), 0, 0, 0);
+    fireball1.posX = 0;
+
+    EntityFireball fireball2 = new EntityLargeFireball(null,
+        Deencapsulation.newUninitializedInstance(EntityLiving.class), 0, 0, 0);
+    fireball2.posX = 1;
+    fireball2.posY = 0;
+
+    EntityFireball fireball3 = new EntityLargeFireball(null,
+        Deencapsulation.newUninitializedInstance(EntityLiving.class), 0, 0, 0);
+    fireball3.posX = 1;
+    fireball3.posY = 1;
+    fireball3.posZ = 0;
+
+    EntityFireball fireball4 = new EntityLargeFireball(null, new EntityGhast(null), 0, 0, 0);
+    fireball4.posX = 1;
+    fireball4.posY = 1;
+    fireball4.posZ = 1;
+
+    List<Entity> entityList = Arrays.asList(fireball1, fireball2, fireball3, fireball4);
+
+    Detonate detonateEvent = new Detonate(world, explosion, entityList);
+    eventHandler.onDetonateEvent(detonateEvent);
+  }
+
+  /**
    * Test that the explosion's explosionPlacedBy field is used when it is populated
    */
   @Test
-  public void testOnDetonateEvent_explosionPlacedByNullFireballShootingEntityGhast_entityGhastUsed() {
+  public void testOnDetonateEvent_exploderIsNullFireballShootingEntityGhast_entityGhastUsed() {
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
       String getMobGriefingRule(GameRules gameRules, EntityLivingBase entity) {
@@ -267,6 +343,32 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
     Assert.assertThat("Affected block position list size should be 0.",
         explosion.affectedBlockPositions.size(), CoreMatchers.is(0));
     Assert.assertThat("isSmoking should be false", explosion.isSmoking, CoreMatchers.is(false));
+  }
+
+  /**
+   * Test that when the entity is an EntityWither the mobGriefing override task is added to the task
+   * list
+   */
+  @Test
+  public void testOnEntityJoinWorldEvent_entityWither_mobGriefingOverrideTaskAdded() {
+    EntityWither entityWither = new EntityWither(null);
+    EntityJoinWorldEvent entityJoinWorldEvent = new EntityJoinWorldEvent(entityWither, world);
+    eventHandler.onEntityJoinWorldEvent(entityJoinWorldEvent);
+
+    Iterator<?> entityAiTaskEntryIterator = entityWither.tasks.taskEntries.iterator();
+
+    while (entityAiTaskEntryIterator.hasNext()) {
+      EntityAITaskEntry entityAiTaskEntry = (EntityAITaskEntry) entityAiTaskEntryIterator.next();
+
+      if (entityAiTaskEntry.action instanceof BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour) {
+        break;
+      }
+
+      if (!entityAiTaskEntryIterator.hasNext()) {
+        Assert.fail(
+            "BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour task was not found in the Wither's task list.");
+      }
+    }
   }
 
   /**

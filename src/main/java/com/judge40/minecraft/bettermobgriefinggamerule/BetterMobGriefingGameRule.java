@@ -26,6 +26,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityGhast;
@@ -51,10 +52,11 @@ public class BetterMobGriefingGameRule {
   public static final String CREEPER = "mobGriefingCreeper";
   public static final String ENDERMAN = "mobGriefingEnderman";
   public static final String GHAST = "mobGriefingGhast";
+  public static final String WITHER = "mobGriefingWither";
   public static final String ZOMBIE = "mobGriefingZombie";
 
   public static final List<String> MOBGRIEFING_GAME_RULES =
-      Arrays.asList(CREEPER, ENDERMAN, GHAST, ZOMBIE);
+      Arrays.asList(CREEPER, ENDERMAN, GHAST, WITHER, ZOMBIE);
 
   /**
    * On initialisation registers the event handler
@@ -120,6 +122,8 @@ public class BetterMobGriefingGameRule {
       mobGriefingRule = BetterMobGriefingGameRule.ENDERMAN;
     } else if (entity instanceof EntityGhast) {
       mobGriefingRule = BetterMobGriefingGameRule.GHAST;
+    } else if (entity instanceof EntityWither) {
+      mobGriefingRule = BetterMobGriefingGameRule.WITHER;
     } else if (entity instanceof EntityZombie) {
       mobGriefingRule = BetterMobGriefingGameRule.ZOMBIE;
     }

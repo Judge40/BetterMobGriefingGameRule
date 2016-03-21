@@ -21,6 +21,7 @@ package com.judge40.minecraft.bettermobgriefinggamerule;
 import java.util.Iterator;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIBreakDoor;
+import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour;
 
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -28,6 +29,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.world.Explosion;
@@ -51,10 +53,19 @@ public class BetterMobGriefingGameRuleEventHandler {
     GameRules gameRules = detonateEvent.world.getGameRules();
 
     // Get explosion source entity
-    EntityLivingBase entity = detonateEvent.explosion.getExplosivePlacedBy();
+    Entity exploder = ObfuscationReflectionHelper.getPrivateValue(Explosion.class,
+        detonateEvent.explosion, "exploder", "field_77283_e");
+    EntityLivingBase entity = null;
 
-    // If entity is null then the explosion source might be a fireball, check the affected entities
-    // for a matching fireball and retrieve the entity from it
+    if (exploder instanceof EntityLivingBase) {
+      entity = (EntityLivingBase) exploder;
+    } else if (exploder instanceof EntityFireball) {
+      entity = ((EntityFireball) exploder).shootingEntity;
+    }
+
+    // If entity is null then the explosion source might be a fireball without shootingEntity
+    // populated, check the affected entities for a matching fireball and retrieve the entity from
+    // it
     if (entity == null) {
       for (Entity affectedEntity : detonateEvent.getAffectedEntities()) {
         if (affectedEntity instanceof EntityFireball) {
@@ -99,7 +110,12 @@ public class BetterMobGriefingGameRuleEventHandler {
    */
   @SubscribeEvent
   public void onEntityJoinWorldEvent(EntityJoinWorldEvent entityJoinWorldEvent) {
-    if (entityJoinWorldEvent.entity instanceof EntityZombie) {
+
+    if (entityJoinWorldEvent.entity instanceof EntityWither) {
+      EntityWither entityWither = (EntityWither) entityJoinWorldEvent.entity;
+      entityWither.tasks.addTask(0,
+          new BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour(entityWither));
+    } else if (entityJoinWorldEvent.entity instanceof EntityZombie) {
       EntityZombie entityZombie = (EntityZombie) entityJoinWorldEvent.entity;
 
       // Get existing "BreakDoor" task

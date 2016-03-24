@@ -24,6 +24,7 @@ import java.util.Random;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIBreakDoor;
+import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIEatGrass;
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour;
 
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -31,8 +32,10 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSilverfish;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
+import net.minecraft.entity.ai.EntityAIEatGrass;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntitySilverfish;
@@ -155,6 +158,26 @@ public class BetterMobGriefingGameRuleEventHandler {
       if (priority > -1) {
         entityZombie.tasks.removeTask(entityAiBreakDoor);
         entityZombie.tasks.addTask(priority, betterMobGriefingGameRuleEntityAiBreakDoor);
+      }
+    }
+
+    // If entity has the EntityAIEatGrass task then replace it with a new
+    // BetterMobGriefingGameRuleEntityAIEatGrass task
+    if (entityJoinWorldEvent.entity instanceof EntityLiving) {
+      EntityLiving entityLiving = (EntityLiving) entityJoinWorldEvent.entity;
+
+      if (entityLiving.tasks != null) {
+        Iterator<?> entityAiTaskEntryIterator = entityLiving.tasks.taskEntries.iterator();
+
+        while (entityAiTaskEntryIterator.hasNext()) {
+          EntityAITaskEntry entityAiTaskEntry =
+              (EntityAITaskEntry) entityAiTaskEntryIterator.next();
+
+          if (entityAiTaskEntry.action instanceof EntityAIEatGrass) {
+            entityAiTaskEntry.action = new BetterMobGriefingGameRuleEntityAIEatGrass(entityLiving);
+            break;
+          }
+        }
       }
     }
   }

@@ -38,6 +38,7 @@ import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -167,6 +168,16 @@ public class BetterMobGriefingGameRuleTest {
   }
 
   /**
+   * Test that the rule for EntitySheep is added to the GameRules
+   */
+  @Test
+  public void testAddMobGriefingGameRules_entitySheep_entitySheepRuleAdded() {
+    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
+    Assert.assertThat("The Sheep mobGriefing rule was not added to the GameRules",
+        gameRules.hasRule(BetterMobGriefingGameRule.SHEEP), CoreMatchers.is(true));
+  }
+
+  /**
    * Test that the rule for EntitySilverfish is added to the GameRules
    */
   @Test
@@ -271,8 +282,8 @@ public class BetterMobGriefingGameRuleTest {
   }
 
   /**
-   * Test that when entity is a Dragon and the matching rule does exist that the Dragon
-   * mobGriefing rule is used
+   * Test that when entity is a Dragon and the matching rule does exist that the Dragon mobGriefing
+   * rule is used
    */
   @Test
   public void testGetMobGriefingRule_entityDragonRuleExists_dragonRule() {
@@ -355,6 +366,31 @@ public class BetterMobGriefingGameRuleTest {
   public void testGetMobGriefingRule_entityGhastRuleNotExists_originalRule() {
     String mobGriefingRule =
         BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityGhast(null));
+    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
+        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
+  }
+
+  /**
+   * Test that when entity is an Sheep and the matching rule does exist that the Enderman
+   * mobGriefing rule is used
+   */
+  @Test
+  public void testGetMobGriefingRule_entitySheepRuleExists_sheepRule() {
+    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.SHEEP, "true");
+    String mobGriefingRule =
+        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntitySheep(null));
+    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
+        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.SHEEP));
+  }
+
+  /**
+   * Test that when entity is an Sheep and the matching rule does not exist that the default
+   * mobGriefing rule is used
+   */
+  @Test
+  public void testGetMobGriefingRule_entitySheepRuleNotExists_originalRule() {
+    String mobGriefingRule =
+        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntitySheep(null));
     Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
         mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
   }

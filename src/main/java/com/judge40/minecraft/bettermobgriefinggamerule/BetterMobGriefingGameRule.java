@@ -33,6 +33,7 @@ import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
@@ -55,12 +56,13 @@ public class BetterMobGriefingGameRule {
   public static final String DRAGON = "mobGriefingDragon";
   public static final String ENDERMAN = "mobGriefingEnderman";
   public static final String GHAST = "mobGriefingGhast";
+  public static final String SHEEP = "mobGriefingSheep";
   public static final String SILVERFISH = "mobGriefingSilverfish";
   public static final String WITHER = "mobGriefingWither";
   public static final String ZOMBIE = "mobGriefingZombie";
 
   public static final List<String> MOBGRIEFING_GAME_RULES =
-      Arrays.asList(CREEPER, DRAGON, ENDERMAN, GHAST, SILVERFISH, WITHER, ZOMBIE);
+      Arrays.asList(CREEPER, DRAGON, ENDERMAN, GHAST, SHEEP, SILVERFISH, WITHER, ZOMBIE);
 
   /**
    * On initialisation registers the event handler
@@ -128,6 +130,8 @@ public class BetterMobGriefingGameRule {
       mobGriefingRule = BetterMobGriefingGameRule.ENDERMAN;
     } else if (entity instanceof EntityGhast) {
       mobGriefingRule = BetterMobGriefingGameRule.GHAST;
+    } else if (entity instanceof EntitySheep) {
+      mobGriefingRule = BetterMobGriefingGameRule.SHEEP;
     } else if (entity instanceof EntitySilverfish) {
       mobGriefingRule = BetterMobGriefingGameRule.SILVERFISH;
     } else if (entity instanceof EntityWither) {

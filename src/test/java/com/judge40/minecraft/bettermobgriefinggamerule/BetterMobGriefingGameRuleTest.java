@@ -31,6 +31,7 @@ import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -133,6 +134,16 @@ public class BetterMobGriefingGameRuleTest {
     BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
     Assert.assertThat("The Creeper mobGriefing rule was not added to the GameRules",
         gameRules.hasRule(BetterMobGriefingGameRule.CREEPER), CoreMatchers.is(true));
+  }
+
+  /**
+   * Test that the rule for EntityDragon is added to the GameRules
+   */
+  @Test
+  public void testAddMobGriefingGameRules_entityDragon_entityDragonRuleAdded() {
+    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
+    Assert.assertThat("The EnderDragon mobGriefing rule was not added to the GameRules",
+        gameRules.hasRule(BetterMobGriefingGameRule.DRAGON), CoreMatchers.is(true));
   }
 
   /**
@@ -255,6 +266,31 @@ public class BetterMobGriefingGameRuleTest {
   public void testGetMobGriefingRule_entityCreeperRuleNotExists_originalRule() {
     String mobGriefingRule =
         BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityCreeper(null));
+    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
+        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
+  }
+
+  /**
+   * Test that when entity is a Dragon and the matching rule does exist that the Dragon
+   * mobGriefing rule is used
+   */
+  @Test
+  public void testGetMobGriefingRule_entityDragonRuleExists_dragonRule() {
+    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.DRAGON, "true");
+    String mobGriefingRule =
+        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityDragon(null));
+    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
+        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.DRAGON));
+  }
+
+  /**
+   * Test that when entity is a dragon and the matching rule does not exist that the default
+   * mobGriefing rule is used
+   */
+  @Test
+  public void testGetMobGriefingRule_entityDragonRuleNotExists_originalRule() {
+    String mobGriefingRule =
+        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityDragon(null));
     Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
         mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
   }

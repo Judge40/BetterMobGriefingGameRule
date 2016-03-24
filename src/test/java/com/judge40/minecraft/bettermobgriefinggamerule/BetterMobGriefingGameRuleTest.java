@@ -35,6 +35,7 @@ import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
@@ -152,6 +153,16 @@ public class BetterMobGriefingGameRuleTest {
     BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
     Assert.assertThat("The Ghast mobGriefing rule was not added to the GameRules",
         gameRules.hasRule(BetterMobGriefingGameRule.GHAST), CoreMatchers.is(true));
+  }
+
+  /**
+   * Test that the rule for EntitySilverfish is added to the GameRules
+   */
+  @Test
+  public void testAddMobGriefingGameRules_entitySilverfish_entitySilverfishRuleAdded() {
+    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
+    Assert.assertThat("The Silverfish mobGriefing rule was not added to the GameRules",
+        gameRules.hasRule(BetterMobGriefingGameRule.SILVERFISH), CoreMatchers.is(true));
   }
 
   /**
@@ -308,6 +319,31 @@ public class BetterMobGriefingGameRuleTest {
   public void testGetMobGriefingRule_entityGhastRuleNotExists_originalRule() {
     String mobGriefingRule =
         BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityGhast(null));
+    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
+        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
+  }
+
+  /**
+   * Test that when entity is an Silverfish and the matching rule does exist that the Enderman
+   * mobGriefing rule is used
+   */
+  @Test
+  public void testGetMobGriefingRule_entitySilverfishRuleExists_silverfishRule() {
+    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.SILVERFISH, "true");
+    String mobGriefingRule =
+        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntitySilverfish(null));
+    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
+        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.SILVERFISH));
+  }
+
+  /**
+   * Test that when entity is an Silverfish and the matching rule does not exist that the default
+   * mobGriefing rule is used
+   */
+  @Test
+  public void testGetMobGriefingRule_entitySilverfishRuleNotExists_originalRule() {
+    String mobGriefingRule =
+        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntitySilverfish(null));
     Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
         mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
   }

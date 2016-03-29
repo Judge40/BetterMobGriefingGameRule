@@ -20,6 +20,7 @@ instead of the original "mobGriefing" game rule.
 | EnderDragon | mobGriefingDragon     |
 | Enderman    | mobGriefingEnderman   |
 | Ghast       | mobGriefingGhast      |
+| Sheep       | mobGriefingSheep      |
 | Silverfish  | mobGriefingSilverfish |
 | Wither      | mobGriefingWither     |
 | Zombie      | mobGriefingZombie     |

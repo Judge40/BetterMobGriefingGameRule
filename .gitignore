@@ -35,6 +35,7 @@ gradle-app.setting
 # Project Specific
 #-----------------------------------------------------------------------
 # Minecraft
+logs/
 run/
 
 # JMockit Coverage

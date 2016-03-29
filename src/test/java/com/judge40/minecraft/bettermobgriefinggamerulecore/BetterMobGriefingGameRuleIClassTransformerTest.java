@@ -35,6 +35,7 @@ import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.monster.EntityEnderman;
 
 /**
@@ -74,6 +75,29 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
 
     betterMobGriefingGameRuleIClassTransformer.transform(this.getClass().getName(),
         this.getClass().getName(), new byte[0]);
+  }
+
+  /**
+   * Test that the game rule transformation method is called with the correct parameters for
+   * EntityDragon
+   */
+  @Test
+  public void testTransform_entityDragon_transformGameRuleCalled() {
+    byte[] inputBasicClass = new byte[0];
+
+    new MockUp<BetterMobGriefingGameRuleIClassTransformer>() {
+      @Mock(invocations = 1)
+      byte[] transformMobGriefingGameRule(byte[] basicClass, String newGameRule) {
+        Assert.assertThat("Bytes to be transformed does not match the expected bytes.", basicClass,
+            CoreMatchers.is(inputBasicClass));
+        Assert.assertThat("New game rule does not match the expected game rule.", newGameRule,
+            CoreMatchers.is(BetterMobGriefingGameRule.DRAGON));
+        return basicClass;
+      }
+    };
+
+    betterMobGriefingGameRuleIClassTransformer.transform(EntityDragon.class.getName(),
+        EntityDragon.class.getName(), inputBasicClass);
   }
 
   /**

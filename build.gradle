@@ -18,7 +18,7 @@ buildscript {
 apply plugin: "forge"
 
 // Mod information
-version = "1.7.10-0.1.0"
+version = "1.7.10-0.2.0"
 group= "com.judge40.minecraft.bettermobgriefinggamerule"
 archivesBaseName = "bettermobgriefinggamerule"
 

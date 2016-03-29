@@ -50,6 +50,8 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
 
     if (transformedName.equals("net.minecraft.entity.monster.EntityEnderman")) {
       newRule = BetterMobGriefingGameRule.ENDERMAN;
+    } else if (transformedName.equals("net.minecraft.entity.boss.EntityDragon")) {
+      newRule = BetterMobGriefingGameRule.DRAGON;
     }
 
     if (newRule != null) {

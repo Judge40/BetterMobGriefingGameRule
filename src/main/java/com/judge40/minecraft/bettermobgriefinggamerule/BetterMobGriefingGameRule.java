@@ -26,9 +26,14 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntitySilverfish;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
@@ -43,15 +48,21 @@ public class BetterMobGriefingGameRule {
   // Constants for mod attributes
   public static final String MODID = "bettermobgriefinggamerule";
   public static final String NAME = "Better mobGriefing GameRule";
-  public static final String VERSION = "1.7.10-0.1.0";
+  public static final String VERSION = "1.7.10-0.2.0";
 
   // Constants for the mobGriefing rules
   public static final String ORIGINAL = "mobGriefing";
   public static final String CREEPER = "mobGriefingCreeper";
+  public static final String DRAGON = "mobGriefingDragon";
   public static final String ENDERMAN = "mobGriefingEnderman";
   public static final String GHAST = "mobGriefingGhast";
+  public static final String SHEEP = "mobGriefingSheep";
+  public static final String SILVERFISH = "mobGriefingSilverfish";
+  public static final String WITHER = "mobGriefingWither";
+  public static final String ZOMBIE = "mobGriefingZombie";
 
-  public static final List<String> MOBGRIEFING_GAME_RULES = Arrays.asList(CREEPER, ENDERMAN, GHAST);
+  public static final List<String> MOBGRIEFING_GAME_RULES =
+      Arrays.asList(CREEPER, DRAGON, ENDERMAN, GHAST, SHEEP, SILVERFISH, WITHER, ZOMBIE);
 
   /**
    * On initialisation registers the event handler
@@ -113,10 +124,20 @@ public class BetterMobGriefingGameRule {
 
     if (entity instanceof EntityCreeper) {
       mobGriefingRule = BetterMobGriefingGameRule.CREEPER;
+    } else if (entity instanceof EntityDragon) {
+      mobGriefingRule = BetterMobGriefingGameRule.DRAGON;
     } else if (entity instanceof EntityEnderman) {
       mobGriefingRule = BetterMobGriefingGameRule.ENDERMAN;
     } else if (entity instanceof EntityGhast) {
       mobGriefingRule = BetterMobGriefingGameRule.GHAST;
+    } else if (entity instanceof EntitySheep) {
+      mobGriefingRule = BetterMobGriefingGameRule.SHEEP;
+    } else if (entity instanceof EntitySilverfish) {
+      mobGriefingRule = BetterMobGriefingGameRule.SILVERFISH;
+    } else if (entity instanceof EntityWither) {
+      mobGriefingRule = BetterMobGriefingGameRule.WITHER;
+    } else if (entity instanceof EntityZombie) {
+      mobGriefingRule = BetterMobGriefingGameRule.ZOMBIE;
     }
 
     // If non-supported entity or rule does not exist then default back to the original rule

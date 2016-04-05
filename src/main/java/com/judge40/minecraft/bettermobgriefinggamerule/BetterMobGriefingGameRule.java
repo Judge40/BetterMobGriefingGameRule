@@ -25,6 +25,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -52,14 +53,22 @@ public class BetterMobGriefingGameRule {
 
   // Constants for the mobGriefing rules
   public static final String ORIGINAL = "mobGriefing";
-  public static final String CREEPER = "mobGriefingCreeper";
-  public static final String DRAGON = "mobGriefingDragon";
-  public static final String ENDERMAN = "mobGriefingEnderman";
-  public static final String GHAST = "mobGriefingGhast";
-  public static final String SHEEP = "mobGriefingSheep";
-  public static final String SILVERFISH = "mobGriefingSilverfish";
-  public static final String WITHER = "mobGriefingWither";
-  public static final String ZOMBIE = "mobGriefingZombie";
+  public static final String CREEPER = BetterMobGriefingGameRule.ORIGINAL
+      .concat((String) EntityList.classToStringMapping.get(EntityCreeper.class));
+  public static final String DRAGON = BetterMobGriefingGameRule.ORIGINAL
+      .concat((String) EntityList.classToStringMapping.get(EntityDragon.class));
+  public static final String ENDERMAN = BetterMobGriefingGameRule.ORIGINAL
+      .concat((String) EntityList.classToStringMapping.get(EntityEnderman.class));
+  public static final String GHAST = BetterMobGriefingGameRule.ORIGINAL
+      .concat((String) EntityList.classToStringMapping.get(EntityGhast.class));
+  public static final String SHEEP = BetterMobGriefingGameRule.ORIGINAL
+      .concat((String) EntityList.classToStringMapping.get(EntitySheep.class));
+  public static final String SILVERFISH = BetterMobGriefingGameRule.ORIGINAL
+      .concat((String) EntityList.classToStringMapping.get(EntitySilverfish.class));
+  public static final String WITHER = BetterMobGriefingGameRule.ORIGINAL
+      .concat((String) EntityList.classToStringMapping.get(EntityWither.class));
+  public static final String ZOMBIE = BetterMobGriefingGameRule.ORIGINAL
+      .concat((String) EntityList.classToStringMapping.get(EntityZombie.class));
 
   public static final List<String> MOBGRIEFING_GAME_RULES =
       Arrays.asList(CREEPER, DRAGON, ENDERMAN, GHAST, SHEEP, SILVERFISH, WITHER, ZOMBIE);
@@ -120,29 +129,17 @@ public class BetterMobGriefingGameRule {
    * @return The mobGriefing rule for the entity
    */
   public static String getMobGriefingRule(GameRules gameRules, EntityLivingBase entity) {
-    String mobGriefingRule = null;
+    String mobGriefingRule = BetterMobGriefingGameRule.ORIGINAL;
 
-    if (entity instanceof EntityCreeper) {
-      mobGriefingRule = BetterMobGriefingGameRule.CREEPER;
-    } else if (entity instanceof EntityDragon) {
-      mobGriefingRule = BetterMobGriefingGameRule.DRAGON;
-    } else if (entity instanceof EntityEnderman) {
-      mobGriefingRule = BetterMobGriefingGameRule.ENDERMAN;
-    } else if (entity instanceof EntityGhast) {
-      mobGriefingRule = BetterMobGriefingGameRule.GHAST;
-    } else if (entity instanceof EntitySheep) {
-      mobGriefingRule = BetterMobGriefingGameRule.SHEEP;
-    } else if (entity instanceof EntitySilverfish) {
-      mobGriefingRule = BetterMobGriefingGameRule.SILVERFISH;
-    } else if (entity instanceof EntityWither) {
-      mobGriefingRule = BetterMobGriefingGameRule.WITHER;
-    } else if (entity instanceof EntityZombie) {
-      mobGriefingRule = BetterMobGriefingGameRule.ZOMBIE;
-    }
+    // Override the mobGriefing rule if there is a matching entity specific rule
+    String entityName = EntityList.getEntityString(entity);
 
-    // If non-supported entity or rule does not exist then default back to the original rule
-    if (mobGriefingRule == null || !gameRules.hasRule(mobGriefingRule)) {
-      mobGriefingRule = BetterMobGriefingGameRule.ORIGINAL;
+    if (entityName != null) {
+      String entityMobGriefingRule = BetterMobGriefingGameRule.ORIGINAL.concat(entityName);
+
+      if (gameRules.hasRule(entityMobGriefingRule)) {
+        mobGriefingRule = entityMobGriefingRule;
+      }
     }
 
     return mobGriefingRule;

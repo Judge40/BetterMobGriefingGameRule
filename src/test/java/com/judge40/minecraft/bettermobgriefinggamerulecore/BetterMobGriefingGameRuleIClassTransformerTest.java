@@ -29,11 +29,11 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
 import com.google.common.primitives.Bytes;
-import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 
 import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -68,7 +68,7 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
   public void testTransform_unhandledClass_transformGameRuleCalled() {
     new MockUp<BetterMobGriefingGameRuleIClassTransformer>() {
       @Mock(invocations = 0)
-      byte[] transformMobGriefingGameRule(byte[] basicClass, String newGameRule) {
+      byte[] transformMobGriefingGameRule(byte[] basicClass) {
         return new byte[0];
       }
     };
@@ -87,11 +87,9 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
 
     new MockUp<BetterMobGriefingGameRuleIClassTransformer>() {
       @Mock(invocations = 1)
-      byte[] transformMobGriefingGameRule(byte[] basicClass, String newGameRule) {
+      byte[] transformMobGriefingGameRule(byte[] basicClass) {
         Assert.assertThat("Bytes to be transformed does not match the expected bytes.", basicClass,
             CoreMatchers.is(inputBasicClass));
-        Assert.assertThat("New game rule does not match the expected game rule.", newGameRule,
-            CoreMatchers.is(BetterMobGriefingGameRule.DRAGON));
         return basicClass;
       }
     };
@@ -110,11 +108,9 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
 
     new MockUp<BetterMobGriefingGameRuleIClassTransformer>() {
       @Mock(invocations = 1)
-      byte[] transformMobGriefingGameRule(byte[] basicClass, String newGameRule) {
+      byte[] transformMobGriefingGameRule(byte[] basicClass) {
         Assert.assertThat("Bytes to be transformed does not match the expected bytes.", basicClass,
             CoreMatchers.is(inputBasicClass));
-        Assert.assertThat("New game rule does not match the expected game rule.", newGameRule,
-            CoreMatchers.is(BetterMobGriefingGameRule.ENDERMAN));
         return basicClass;
       }
     };
@@ -134,14 +130,15 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
     classReader.accept(classWriter, ClassReader.SKIP_DEBUG);
     byte[] entityEndermanBytes = classWriter.toByteArray();
 
-    byte[] transformedBytes = Deencapsulation.invoke(
-        BetterMobGriefingGameRuleIClassTransformer.class, "transformMobGriefingGameRule",
-        entityEndermanBytes, BetterMobGriefingGameRule.ENDERMAN);
+    byte[] transformedBytes =
+        Deencapsulation.invoke(BetterMobGriefingGameRuleIClassTransformer.class,
+            "transformMobGriefingGameRule", entityEndermanBytes);
 
     Assert.assertThat("mobGriefing game rule was still found in the transformed bytes.",
         Bytes.indexOf(transformedBytes, "\"mobGriefing\"".getBytes()), CoreMatchers.is(-1));
     Assert.assertThat("mobGriefingEnderman game rule was not found in the transformed bytes.",
-        Bytes.indexOf(transformedBytes, BetterMobGriefingGameRule.ENDERMAN.getBytes()),
+        Bytes.indexOf(transformedBytes,
+            ((String) EntityList.classToStringMapping.get(EntityEnderman.class)).getBytes()),
         CoreMatchers.not(-1));
   }
 
@@ -159,7 +156,7 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
 
     byte[] transformedBytes =
         Deencapsulation.invoke(BetterMobGriefingGameRuleIClassTransformer.class,
-            "transformMobGriefingGameRule", entityLivingBaseBytes, "dummyRule");
+            "transformMobGriefingGameRule", entityLivingBaseBytes);
 
     Assert.assertThat("mobGriefing game rule was still found in the transformed bytes.",
         transformedBytes, CoreMatchers.is(entityLivingBaseBytes));

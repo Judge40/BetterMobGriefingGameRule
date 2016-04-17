@@ -63,9 +63,8 @@ public class BetterMobGriefingGameRuleEntityAIEatGrass extends EntityAIEatGrass 
       int k = MathHelper.floor_double(entityLiving.posZ);
 
       // Get whether mobGriefing is enabled for this entity
-      String mobGriefingRule =
-          BetterMobGriefingGameRule.getMobGriefingRule(world.getGameRules(), entityLiving);
-      boolean mobGriefingEnabled = world.getGameRules().getGameRuleBooleanValue(mobGriefingRule);
+      boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entityLiving);
+
 
       if (world.getBlock(i, j, k) == Blocks.tallgrass) {
         if (mobGriefingEnabled) {

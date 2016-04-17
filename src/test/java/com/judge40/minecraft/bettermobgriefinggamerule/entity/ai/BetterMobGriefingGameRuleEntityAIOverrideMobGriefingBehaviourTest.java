@@ -53,7 +53,6 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
   @Before
   public void setUp() throws Exception {
     gameRules = new GameRules();
-    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
 
     world = Deencapsulation.newUninitializedInstance(World.class);
 
@@ -148,8 +147,14 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
       }
     };
 
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock
+      boolean isMobGriefingEnabled(EntityLiving entity) {
+        return true;
+      }
+    };
+
     gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "false");
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.WITHER, "true");
 
     EntityWither entityWither = new EntityWither(null);
     entityWither.worldObj = world;
@@ -206,8 +211,14 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
       }
     };
 
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock
+      boolean isMobGriefingEnabled(EntityLiving entity) {
+        return true;
+      }
+    };
+
     gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "false");
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.WITHER, "true");
 
     EntityWither entityWither = new EntityWither(null);
     entityWither.worldObj = world;
@@ -265,8 +276,14 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
       }
     };
 
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock
+      boolean isMobGriefingEnabled(EntityLiving entity) {
+        return true;
+      }
+    };
+
     gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "false");
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.WITHER, "true");
 
     EntityWither entityWither = new EntityWither(null);
     entityWither.worldObj = world;
@@ -298,8 +315,14 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
       }
     };
 
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock
+      boolean isMobGriefingEnabled(EntityLiving entity) {
+        return true;
+      }
+    };
+
     gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "false");
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.WITHER, "true");
 
     EntityWither entityWither = new EntityWither(null);
     entityWither.worldObj = world;
@@ -325,8 +348,14 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
    */
   @Test
   public void testUpdateTask_entityWitherOriginalMobGriefingTrueBetterMobGriefingFalse_blockBreakCooldownReset() {
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock
+      boolean isMobGriefingEnabled(EntityLiving entity) {
+        return false;
+      }
+    };
+
     gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "true");
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.WITHER, "false");
 
     EntityWither entityWither = new EntityWither(null);
     entityWither.worldObj = world;
@@ -359,8 +388,14 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
       }
     };
 
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock
+      boolean isMobGriefingEnabled(EntityLiving entity) {
+        return true;
+      }
+    };
+
     gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "true");
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.WITHER, "true");
 
     EntityWither entityWither = new EntityWither(null);
     entityWither.worldObj = world;

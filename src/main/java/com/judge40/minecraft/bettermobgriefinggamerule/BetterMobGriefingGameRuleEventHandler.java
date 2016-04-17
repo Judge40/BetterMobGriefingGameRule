@@ -95,22 +95,24 @@ public class BetterMobGriefingGameRuleEventHandler {
       }
     }
 
-    // Get whether mobGriefing is enabled for this entity
-    String mobGriefingRule = BetterMobGriefingGameRule.getMobGriefingRule(gameRules, entity);
-    boolean mobGriefingEnabled = gameRules.getGameRuleBooleanValue(mobGriefingRule);
+    if (entity instanceof EntityLiving) {
+      // Get whether mobGriefing is enabled for this entity
+      boolean mobGriefingEnabled =
+          BetterMobGriefingGameRule.isMobGriefingEnabled((EntityLiving) entity);
 
-    boolean mobGriefingOriginal =
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+      boolean mobGriefingOriginal =
+          gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
 
-    // If better mobGriefing has overridden the default value then update relevant flag
-    if (mobGriefingEnabled != mobGriefingOriginal) {
-      ObfuscationReflectionHelper.setPrivateValue(Explosion.class, detonateEvent.explosion,
-          mobGriefingEnabled, "isSmoking", "field_82755_b");
-    }
+      // If better mobGriefing has overridden the default value then update relevant flag
+      if (mobGriefingEnabled ^ mobGriefingOriginal) {
+        ObfuscationReflectionHelper.setPrivateValue(Explosion.class, detonateEvent.explosion,
+            mobGriefingEnabled, "isSmoking", "field_82755_b");
+      }
 
-    // If mobGriefing is not enabled then clear down the affected blocks
-    if (!mobGriefingEnabled) {
-      detonateEvent.getAffectedBlocks().clear();
+      // If mobGriefing is not enabled then clear down the affected blocks
+      if (!mobGriefingEnabled) {
+        detonateEvent.getAffectedBlocks().clear();
+      }
     }
   }
 
@@ -229,10 +231,8 @@ public class BetterMobGriefingGameRuleEventHandler {
             for (int j1 = 0; !flag && j1 <= 10 && j1 >= -10; j1 = j1 <= 0 ? 1 - j1 : 0 - j1) {
               if (entitySilverfish.worldObj.getBlock(i + i1, j + l, k + j1) == Blocks.monster_egg) {
 
-                String mobGriefingRule = BetterMobGriefingGameRule
-                    .getMobGriefingRule(entitySilverfish.worldObj.getGameRules(), entitySilverfish);
-                boolean mobGriefingEnabled = entitySilverfish.worldObj.getGameRules()
-                    .getGameRuleBooleanValue(mobGriefingRule);
+                boolean mobGriefingEnabled =
+                    BetterMobGriefingGameRule.isMobGriefingEnabled(entitySilverfish);
 
                 if (!mobGriefingEnabled) {
                   int k1 = entitySilverfish.worldObj.getBlockMetadata(i + i1, j + l, k + j1);

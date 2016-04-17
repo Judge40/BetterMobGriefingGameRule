@@ -23,10 +23,13 @@ import java.util.ListIterator;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 
@@ -46,16 +49,9 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
    */
   @Override
   public byte[] transform(String name, String transformedName, byte[] basicClass) {
-    String newRule = null;
-
-    if (transformedName.equals("net.minecraft.entity.monster.EntityEnderman")) {
-      newRule = BetterMobGriefingGameRule.ENDERMAN;
-    } else if (transformedName.equals("net.minecraft.entity.boss.EntityDragon")) {
-      newRule = BetterMobGriefingGameRule.DRAGON;
-    }
-
-    if (newRule != null) {
-      basicClass = transformMobGriefingGameRule(basicClass, newRule);
+    if (transformedName.equals("net.minecraft.entity.monster.EntityEnderman")
+        || transformedName.equals("net.minecraft.entity.boss.EntityDragon")) {
+      basicClass = transformMobGriefingGameRule(basicClass);
     }
 
     return basicClass;
@@ -65,10 +61,9 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
    * Transform the class byte array and replaces the mobGriefing game rule with a new rule
    * 
    * @param basicClass The byte array to transform
-   * @param newGameRule The new game rule to replace mobGriefing
    * @return The transformed byte array
    */
-  private static byte[] transformMobGriefingGameRule(byte[] basicClass, String newGameRule) {
+  private static byte[] transformMobGriefingGameRule(byte[] basicClass) {
     ClassNode classNode = new ClassNode();
     ClassReader classReader = new ClassReader(basicClass);
     classReader.accept(classNode, 0);
@@ -86,7 +81,31 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
           LdcInsnNode ldcNode = (LdcInsnNode) instruction;
 
           if (ldcNode.cst.equals(BetterMobGriefingGameRule.ORIGINAL)) {
-            ldcNode.cst = newGameRule;
+            AbstractInsnNode nextInstruction = ldcNode.getNext();
+
+            if (nextInstruction instanceof MethodInsnNode) {
+              MethodInsnNode methodInsnNode = (MethodInsnNode) nextInstruction;
+
+              if (methodInsnNode.name.equals("getGameRuleBooleanValue")
+                  || methodInsnNode.name.equals("func_82758_b")) {
+                // Found correct instructions to replace
+                instructionIterator.next();
+
+                while (instructionIterator.hasPrevious()) {
+                  instructionIterator.remove();
+                  AbstractInsnNode previousInstruction = instructionIterator.previous();
+
+                  if (previousInstruction instanceof VarInsnNode) {
+                    // Found entity variable
+                    instructionIterator.next();
+                    instructionIterator.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                        "com/judge40/minecraft/bettermobgriefinggamerule/BetterMobGriefingGameRule",
+                        "isMobGriefingEnabled", "(Lnet/minecraft/entity/EntityLiving;)Z", false));
+                    break;
+                  }
+                }
+              }
+            }
           }
         }
       }

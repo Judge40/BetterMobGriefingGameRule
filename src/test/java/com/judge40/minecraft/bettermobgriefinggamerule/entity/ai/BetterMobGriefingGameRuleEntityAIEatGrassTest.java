@@ -22,6 +22,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
+
 import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
@@ -96,9 +98,9 @@ public class BetterMobGriefingGameRuleEntityAIEatGrassTest {
       }
     };
 
-    new MockUp<GameRules>() {
+    new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean getGameRuleBooleanValue(String p_82766_1_) {
+      boolean isMobGriefingEnabled(EntityLiving entity) {
         return true;
       }
     };
@@ -133,9 +135,9 @@ public class BetterMobGriefingGameRuleEntityAIEatGrassTest {
       }
     };
 
-    new MockUp<GameRules>() {
+    new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean getGameRuleBooleanValue(String p_82766_1_) {
+      boolean isMobGriefingEnabled(EntityLiving entity) {
         return false;
       }
     };
@@ -176,9 +178,9 @@ public class BetterMobGriefingGameRuleEntityAIEatGrassTest {
       }
     };
 
-    new MockUp<GameRules>() {
+    new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean getGameRuleBooleanValue(String p_82766_1_) {
+      boolean isMobGriefingEnabled(EntityLiving entity) {
         return true;
       }
     };
@@ -219,9 +221,9 @@ public class BetterMobGriefingGameRuleEntityAIEatGrassTest {
       }
     };
 
-    new MockUp<GameRules>() {
+    new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean getGameRuleBooleanValue(String p_82766_1_) {
+      boolean isMobGriefingEnabled(EntityLiving entity) {
         return false;
       }
     };
@@ -262,9 +264,9 @@ public class BetterMobGriefingGameRuleEntityAIEatGrassTest {
       }
     };
 
-    new MockUp<GameRules>() {
+    new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean getGameRuleBooleanValue(String p_82766_1_) {
+      boolean isMobGriefingEnabled(EntityLiving entity) {
         return true;
       }
     };

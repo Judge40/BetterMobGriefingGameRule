@@ -62,10 +62,7 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour exten
   @Override
   public void updateTask() {
     if (entity instanceof EntityWither) {
-      String mobGriefingRule =
-          BetterMobGriefingGameRule.getMobGriefingRule(entity.worldObj.getGameRules(), entity);
-      boolean betterMobGriefingEnabled =
-          entity.worldObj.getGameRules().getGameRuleBooleanValue(mobGriefingRule);
+      boolean betterMobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
 
       boolean originalMobGriefingEnabled = entity.worldObj.getGameRules()
           .getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);

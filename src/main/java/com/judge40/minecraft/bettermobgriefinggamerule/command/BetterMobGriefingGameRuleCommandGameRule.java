@@ -91,12 +91,15 @@ public class BetterMobGriefingGameRuleCommandGameRule extends CommandGameRule {
         if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
 
           if (commandWords[2].equals(Boolean.toString(true))
-              || commandWords[2].equals(Boolean.toString(false))) {
+              || commandWords[2].equals(Boolean.toString(false))
+              || commandWords[2].equals(BetterMobGriefingGameRule.INHERIT)) {
             worldSavedData.entityNamesToMobGriefingValue.put(commandWords[1], commandWords[2]);
             func_152373_a(commandSender, this, "commands.gamerule.success", new Object[0]);
           } else {
-            throw new WrongUsageException("/gamerule mobGriefing <entity name> true|false",
-                new Object[0]);
+            String exceptionMessage = String.format("/gamerule %s <entity name> %s|%s|%s",
+                BetterMobGriefingGameRule.ORIGINAL, Boolean.toString(true), Boolean.toString(false),
+                BetterMobGriefingGameRule.INHERIT);
+            throw new WrongUsageException(exceptionMessage, new Object[0]);
           }
         } else {
           throw new WrongUsageException(
@@ -134,6 +137,7 @@ public class BetterMobGriefingGameRuleCommandGameRule extends CommandGameRule {
         tabCompletionOptions = getListOfStringsMatchingLastWord(commandWords,
             possibleWords.toArray(new String[possibleWords.size()]));
       } else if (commandWords.length == 3) {
+        possibleWords.add(BetterMobGriefingGameRule.INHERIT);
         Class<?> entityClass = (Class<?>) EntityList.stringToClassMapping.get(commandWords[1]);
 
         if (entityClass != null) {

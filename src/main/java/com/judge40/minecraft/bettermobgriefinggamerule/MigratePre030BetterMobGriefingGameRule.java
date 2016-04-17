@@ -79,48 +79,56 @@ public class MigratePre030BetterMobGriefingGameRule {
    */
   public static void migrateGameRulesToWorldData() {
     // Map entity names to original rules
-    Map<String, String> entityNamesToOriginalRule = new HashMap<>();
+    Map<String, String> entityNamesToOriginalEntityRule = new HashMap<>();
 
     for (String entityName : MOBGRIEFING_GAME_RULES) {
-      String originalRule = BetterMobGriefingGameRule.ORIGINAL.concat(entityName);
+      String originalEntityRule = BetterMobGriefingGameRule.ORIGINAL.concat(entityName);
 
       // Handle special cases where the entity name used has changed from the original hard coded
       // value
       if (entityName.equals(DRAGON)) {
-        originalRule = BetterMobGriefingGameRule.ORIGINAL.concat("Dragon");
+        originalEntityRule = BetterMobGriefingGameRule.ORIGINAL.concat("Dragon");
       } else if (entityName.equals(WITHER)) {
-        originalRule = BetterMobGriefingGameRule.ORIGINAL.concat("Wither");
+        originalEntityRule = BetterMobGriefingGameRule.ORIGINAL.concat("Wither");
       }
 
-      entityNamesToOriginalRule.put(entityName, originalRule);
+      entityNamesToOriginalEntityRule.put(entityName, originalEntityRule);
     }
 
     World world = MinecraftServer.getServer().getEntityWorld();
     GameRules gameRules = world.getGameRules();
+    String mobGriefingValue = gameRules.getGameRuleStringValue(BetterMobGriefingGameRule.ORIGINAL);
+
     BetterMobGriefingGameRuleWorldSavedData worldSavedData =
         BetterMobGriefingGameRuleWorldSavedData.forWorld(world);
 
-    for (Entry<String, String> entityNameToOriginalRule : entityNamesToOriginalRule.entrySet()) {
-      String originalRule = entityNameToOriginalRule.getValue();
+    for (Entry<String, String> entityNameToOriginalEntityRule : entityNamesToOriginalEntityRule
+        .entrySet()) {
+      String originalEntityRule = entityNameToOriginalEntityRule.getValue();
 
-      if (gameRules.hasRule(originalRule)) {
+      if (gameRules.hasRule(originalEntityRule)) {
         // Get the game rule value
-        String mobGriefingValue = gameRules.getGameRuleStringValue(originalRule);
+        String entityMobGriefingValue = gameRules.getGameRuleStringValue(originalEntityRule);
 
         // Remove the old game rule from the world's game rules
         TreeMap<?, ?> theGameRules = ObfuscationReflectionHelper.getPrivateValue(GameRules.class,
             gameRules, "theGameRules", "field_82577_x");
-        theGameRules.remove(originalRule);
+        theGameRules.remove(originalEntityRule);
 
         // If the rule does not already exist in the world saved data then migrate the game rule
         // value
-        String entityName = entityNameToOriginalRule.getKey();
+        String entityName = entityNameToOriginalEntityRule.getKey();
 
         if (!worldSavedData.entityNamesToMobGriefingValue.containsKey(entityName)) {
-          worldSavedData.entityNamesToMobGriefingValue.put(entityName, mobGriefingValue);
+
+          if (entityMobGriefingValue.equals(mobGriefingValue)) {
+            entityMobGriefingValue = BetterMobGriefingGameRule.INHERIT;
+          }
+
+          worldSavedData.entityNamesToMobGriefingValue.put(entityName, entityMobGriefingValue);
           worldSavedData.setDirty(true);
           logger.info(String.format("%s game rule %s migrated with the value %s.",
-              BetterMobGriefingGameRule.ORIGINAL, entityName, mobGriefingValue));
+              BetterMobGriefingGameRule.ORIGINAL, entityName, entityMobGriefingValue));
         }
       }
     }

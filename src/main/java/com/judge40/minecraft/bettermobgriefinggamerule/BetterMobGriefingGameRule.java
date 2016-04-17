@@ -45,7 +45,6 @@ import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -63,6 +62,7 @@ public class BetterMobGriefingGameRule {
 
   // Constants for the mobGriefing rules
   public static final String ORIGINAL = "mobGriefing";
+  public static final String INHERIT = "inherit";
 
   private static final List<Class<? extends EntityLiving>> MOB_GRIEFING_ENTITY_CLASSES = Arrays
       .asList(EntityCreeper.class, EntityDragon.class, EntityEnderman.class, EntityGhast.class,
@@ -129,9 +129,7 @@ public class BetterMobGriefingGameRule {
     // Add the rule only if it does not already exist
     if (entityName != null
         && !worldSavedData.entityNamesToMobGriefingValue.containsKey(entityName)) {
-      GameRules gameRules = world.getGameRules();
-      String originalMobGriefingValue = gameRules.getGameRuleStringValue(ORIGINAL);
-      worldSavedData.entityNamesToMobGriefingValue.put(entityName, originalMobGriefingValue);
+      worldSavedData.entityNamesToMobGriefingValue.put(entityName, INHERIT);
       worldSavedData.setDirty(true);
     }
   }

@@ -60,8 +60,6 @@ public class BetterMobGriefingGameRuleTest {
 
   private World world;
 
-  private GameRules gameRules;
-
   /**
    * @throws java.lang.Exception
    */
@@ -71,7 +69,6 @@ public class BetterMobGriefingGameRuleTest {
     world = Deencapsulation.newUninitializedInstance(World.class);
     WorldInfo worldInfo = new WorldInfo(new NBTTagCompound());
     Deencapsulation.setField(world, "worldInfo", worldInfo);
-    gameRules = new GameRules();
 
     MapStorage mapStorage = new MapStorage(null);
     world.mapStorage = mapStorage;
@@ -84,7 +81,6 @@ public class BetterMobGriefingGameRuleTest {
   public void tearDown() throws Exception {
     betterMobGriefingGameRule = null;
     world = null;
-    gameRules = null;
   }
 
   /**
@@ -196,14 +192,6 @@ public class BetterMobGriefingGameRuleTest {
       }
     };
 
-    new MockUp<World>() {
-      @Mock
-      GameRules getGameRules() {
-        gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, Boolean.toString(false));
-        return gameRules;
-      }
-    };
-
     BetterMobGriefingGameRule.addMobGriefingGameRule(EntityLiving.class);
     BetterMobGriefingGameRuleWorldSavedData worldSavedData =
         BetterMobGriefingGameRuleWorldSavedData.forWorld(world);
@@ -211,7 +199,7 @@ public class BetterMobGriefingGameRuleTest {
     String entityName = (String) EntityList.classToStringMapping.get(EntityLiving.class);
     String entityMobGriefingValue = worldSavedData.entityNamesToMobGriefingValue.get(entityName);
     Assert.assertThat("The entity mob griefing value does not match the expected value.",
-        entityMobGriefingValue, CoreMatchers.is(Boolean.toString(false)));
+        entityMobGriefingValue, CoreMatchers.is(BetterMobGriefingGameRule.INHERIT));
 
     Assert.assertThat("The world saved data was expected to be marked as dirty.",
         worldSavedData.isDirty(), CoreMatchers.is(true));
@@ -331,6 +319,36 @@ public class BetterMobGriefingGameRuleTest {
         new BetterMobGriefingGameRuleWorldSavedData(BetterMobGriefingGameRule.MODID);
     worldSavedData.entityNamesToMobGriefingValue.put(EntityList.getEntityString(entity),
         Boolean.toString(false));
+
+    MapStorage mapStorage = new MapStorage(null);
+    mapStorage.setData(BetterMobGriefingGameRule.MODID, worldSavedData);
+    world.mapStorage = mapStorage;
+
+    boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
+    Assert.assertThat("Mob griefing should be disabled.", mobGriefingEnabled,
+        CoreMatchers.is(false));
+  }
+
+  /**
+   * Test that mob griefing defaults to the original game rule when the entity is registered and the
+   * world data mob griefing value is inherit
+   */
+  @Test
+  public void testIsMobGriefingEnabled_entityRegisteredEntityMobGriefingValueInherit_originalGameRuleValue() {
+    new MockUp<GameRules>() {
+      @Mock(invocations = 1)
+      boolean getGameRuleBooleanValue(String gameRule) {
+        return false;
+      }
+    };
+
+    EntityLiving entity = new EntityZombie(null);
+    entity.worldObj = world;
+
+    BetterMobGriefingGameRuleWorldSavedData worldSavedData =
+        new BetterMobGriefingGameRuleWorldSavedData(BetterMobGriefingGameRule.MODID);
+    worldSavedData.entityNamesToMobGriefingValue.put(EntityList.getEntityString(entity),
+        BetterMobGriefingGameRule.INHERIT);
 
     MapStorage mapStorage = new MapStorage(null);
     mapStorage.setData(BetterMobGriefingGameRule.MODID, worldSavedData);

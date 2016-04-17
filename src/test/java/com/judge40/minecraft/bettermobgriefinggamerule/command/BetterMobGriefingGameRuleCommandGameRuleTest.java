@@ -516,8 +516,8 @@ public class BetterMobGriefingGameRuleCommandGameRuleTest {
 
     List<?> returnedTabCompletionOptions =
         commandGameRule.addTabCompletionOptions(null, new String[] {"mobGriefing", entityName, ""});
-    List<String> expectedTabCompletionOptions =
-        Arrays.asList(Boolean.toString(true), Boolean.toString(false));
+    List<String> expectedTabCompletionOptions = Arrays.asList(Boolean.toString(true),
+        Boolean.toString(false), BetterMobGriefingGameRule.INHERIT);
     Assert.assertThat("The returned tab completion options do no match the expected options.",
         returnedTabCompletionOptions, CoreMatchers.is(expectedTabCompletionOptions));
   }

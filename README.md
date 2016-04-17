@@ -14,16 +14,20 @@ The below game rules can be used to override the mobGriefing behaviour
 for the associated entity type, the value of these rules will be used
 instead of the original "mobGriefing" game rule.
 
-| Entity      | GameRule              |
-| ----------- | --------------------- |
-| Creeper     | mobGriefingCreeper    |
-| EnderDragon | mobGriefingDragon     |
-| Enderman    | mobGriefingEnderman   |
-| Ghast       | mobGriefingGhast      |
-| Sheep       | mobGriefingSheep      |
-| Silverfish  | mobGriefingSilverfish |
-| Wither      | mobGriefingWither     |
-| Zombie      | mobGriefingZombie     |
+| Entity      | GameRule               |
+| ----------- | ---------------------- |
+| Creeper     | mobGriefing Creeper    |
+| EnderDragon | mobGriefing Dragon     |
+| Enderman    | mobGriefing Enderman   |
+| Ghast       | mobGriefing Ghast      |
+| Sheep       | mobGriefing Sheep      |
+| Silverfish  | mobGriefing Silverfish |
+| Wither      | mobGriefing Wither     |
+| Zombie      | mobGriefing Zombie     |
+
+Each rule can be set to "true", "false" or "inherit", when the value is
+"inherit" the entity's mobGriefing behaviour will be inherited from the
+original "mobGriefing" game rule.
 
 Full details of the effects of each game rule can be found in this
 projects wiki.

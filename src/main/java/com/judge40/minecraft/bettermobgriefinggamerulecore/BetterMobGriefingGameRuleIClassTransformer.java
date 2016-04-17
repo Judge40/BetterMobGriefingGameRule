@@ -87,7 +87,7 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
               MethodInsnNode methodInsnNode = (MethodInsnNode) nextInstruction;
 
               if (methodInsnNode.name.equals("getGameRuleBooleanValue")
-                  || methodInsnNode.name.equals("func_82758_b")) {
+                  || methodInsnNode.name.equals("func_82766_b")) {
                 // Found correct instructions to replace
                 instructionIterator.next();
 

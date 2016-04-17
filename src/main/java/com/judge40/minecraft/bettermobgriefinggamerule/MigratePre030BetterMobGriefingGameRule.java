@@ -112,7 +112,7 @@ public class MigratePre030BetterMobGriefingGameRule {
 
         // Remove the old game rule from the world's game rules
         TreeMap<?, ?> theGameRules = ObfuscationReflectionHelper.getPrivateValue(GameRules.class,
-            gameRules, "theGameRules", "field_82577_x");
+            gameRules, "theGameRules", "field_82771_a");
         theGameRules.remove(originalEntityRule);
 
         // If the rule does not already exist in the world saved data then migrate the game rule

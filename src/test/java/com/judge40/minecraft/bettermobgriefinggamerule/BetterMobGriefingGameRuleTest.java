@@ -18,30 +18,38 @@
  */
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.judge40.minecraft.bettermobgriefinggamerule.command.BetterMobGriefingGameRuleCommandGameRule;
+import com.judge40.minecraft.bettermobgriefinggamerule.world.BetterMobGriefingGameRuleWorldSavedData;
+
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartedEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
+import net.minecraft.command.CommandGameRule;
+import net.minecraft.command.CommandHandler;
+import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandManager;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.boss.EntityWither;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.MapStorage;
+import net.minecraft.world.storage.WorldInfo;
 
 /**
  * Tests for BetterMobGriefingGameRule
@@ -50,7 +58,7 @@ public class BetterMobGriefingGameRuleTest {
 
   private BetterMobGriefingGameRule betterMobGriefingGameRule;
 
-  private GameRules gameRules;
+  private World world;
 
   /**
    * @throws java.lang.Exception
@@ -58,7 +66,12 @@ public class BetterMobGriefingGameRuleTest {
   @Before
   public void setUp() throws Exception {
     betterMobGriefingGameRule = new BetterMobGriefingGameRule();
-    gameRules = new GameRules();
+    world = Deencapsulation.newUninitializedInstance(World.class);
+    WorldInfo worldInfo = new WorldInfo(new NBTTagCompound());
+    Deencapsulation.setField(world, "worldInfo", worldInfo);
+
+    MapStorage mapStorage = new MapStorage(null);
+    world.mapStorage = mapStorage;
   }
 
   /**
@@ -67,7 +80,7 @@ public class BetterMobGriefingGameRuleTest {
   @After
   public void tearDown() throws Exception {
     betterMobGriefingGameRule = null;
-    gameRules = null;
+    world = null;
   }
 
   /**
@@ -90,11 +103,87 @@ public class BetterMobGriefingGameRuleTest {
    * Test that the new game rules are added on FMLServerStartedEvent
    */
   @Test
-  public void testOnFMLServerStartedEvent_addMobGriefingGameRulesCalled() {
+  public void testOnFMLServerStartingEvent_mobGriefingGameRulesAndCommandsAdded() {
     new MockUp<MinecraftServer>() {
       @Mock
       void $clinit() {
 
+      }
+    };
+
+    CommandHandler commandHandler = new CommandHandler();
+    CommandGameRule commandGameRule = new CommandGameRule();
+    commandHandler.registerCommand(new CommandGameRule());
+
+    MinecraftServer mockServer = new MockUp<MinecraftServer>() {
+      @Mock
+      ICommandManager getCommandManager() {
+        return commandHandler;
+      }
+    }.getMockInstance();
+
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock(invocations = 1)
+      void addMobGriefingGameRules() {
+
+      }
+    };
+
+    new MockUp<MigratePre030BetterMobGriefingGameRule>() {
+      @Mock(invocations = 1)
+      void migrateGameRulesToWorldData() {
+
+      }
+    };
+
+    betterMobGriefingGameRule.onFMLServerStartingEvent(new FMLServerStartingEvent(mockServer));
+
+    // Test that the command map contains the correct gamerule command
+    ICommand commandMapCommand =
+        (ICommand) commandHandler.getCommands().get(commandGameRule.getCommandName());
+    Assert.assertThat("The game rule command in the command map is not of the expected type.",
+        commandMapCommand, CoreMatchers.instanceOf(BetterMobGriefingGameRuleCommandGameRule.class));
+
+    // Test that the original command was removed from the command set
+    Set<ICommand> commandSet = Deencapsulation.getField(commandHandler, "commandSet");
+    Assert.assertThat("The original game rule command was not removed from the command set.",
+        commandSet, CoreMatchers.not(CoreMatchers.hasItem(commandGameRule)));
+  }
+
+  /**
+   * Test that game rules are created for all expected entity classes
+   */
+  @Test
+  public void testAddMobGriefingGameRules_allExpectedEntityClassesAdded() {
+    List<Class<? extends EntityLiving>> addedEntityClasses = new ArrayList<>();
+
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock
+      void addMobGriefingGameRule(Class<? extends EntityLiving> entityClass) {
+        addedEntityClasses.add(entityClass);
+      }
+
+    };
+
+    BetterMobGriefingGameRule.addMobGriefingGameRules();
+
+    List<Class<? extends EntityLiving>> expectedEntityClasses =
+        Deencapsulation.getField(BetterMobGriefingGameRule.class, "MOB_GRIEFING_ENTITY_CLASSES");
+    Assert.assertThat(
+        "The entity classes to add game rules for does not match the expected classes.",
+        addedEntityClasses, CoreMatchers.is(expectedEntityClasses));
+  }
+
+  /**
+   * Test that the entity has a game rule created when the entity is registered in EntityList and
+   * the rule does not already exist
+   */
+  @Test
+  public void testAddMobGriefingGameRule_entityRegisteredRuleNotExists_entityGameRuleAdded() {
+    new MockUp<MinecraftServer>() {
+      @Mock
+      World getEntityWorld() {
+        return world;
       }
 
       @Mock
@@ -103,392 +192,225 @@ public class BetterMobGriefingGameRuleTest {
       }
     };
 
+    BetterMobGriefingGameRule.addMobGriefingGameRule(EntityLiving.class);
+    BetterMobGriefingGameRuleWorldSavedData worldSavedData =
+        BetterMobGriefingGameRuleWorldSavedData.forWorld(world);
+
+    String entityName = (String) EntityList.classToStringMapping.get(EntityLiving.class);
+    String entityMobGriefingValue = worldSavedData.entityNamesToMobGriefingValue.get(entityName);
+    Assert.assertThat("The entity mob griefing value does not match the expected value.",
+        entityMobGriefingValue, CoreMatchers.is(BetterMobGriefingGameRule.INHERIT));
+
+    Assert.assertThat("The world saved data was expected to be marked as dirty.",
+        worldSavedData.isDirty(), CoreMatchers.is(true));
+  }
+
+  /**
+   * Test that the entities game rule is unchanged when the entity is registered in EntityList and
+   * the rule already exists
+   */
+  @Test
+  public void testAddMobGriefingGameRule_entityRegisteredRuleExists_entityGameRuleUnchanged() {
     new MockUp<MinecraftServer>() {
       @Mock
       World getEntityWorld() {
-        return Deencapsulation.newUninitializedInstance(World.class);
+        return world;
       }
-    };
 
-    new MockUp<World>() {
       @Mock
-      GameRules getGameRules() {
-        return gameRules;
+      MinecraftServer getServer() {
+        return Deencapsulation.newUninitializedInstance(MinecraftServer.class);
       }
     };
 
-    new MockUp<BetterMobGriefingGameRule>() {
-      @Mock(invocations = 1)
-      void addMobGriefingGameRules(GameRules gameRules) {
+    BetterMobGriefingGameRuleWorldSavedData worldSavedData =
+        BetterMobGriefingGameRuleWorldSavedData.forWorld(world);
+    String entityName = (String) EntityList.classToStringMapping.get(EntityLiving.class);
+    worldSavedData.entityNamesToMobGriefingValue.put(entityName, Boolean.toString(false));
 
+    BetterMobGriefingGameRule.addMobGriefingGameRule(EntityLiving.class);
+
+    String entityMobGriefingValue = worldSavedData.entityNamesToMobGriefingValue.get(entityName);
+    Assert.assertThat("The entity mob griefing value does not match the expected value.",
+        entityMobGriefingValue, CoreMatchers.is(Boolean.toString(false)));
+
+    Assert.assertThat("The world saved data was not expected to be marked as dirty.",
+        worldSavedData.isDirty(), CoreMatchers.is(false));
+  }
+
+  /**
+   * Test that the entity does not have a game rule created when the entity is not registered in
+   * EntityList
+   */
+  @Test
+  public void testAddMobGriefingGameRule_entityNotRegistered_noEntityGameRuleAdded() {
+    new MockUp<MinecraftServer>() {
+      @Mock
+      World getEntityWorld() {
+        return world;
+      }
+
+      @Mock
+      MinecraftServer getServer() {
+        return Deencapsulation.newUninitializedInstance(MinecraftServer.class);
       }
     };
 
-    betterMobGriefingGameRule.onFMLServerStartedEvent(new FMLServerStartedEvent());
+    EntityLiving entityLiving = new EntityLiving(null) {};
+    BetterMobGriefingGameRule.addMobGriefingGameRule(entityLiving.getClass());
+
+    BetterMobGriefingGameRuleWorldSavedData worldSavedData =
+        BetterMobGriefingGameRuleWorldSavedData.forWorld(world);
+    String entityName = (String) EntityList.classToStringMapping.get(EntityLiving.class);
+    String entityMobGriefingValue = worldSavedData.entityNamesToMobGriefingValue.get(entityName);
+    Assert.assertThat("The entity mob griefing value does not match the expected value.",
+        entityMobGriefingValue, CoreMatchers.nullValue());
+
+    Assert.assertThat("The world saved data was not expected to be marked as dirty.",
+        worldSavedData.isDirty(), CoreMatchers.is(false));
   }
 
   /**
-   * Test that the rule for EntityCreeper is added to the GameRules
+   * Test that mob griefing is enabled when the entity is registered and the world data mob griefing
+   * value for the entity is true
    */
   @Test
-  public void testAddMobGriefingGameRules_entityCreeper_entityCreeperRuleAdded() {
-    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
-    Assert.assertThat("The Creeper mobGriefing rule was not added to the GameRules",
-        gameRules.hasRule(BetterMobGriefingGameRule.CREEPER), CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that the rule for EntityDragon is added to the GameRules
-   */
-  @Test
-  public void testAddMobGriefingGameRules_entityDragon_entityDragonRuleAdded() {
-    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
-    Assert.assertThat("The EnderDragon mobGriefing rule was not added to the GameRules",
-        gameRules.hasRule(BetterMobGriefingGameRule.DRAGON), CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that the rule for EntityEnderman is added to the GameRules
-   */
-  @Test
-  public void testAddMobGriefingGameRules_entityEnderman_entityEndermanRuleAdded() {
-    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
-    Assert.assertThat("The Enderman mobGriefing rule was not added to the GameRules",
-        gameRules.hasRule(BetterMobGriefingGameRule.ENDERMAN), CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that the rule for EntityGhast is added to the GameRules
-   */
-  @Test
-  public void testAddMobGriefingGameRules_entityGhast_entityGhastRuleAdded() {
-    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
-    Assert.assertThat("The Ghast mobGriefing rule was not added to the GameRules",
-        gameRules.hasRule(BetterMobGriefingGameRule.GHAST), CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that the rule for EntitySheep is added to the GameRules
-   */
-  @Test
-  public void testAddMobGriefingGameRules_entitySheep_entitySheepRuleAdded() {
-    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
-    Assert.assertThat("The Sheep mobGriefing rule was not added to the GameRules",
-        gameRules.hasRule(BetterMobGriefingGameRule.SHEEP), CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that the rule for EntitySilverfish is added to the GameRules
-   */
-  @Test
-  public void testAddMobGriefingGameRules_entitySilverfish_entitySilverfishRuleAdded() {
-    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
-    Assert.assertThat("The Silverfish mobGriefing rule was not added to the GameRules",
-        gameRules.hasRule(BetterMobGriefingGameRule.SILVERFISH), CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that the rule for EntityWither is added to the GameRules
-   */
-  @Test
-  public void testAddMobGriefingGameRules_entityWither_entityWitherRuleAdded() {
-    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
-    Assert.assertThat("The Wither mobGriefing rule was not added to the GameRules",
-        gameRules.hasRule(BetterMobGriefingGameRule.WITHER), CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that the rule for EntityZombie is added to the GameRules
-   */
-  @Test
-  public void testAddMobGriefingGameRules_entityZombie_entityZombieRuleAdded() {
-    BetterMobGriefingGameRule.addMobGriefingGameRules(gameRules);
-    Assert.assertThat("The Zombie mobGriefing rule was not added to the GameRules",
-        gameRules.hasRule(BetterMobGriefingGameRule.ZOMBIE), CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that a new rule is added with the correct default value when original is true
-   */
-  @Test
-  public void testAddMobGriefingGameRule_noExistingRuleOriginalRuleTrue_newRuleDefaultTrue() {
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "true");
-    BetterMobGriefingGameRule.addMobGriefingGameRule(gameRules, "newRule");
-
-    Assert.assertThat("The new rule was not added to the GameRules", gameRules.hasRule("newRule"),
-        CoreMatchers.is(true));
-    Assert.assertThat("The new rule does not have the correct default value",
-        gameRules.getGameRuleBooleanValue("newRule"), CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that a new rule is added with the correct default value when original is false
-   */
-  @Test
-  public void testAddMobGriefingGameRule_noExistingRuleOriginalRuleFalse_newRuleDefaultFalse() {
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "false");
-    BetterMobGriefingGameRule.addMobGriefingGameRule(gameRules, "newRule");
-
-    Assert.assertThat("The new rule was not added to the GameRules", gameRules.hasRule("newRule"),
-        CoreMatchers.is(true));
-    Assert.assertThat("The new rule does not have the correct default value",
-        gameRules.getGameRuleBooleanValue("newRule"), CoreMatchers.is(false));
-  }
-
-  /**
-   * Test that when a rule already exists it is not added again
-   */
-  @Test
-  public void testAddMobGriefingGameRule_existingRule_noNewRuleAdded() {
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, "true");
-    gameRules.setOrCreateGameRule("existingRule", "false");
-
+  public void testIsMobGriefingEnabled_entityRegisteredEntityMobGriefingValueTrue_mobGriefingEnabled() {
     new MockUp<GameRules>() {
       @Mock(invocations = 0)
-      void addGameRule(String gameRule, String value) {
-
+      boolean getGameRuleBooleanValue(String gameRule) {
+        return false;
       }
     };
 
-    BetterMobGriefingGameRule.addMobGriefingGameRule(gameRules, "existingRule");
+    EntityLiving entity = new EntityZombie(null);
+    entity.worldObj = world;
 
-    Assert.assertThat("The existing rule's value should not have been changed",
-        gameRules.getGameRuleBooleanValue("existingRule"), CoreMatchers.is(false));
+    BetterMobGriefingGameRuleWorldSavedData worldSavedData =
+        new BetterMobGriefingGameRuleWorldSavedData(BetterMobGriefingGameRule.MODID);
+    worldSavedData.entityNamesToMobGriefingValue.put(EntityList.getEntityString(entity),
+        Boolean.toString(true));
+
+    MapStorage mapStorage = new MapStorage(null);
+    mapStorage.setData(BetterMobGriefingGameRule.MODID, worldSavedData);
+    world.mapStorage = mapStorage;
+
+    boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
+    Assert.assertThat("Mob griefing should be enabled.", mobGriefingEnabled, CoreMatchers.is(true));
   }
 
   /**
-   * Test that when entity is a Creeper and the matching rule does exist that the Creeper
-   * mobGriefing rule is used
+   * Test that mob griefing is disabled when the entity is registered and the world data mob
+   * griefing value for the entity is false
    */
   @Test
-  public void testGetMobGriefingRule_entityCreeperRuleExists_creeperRule() {
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.CREEPER, "true");
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityCreeper(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.CREEPER));
-  }
-
-  /**
-   * Test that when entity is a creeper and the matching rule does not exist that the default
-   * mobGriefing rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entityCreeperRuleNotExists_originalRule() {
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityCreeper(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
-  }
-
-  /**
-   * Test that when entity is a Dragon and the matching rule does exist that the Dragon mobGriefing
-   * rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entityDragonRuleExists_dragonRule() {
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.DRAGON, "true");
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityDragon(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.DRAGON));
-  }
-
-  /**
-   * Test that when entity is a dragon and the matching rule does not exist that the default
-   * mobGriefing rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entityDragonRuleNotExists_originalRule() {
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityDragon(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
-  }
-
-  /**
-   * Test that when entity is an Enderman and the matching rule does exist that the Enderman
-   * mobGriefing rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entityEndermanRuleExists_endermanRule() {
-    new MockUp<EntityEnderman>() {
-      @Mock
-      void $clinit() {
-
+  public void testIsMobGriefingEnabled_entityRegisteredEntityMobGriefingValueFalse_mobGriefingDisabled() {
+    new MockUp<GameRules>() {
+      @Mock(invocations = 0)
+      boolean getGameRuleBooleanValue(String gameRule) {
+        return false;
       }
     };
 
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ENDERMAN, "true");
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityEnderman(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ENDERMAN));
+    EntityLiving entity = new EntityZombie(null);
+    entity.worldObj = world;
+
+    BetterMobGriefingGameRuleWorldSavedData worldSavedData =
+        new BetterMobGriefingGameRuleWorldSavedData(BetterMobGriefingGameRule.MODID);
+    worldSavedData.entityNamesToMobGriefingValue.put(EntityList.getEntityString(entity),
+        Boolean.toString(false));
+
+    MapStorage mapStorage = new MapStorage(null);
+    mapStorage.setData(BetterMobGriefingGameRule.MODID, worldSavedData);
+    world.mapStorage = mapStorage;
+
+    boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
+    Assert.assertThat("Mob griefing should be disabled.", mobGriefingEnabled,
+        CoreMatchers.is(false));
   }
 
   /**
-   * Test that when entity is an Enderman and the matching rule does not exist that the default
-   * mobGriefing rule is used
+   * Test that mob griefing defaults to the original game rule when the entity is registered and the
+   * world data mob griefing value is inherit
    */
   @Test
-  public void testGetMobGriefingRule_entityEndermanRuleNotExists_originalRule() {
-    new MockUp<EntityEnderman>() {
-      @Mock
-      void $clinit() {
-
+  public void testIsMobGriefingEnabled_entityRegisteredEntityMobGriefingValueInherit_originalGameRuleValue() {
+    new MockUp<GameRules>() {
+      @Mock(invocations = 1)
+      boolean getGameRuleBooleanValue(String gameRule) {
+        return false;
       }
     };
 
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityEnderman(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
+    EntityLiving entity = new EntityZombie(null);
+    entity.worldObj = world;
+
+    BetterMobGriefingGameRuleWorldSavedData worldSavedData =
+        new BetterMobGriefingGameRuleWorldSavedData(BetterMobGriefingGameRule.MODID);
+    worldSavedData.entityNamesToMobGriefingValue.put(EntityList.getEntityString(entity),
+        BetterMobGriefingGameRule.INHERIT);
+
+    MapStorage mapStorage = new MapStorage(null);
+    mapStorage.setData(BetterMobGriefingGameRule.MODID, worldSavedData);
+    world.mapStorage = mapStorage;
+
+    boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
+    Assert.assertThat("Mob griefing should be disabled.", mobGriefingEnabled,
+        CoreMatchers.is(false));
   }
 
   /**
-   * Test that when entity is an Ghast and the matching rule does exist that the Enderman
-   * mobGriefing rule is used
+   * Test that mob griefing defaults to the original game rule when the entity is registered but the
+   * world data mob griefing value does not exist
    */
   @Test
-  public void testGetMobGriefingRule_entityGhastRuleExists_ghastRule() {
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.GHAST, "true");
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityGhast(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.GHAST));
+  public void testIsMobGriefingEnabled_entityRegisteredEntityMobGriefingValueNull_originalGameRuleValue() {
+    new MockUp<GameRules>() {
+      @Mock(invocations = 1)
+      boolean getGameRuleBooleanValue(String gameRule) {
+        return false;
+      }
+    };
+
+    EntityLiving entity = new EntityZombie(null);
+    entity.worldObj = world;
+
+    BetterMobGriefingGameRuleWorldSavedData worldSavedData =
+        new BetterMobGriefingGameRuleWorldSavedData(BetterMobGriefingGameRule.MODID);
+
+    MapStorage mapStorage = new MapStorage(null);
+    mapStorage.setData(BetterMobGriefingGameRule.MODID, worldSavedData);
+    world.mapStorage = mapStorage;
+
+    boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
+    Assert.assertThat("Mob griefing should be disabled.", mobGriefingEnabled,
+        CoreMatchers.is(false));
   }
 
   /**
-   * Test that when entity is an Ghast and the matching rule does not exist that the default
-   * mobGriefing rule is used
+   * Test that mob griefing defaults to the original game rule when the entity is not registered
    */
   @Test
-  public void testGetMobGriefingRule_entityGhastRuleNotExists_originalRule() {
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityGhast(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
-  }
+  public void testIsMobGriefingEnabled_entityNotRegistered_originalGameRuleValue() {
+    new MockUp<GameRules>() {
+      @Mock(invocations = 1)
+      boolean getGameRuleBooleanValue(String gameRule) {
+        return false;
+      }
+    };
 
-  /**
-   * Test that when entity is an Sheep and the matching rule does exist that the Enderman
-   * mobGriefing rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entitySheepRuleExists_sheepRule() {
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.SHEEP, "true");
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntitySheep(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.SHEEP));
-  }
+    EntityLiving entity = new EntityLiving(null) {};
+    entity.worldObj = world;
 
-  /**
-   * Test that when entity is an Sheep and the matching rule does not exist that the default
-   * mobGriefing rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entitySheepRuleNotExists_originalRule() {
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntitySheep(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
-  }
+    BetterMobGriefingGameRuleWorldSavedData worldSavedData =
+        new BetterMobGriefingGameRuleWorldSavedData(BetterMobGriefingGameRule.MODID);
 
-  /**
-   * Test that when entity is an Silverfish and the matching rule does exist that the Enderman
-   * mobGriefing rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entitySilverfishRuleExists_silverfishRule() {
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.SILVERFISH, "true");
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntitySilverfish(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.SILVERFISH));
-  }
+    MapStorage mapStorage = new MapStorage(null);
+    mapStorage.setData(BetterMobGriefingGameRule.MODID, worldSavedData);
+    world.mapStorage = mapStorage;
 
-  /**
-   * Test that when entity is an Silverfish and the matching rule does not exist that the default
-   * mobGriefing rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entitySilverfishRuleNotExists_originalRule() {
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntitySilverfish(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
-  }
-
-  /**
-   * Test that when entity is an Wither and the matching rule does exist that the Enderman
-   * mobGriefing rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entityWitherRuleExists_witherRule() {
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.WITHER, "true");
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityWither(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.WITHER));
-  }
-
-  /**
-   * Test that when entity is an Wither and the matching rule does not exist that the default
-   * mobGriefing rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entityWitherRuleNotExists_originalRule() {
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityWither(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
-  }
-
-  /**
-   * Test that when entity is an Zombie and the matching rule does exist that the Zombie mobGriefing
-   * rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entityZombieRuleExists_zombieRule() {
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ZOMBIE, "true");
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityZombie(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ZOMBIE));
-  }
-
-  /**
-   * Test that when entity is an Zombie and the matching rule does not exist that the default
-   * mobGriefing rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entityZombieRuleNotExists_originalRule() {
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(gameRules, new EntityZombie(null));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
-  }
-
-  /**
-   * Test that when the entity is not specifically handled the default mobGriefing rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entityNotHandled_originalRule() {
-    gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ENDERMAN, "true");
-    String mobGriefingRule = BetterMobGriefingGameRule.getMobGriefingRule(gameRules,
-        Deencapsulation.newUninitializedInstance(EntityLiving.class));
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
-  }
-
-  /**
-   * Test that when the entity is null the default mobGriefing rule is used
-   */
-  @Test
-  public void testGetMobGriefingRule_entityNull_originalRule() {
-    String mobGriefingRule = BetterMobGriefingGameRule.getMobGriefingRule(gameRules, null);
-    Assert.assertThat("The returned mobGriefing rule does not match the expected rule",
-        mobGriefingRule, CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
+    boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
+    Assert.assertThat("Mob griefing should be disabled.", mobGriefingEnabled,
+        CoreMatchers.is(false));
   }
 }

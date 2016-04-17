@@ -46,10 +46,7 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoor extends EntityAIBreakDoo
     boolean shouldExecute = super.shouldExecute();
 
     // Get whether mobGriefing is enabled for this entity
-    String mobGriefingRule =
-        BetterMobGriefingGameRule.getMobGriefingRule(theEntity.worldObj.getGameRules(), theEntity);
-    boolean mobGriefingEnabled =
-        theEntity.worldObj.getGameRules().getGameRuleBooleanValue(mobGriefingRule);
+    boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(theEntity);
 
     // If shouldExecute from parent class is false and mobGriefing is true then also check
     // func_150015_f again as that might have been the cause of a false result and should not be

@@ -65,7 +65,7 @@ public class BetterMobGriefingGameRuleIFMLLoadingPluginTest {
    * Test that null is returned for the mod container class
    */
   @Test
-  public void testGetModContainerClass_modContainerClassReturned() {
+  public void testGetModContainerClass_nullReturned() {
     String modContainerClass = betterMobGriefingGameRuleIFMLLoadingPlugin.getModContainerClass();
     Assert.assertThat("Registered mod container class should be null.", modContainerClass,
         CoreMatchers.nullValue());
@@ -93,7 +93,7 @@ public class BetterMobGriefingGameRuleIFMLLoadingPluginTest {
    * Test that null is returned for the access transformer class
    */
   @Test
-  public void testGetAccessTransformerClass_modContainerClassReturned() {
+  public void testGetAccessTransformerClass_nullReturned() {
     String accessTransformerClass =
         betterMobGriefingGameRuleIFMLLoadingPlugin.getAccessTransformerClass();
     Assert.assertThat("Registered access transformer class should be null.", accessTransformerClass,

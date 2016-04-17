@@ -24,6 +24,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
+
 import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
@@ -82,9 +84,9 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
       }
     };
 
-    new MockUp<GameRules>() {
+    new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean getGameRuleBooleanValue(String gameRule) {
+      boolean isMobGriefingEnabled(EntityLiving entity) {
         return true;
       }
     };
@@ -106,9 +108,9 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
       }
     };
 
-    new MockUp<GameRules>() {
+    new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean getGameRuleBooleanValue(String gameRule) {
+      boolean isMobGriefingEnabled(EntityLiving entity) {
         return false;
       }
     };
@@ -131,9 +133,9 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
       }
     };
 
-    new MockUp<GameRules>() {
+    new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean getGameRuleBooleanValue(String gameRule) {
+      boolean isMobGriefingEnabled(EntityLiving entity) {
         return true;
       }
     };
@@ -167,9 +169,9 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
       }
     };
 
-    new MockUp<GameRules>() {
+    new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean getGameRuleBooleanValue(String gameRule) {
+      boolean isMobGriefingEnabled(EntityLiving entity) {
         return true;
       }
     };
@@ -203,9 +205,9 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
       }
     };
 
-    new MockUp<GameRules>() {
+    new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean getGameRuleBooleanValue(String gameRule) {
+      boolean isMobGriefingEnabled(EntityLiving entity) {
         return true;
       }
     };
@@ -229,9 +231,9 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
       }
     };
 
-    new MockUp<GameRules>() {
+    new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean getGameRuleBooleanValue(String gameRule) {
+      boolean isMobGriefingEnabled(EntityLiving entity) {
         return false;
       }
     };
@@ -240,5 +242,4 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
     Assert.assertThat("AI task shouldExecute should have returned false.", shouldExecute,
         CoreMatchers.is(false));
   }
-
 }

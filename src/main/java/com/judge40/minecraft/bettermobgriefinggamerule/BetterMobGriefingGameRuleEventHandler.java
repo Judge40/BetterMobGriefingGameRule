@@ -27,6 +27,7 @@ import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefi
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIEatGrass;
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour;
 
+import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
@@ -53,6 +54,19 @@ import net.minecraftforge.event.world.ExplosionEvent.Detonate;
  * Event handler for all EVENT_BUS events
  */
 public class BetterMobGriefingGameRuleEventHandler {
+
+  /**
+   * Store configuration changes
+   * 
+   * @param configChangedEvent The OnConfigChangedEvent
+   */
+  @SubscribeEvent
+  public void onConfigChangedEvent(OnConfigChangedEvent configChangedEvent) {
+    if (configChangedEvent.modID.equals(BetterMobGriefingGameRule.MODID)) {
+      BetterMobGriefingGameRule.configuration.save();
+      BetterMobGriefingGameRule.populateDefaultMobGriefingRulesFromConfiguration();
+    }
+  }
 
   /**
    * On the explosion detonate event check whether mobGriefing is enabled for a specific entity and

@@ -212,8 +212,10 @@ public class BetterMobGriefingGameRule {
   public static void addMobGriefingGameRules() {
     World world = MinecraftServer.getServer().getEntityWorld();
 
-    // Set the global mobGriefing game rule value
-    world.getGameRules().setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, defaultGlobalRule);
+    // Set the global mobGriefing game rule value if this is a new world
+    if (world.getTotalWorldTime() == 0) {
+      world.getGameRules().setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, defaultGlobalRule);
+    }
 
     // Add the entity rules
     BetterMobGriefingGameRuleWorldSavedData worldSavedData =

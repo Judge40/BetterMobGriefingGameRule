@@ -228,7 +228,7 @@ public class BetterMobGriefingGameRuleTest {
    * populated
    */
   @Test
-  public void testAddMobGriefingGameRules_globalAndEntityDefaultsPopulated_globalRuleUpdatedEntityRulesAdded() {
+  public void testAddMobGriefingGameRules_entityDefaultsPopulated_entityRulesAdded() {
     new MockUp<MinecraftServer>() {
       @Mock
       World getEntityWorld() {
@@ -241,23 +241,10 @@ public class BetterMobGriefingGameRuleTest {
       }
     };
 
-    new MockUp<GameRules>() {
-      @Mock(invocations = 1)
-      void setOrCreateGameRule(String gameRule, String value) {
-        Assert.assertThat("The game rule being set does not match the expected game rule", gameRule,
-            CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
-        Assert.assertThat("The game rule value being set does not match the expected value", value,
-            CoreMatchers.is(BetterMobGriefingGameRule.FALSE));
-      }
-    };
-
     BetterMobGriefingGameRuleWorldSavedData worldSavedData =
         BetterMobGriefingGameRuleWorldSavedData.forWorld(world);
     worldSavedData.entityNamesToMobGriefingValue.put("existingEntityName001", "existingValue001");
     worldSavedData.entityNamesToMobGriefingValue.put("dummyEntityName001", "existingValue002");
-
-    Deencapsulation.setField(BetterMobGriefingGameRule.class, "defaultGlobalRule",
-        BetterMobGriefingGameRule.FALSE);
 
     Map<String, String> defaultEntityRules =
         Deencapsulation.getField(BetterMobGriefingGameRule.class, "defaultEntityRules");
@@ -287,6 +274,72 @@ public class BetterMobGriefingGameRuleTest {
         "An entry in the entity name to mob griefing value map was not added as expected.",
         worldSavedData.entityNamesToMobGriefingValue.get("dummyEntityName003"),
         CoreMatchers.is("dummyDefaultValue003"));
+  }
+
+  /**
+   * Test that the global rule default is used when the world is new
+   */
+  @Test
+  public void testAddMobGriefingGameRules_newWorld_globalRuleDefaultApplied() {
+    new MockUp<MinecraftServer>() {
+      @Mock
+      World getEntityWorld() {
+        return world;
+      }
+
+      @Mock
+      MinecraftServer getServer() {
+        return Deencapsulation.newUninitializedInstance(MinecraftServer.class);
+      }
+    };
+
+    new MockUp<GameRules>() {
+      @Mock(invocations = 1)
+      void setOrCreateGameRule(String gameRule, String value) {
+        Assert.assertThat("The game rule being set does not match the expected game rule", gameRule,
+            CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
+        Assert.assertThat("The game rule value being set does not match the expected value", value,
+            CoreMatchers.is(BetterMobGriefingGameRule.FALSE));
+      }
+    };
+
+    Deencapsulation.setField(world.getWorldInfo(), "totalTime", 0);
+    Deencapsulation.setField(BetterMobGriefingGameRule.class, "defaultGlobalRule", BetterMobGriefingGameRule.FALSE);
+
+    BetterMobGriefingGameRule.addMobGriefingGameRules();
+  }
+
+  /**
+   * Test that the global rule default is not used when the world is already existing
+   */
+  @Test
+  public void testAddMobGriefingGameRules_existingWorld_globalRuleDefaultNotApplied() {
+    new MockUp<MinecraftServer>() {
+      @Mock
+      World getEntityWorld() {
+        return world;
+      }
+
+      @Mock
+      MinecraftServer getServer() {
+        return Deencapsulation.newUninitializedInstance(MinecraftServer.class);
+      }
+    };
+
+    new MockUp<GameRules>() {
+      @Mock(invocations = 0)
+      void setOrCreateGameRule(String gameRule, String value) {
+        Assert.assertThat("The game rule being set does not match the expected game rule", gameRule,
+            CoreMatchers.is(BetterMobGriefingGameRule.ORIGINAL));
+        Assert.assertThat("The game rule value being set does not match the expected value", value,
+            CoreMatchers.is(BetterMobGriefingGameRule.FALSE));
+      }
+    };
+
+    Deencapsulation.setField(world.getWorldInfo(), "totalTime", 1);
+    Deencapsulation.setField(BetterMobGriefingGameRule.class, "defaultGlobalRule", BetterMobGriefingGameRule.FALSE);
+
+    BetterMobGriefingGameRule.addMobGriefingGameRules();
   }
 
   /**

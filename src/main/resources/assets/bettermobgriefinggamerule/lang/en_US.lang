@@ -1,0 +1,14 @@
+# ----------------------------------------------------------------------
+# Configuration
+# ----------------------------------------------------------------------
+
+# Categories
+bettermobgriefinggamerule.config.defaultMobGriefingValues=Default mobGriefing Values
+bettermobgriefinggamerule.config.defaultMobGriefingValues.tooltip=The default mobGriefing values which will be used when creating a new world or opening an existing world for the first time with this mod installed.
+bettermobgriefinggamerule.config.globalRule=Global Rule
+bettermobgriefinggamerule.config.globalRule.tooltip=The global mobGriefing rules which affect multiple entities.
+bettermobgriefinggamerule.config.entityRules=Entity Rules
+bettermobgriefinggamerule.config.entityRules.tooltip=The entity specific mobGriefing rules which affects only the specified type of entity.
+
+
+bettermobgriefinggamerule.config.validValues=[valid values: %s]

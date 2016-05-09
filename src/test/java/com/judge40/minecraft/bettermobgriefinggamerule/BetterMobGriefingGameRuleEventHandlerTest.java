@@ -35,6 +35,7 @@ import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefi
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIEatGrass;
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour;
 
+import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import mockit.Deencapsulation;
 import mockit.Invocation;
@@ -58,6 +59,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.ExplosionEvent.Detonate;
@@ -98,6 +100,53 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
     world = null;
     gameRules = null;
     eventHandler = null;
+  }
+
+  /**
+   * Test that the change is handled when it is from the BetterMobGriefingGameRule configuration
+   */
+  @Test
+  public void testOnConfigChangedEvent_betterMobGriefingGameRuleConfigChanged_handleChange() {
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock(invocations = 1)
+      void populateDefaultMobGriefingRulesFromConfiguration() {
+
+      }
+    };
+
+    new MockUp<Configuration>() {
+      @Mock(invocations = 1)
+      void save() {
+
+      }
+    };
+
+    BetterMobGriefingGameRule.configuration = new Configuration();
+    eventHandler.onConfigChangedEvent(
+        new OnConfigChangedEvent(BetterMobGriefingGameRule.MODID, "", false, false));
+  }
+
+  /**
+   * Test that the change is not handled when it is not from the BetterMobGriefingGameRule
+   * configuration
+   */
+  @Test
+  public void testOnConfigChangedEvent_nonBetterMobGriefingGameRuleConfigChanged_doNotHandleChange() {
+    new MockUp<BetterMobGriefingGameRule>() {
+      @Mock(invocations = 0)
+      void populateDefaultMobGriefingRulesFromConfiguration() {
+
+      }
+    };
+
+    new MockUp<Configuration>() {
+      @Mock(invocations = 0)
+      void save() {
+
+      }
+    };
+
+    eventHandler.onConfigChangedEvent(new OnConfigChangedEvent("dummyModId001", "", false, false));
   }
 
   /**

@@ -18,8 +18,10 @@
  */
 package com.judge40.minecraft.bettermobgriefinggamerulecore;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -34,12 +36,31 @@ import org.objectweb.asm.tree.VarInsnNode;
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.Launch;
 
 /**
  * Class transformer which replaces the mobGriefing game rule for entities which can not be handled
  * with events
  */
 public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransformer {
+
+  private static final Map<String, Map<String, Integer>> TRANSFORM_TARGETS = new HashMap<>();
+
+  static {
+    boolean deobfuscated = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+
+    Map<String, Integer> blockFarmLandTargets = new HashMap<>();
+    blockFarmLandTargets.put(deobfuscated ? "onFallenUpon" : "func_180658_a", 5);
+    TRANSFORM_TARGETS.put("net.minecraft.block.BlockFarmland", blockFarmLandTargets);
+
+    Map<String, Integer> entityDragonTargets = new HashMap<>();
+    entityDragonTargets.put(deobfuscated ? "destroyBlocksInAABB" : "func_70972_a", 5);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.boss.EntityDragon", entityDragonTargets);
+
+    Map<String, Integer> entityEndermanTargets = new HashMap<>();
+    entityEndermanTargets.put(deobfuscated ? "onLivingUpdate" : "func_70636_d", 0);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntityEnderman", entityEndermanTargets);
+  }
 
   /*
    * (non-Javadoc)
@@ -49,9 +70,8 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
    */
   @Override
   public byte[] transform(String name, String transformedName, byte[] basicClass) {
-    if (transformedName.equals("net.minecraft.entity.monster.EntityEnderman")
-        || transformedName.equals("net.minecraft.entity.boss.EntityDragon")) {
-      basicClass = transformMobGriefingGameRule(basicClass);
+    if (TRANSFORM_TARGETS.containsKey(transformedName)) {
+      basicClass = transformMobGriefingGameRule(transformedName, basicClass);
     }
 
     return basicClass;
@@ -60,10 +80,17 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
   /**
    * Transform the class byte array and replaces the mobGriefing game rule with a new rule
    * 
+   * @param transformedName The name of the class being transformed
    * @param basicClass The byte array to transform
-   * @return The transformed byte array
+   * @returnThe transformed byte array
    */
-  private static byte[] transformMobGriefingGameRule(byte[] basicClass) {
+  private static byte[] transformMobGriefingGameRule(String transformedName, byte[] basicClass) {
+    Map<String, Integer> transformTarget = TRANSFORM_TARGETS.get(transformedName);
+
+    if (transformTarget == null) {
+      return basicClass;
+    }
+
     ClassNode classNode = new ClassNode();
     ClassReader classReader = new ClassReader(basicClass);
     classReader.accept(classNode, 0);
@@ -72,37 +99,37 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
 
     while (methodNodeIterator.hasNext()) {
       MethodNode methodNode = methodNodeIterator.next();
-      ListIterator<AbstractInsnNode> instructionIterator = methodNode.instructions.iterator();
+      int entityIndex = transformTarget.getOrDefault(methodNode.name, -1);
 
-      while (instructionIterator.hasNext()) {
+      if (entityIndex == -1) {
+        continue;
+      }
+
+      for (ListIterator<AbstractInsnNode> instructionIterator =
+          methodNode.instructions.iterator(); instructionIterator.hasNext();) {
         AbstractInsnNode instruction = instructionIterator.next();
 
-        if (instruction instanceof LdcInsnNode) {
-          LdcInsnNode ldcNode = (LdcInsnNode) instruction;
+        if (instruction instanceof MethodInsnNode) {
+          MethodInsnNode methodInsnNode = (MethodInsnNode) instruction;
 
-          if (ldcNode.cst.equals(BetterMobGriefingGameRule.ORIGINAL)) {
-            AbstractInsnNode nextInstruction = ldcNode.getNext();
+          if (methodInsnNode.name.equals("getGameRuleBooleanValue")
+              || methodInsnNode.name.equals("func_82766_b")) {
+            LdcInsnNode ldcNode = (LdcInsnNode) methodInsnNode.getPrevious();
 
-            if (nextInstruction instanceof MethodInsnNode) {
-              MethodInsnNode methodInsnNode = (MethodInsnNode) nextInstruction;
+            if (ldcNode.cst.equals(BetterMobGriefingGameRule.ORIGINAL)) {
+              // Found correct instructions to replace
 
-              if (methodInsnNode.name.equals("getGameRuleBooleanValue")
-                  || methodInsnNode.name.equals("func_82766_b")) {
-                // Found correct instructions to replace
-                instructionIterator.next();
+              while (instructionIterator.hasPrevious()) {
+                instructionIterator.remove();
+                instruction = instructionIterator.previous();
 
-                while (instructionIterator.hasPrevious()) {
-                  instructionIterator.remove();
-                  AbstractInsnNode previousInstruction = instructionIterator.previous();
-
-                  if (previousInstruction instanceof VarInsnNode) {
-                    // Found entity variable
-                    instructionIterator.next();
-                    instructionIterator.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-                        "com/judge40/minecraft/bettermobgriefinggamerule/BetterMobGriefingGameRule",
-                        "isMobGriefingEnabled", "(Lnet/minecraft/entity/EntityLiving;)Z", false));
-                    break;
-                  }
+                if (instruction instanceof VarInsnNode) {
+                  ((VarInsnNode) instruction).var = entityIndex;
+                  instructionIterator.next();
+                  instructionIterator.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                      "com/judge40/minecraft/bettermobgriefinggamerule/BetterMobGriefingGameRule",
+                      "isMobGriefingEnabled", "(Lnet/minecraft/entity/Entity;)Z", false));
+                  break;
                 }
               }
             }

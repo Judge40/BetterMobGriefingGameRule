@@ -30,6 +30,7 @@ import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
 import net.minecraft.block.BlockDoor;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.world.GameRules;
@@ -86,7 +87,7 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -110,7 +111,7 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return false;
       }
     };
@@ -135,7 +136,7 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -171,7 +172,7 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -207,7 +208,7 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -233,7 +234,7 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoorTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return false;
       }
     };

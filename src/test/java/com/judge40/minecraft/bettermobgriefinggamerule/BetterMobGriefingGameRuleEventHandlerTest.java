@@ -156,7 +156,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
   public void testOnDetonateEvent_exploderIsEntityCreeper_entityCreeperUsed() {
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         Assert.assertThat("Entity passed as parameter does not match the expected type.", entity,
             CoreMatchers.instanceOf(EntityCreeper.class));
         return false;
@@ -181,7 +181,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         Assert.assertThat("Entity passed as parameter does not match the expected type.", entity,
             CoreMatchers.is(shootingEntity));
         return true;
@@ -207,7 +207,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
   public void testOnDetonateEvent_exploderIsFireballShootingEntityNull_affectedEntitiesChecked() {
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         Assert.assertThat("Entity passed as parameter does not match the expected type.", entity,
             CoreMatchers.instanceOf(EntityGhast.class));
         return true;
@@ -252,7 +252,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
   public void testOnDetonateEvent_exploderIsNullFireballShootingEntityGhast_entityGhastUsed() {
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         Assert.assertThat("Entity passed as parameter does not match the expected type.", entity,
             CoreMatchers.instanceOf(EntityGhast.class));
         return true;
@@ -297,7 +297,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
   public void testOnDetonateEvent_mobGriefingTrueBetterMobGriefingTrue_blockDamage() {
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -325,7 +325,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
   public void testOnDetonateEvent_mobGriefingTrueBetterMobGriefingFalse_noBlockDamage() {
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return false;
       }
     };
@@ -353,7 +353,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
   public void testOnDetonateEvent_mobGriefingFalseBetterMobGriefingTrue_blockDamage() {
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -380,7 +380,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
   public void testOnDetonateEvent_mobGriefingFalseBetterMobGriefingFalse_noBlockDamage() {
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return false;
       }
     };
@@ -619,7 +619,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -694,7 +694,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return false;
       }
     };

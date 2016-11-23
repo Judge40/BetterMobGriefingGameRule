@@ -149,7 +149,7 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -213,7 +213,7 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -278,7 +278,7 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -317,7 +317,7 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -350,7 +350,7 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
   public void testUpdateTask_entityWitherOriginalMobGriefingTrueBetterMobGriefingFalse_blockBreakCooldownReset() {
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return false;
       }
     };
@@ -390,7 +390,7 @@ public class BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviourTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };

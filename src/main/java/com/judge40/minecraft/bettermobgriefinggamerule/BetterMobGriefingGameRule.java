@@ -41,6 +41,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import net.minecraft.command.CommandGameRule;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
@@ -235,12 +236,12 @@ public class BetterMobGriefingGameRule {
   }
 
   /**
-   * Whether mob griefing is enabled to the given {@link EntityLiving}
+   * Whether mob griefing is enabled to the given {@link Entity}
    * 
-   * @param entity The EntityLiving to get the mob griefing value for
+   * @param entity The Entity to get the mob griefing value for
    * @return Whether mob griefing is enabled
    */
-  public static boolean isMobGriefingEnabled(EntityLiving entity) {
+  public static boolean isMobGriefingEnabled(Entity entity) {
     Boolean mobGriefingEnabled = null;
     String entityName = EntityList.getEntityString(entity);
 

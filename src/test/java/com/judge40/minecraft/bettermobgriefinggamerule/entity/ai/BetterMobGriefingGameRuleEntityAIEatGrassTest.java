@@ -30,6 +30,7 @@ import mockit.MockUp;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockTallGrass;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.GameRules;
@@ -100,7 +101,7 @@ public class BetterMobGriefingGameRuleEntityAIEatGrassTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -137,7 +138,7 @@ public class BetterMobGriefingGameRuleEntityAIEatGrassTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return false;
       }
     };
@@ -180,7 +181,7 @@ public class BetterMobGriefingGameRuleEntityAIEatGrassTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };
@@ -223,7 +224,7 @@ public class BetterMobGriefingGameRuleEntityAIEatGrassTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return false;
       }
     };
@@ -266,7 +267,7 @@ public class BetterMobGriefingGameRuleEntityAIEatGrassTest {
 
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock
-      boolean isMobGriefingEnabled(EntityLiving entity) {
+      boolean isMobGriefingEnabled(Entity entity) {
         return true;
       }
     };

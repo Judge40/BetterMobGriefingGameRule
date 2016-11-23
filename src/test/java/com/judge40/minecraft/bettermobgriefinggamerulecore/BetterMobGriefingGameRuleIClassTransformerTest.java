@@ -19,6 +19,8 @@
 package com.judge40.minecraft.bettermobgriefinggamerulecore;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
@@ -37,6 +39,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.launchwrapper.Launch;
 
 /**
  * Tests for BetterMobGriefingGameRuleIClassTransformer
@@ -50,6 +53,10 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
    */
   @Before
   public void setUp() throws Exception {
+    Map<String, Object> blackboard = new HashMap<>();
+    blackboard.put("fml.deobfuscatedEnvironment", true);
+    Launch.blackboard = blackboard;
+
     betterMobGriefingGameRuleIClassTransformer = new BetterMobGriefingGameRuleIClassTransformer();
   }
 
@@ -58,6 +65,7 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
    */
   @After
   public void tearDown() throws Exception {
+    Launch.blackboard = null;
     betterMobGriefingGameRuleIClassTransformer = null;
   }
 
@@ -68,7 +76,7 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
   public void testTransform_unhandledClass_transformGameRuleCalled() {
     new MockUp<BetterMobGriefingGameRuleIClassTransformer>() {
       @Mock(invocations = 0)
-      byte[] transformMobGriefingGameRule(byte[] basicClass) {
+      byte[] transformMobGriefingGameRule(String transformedName, byte[] basicClass) {
         return new byte[0];
       }
     };
@@ -87,7 +95,7 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
 
     new MockUp<BetterMobGriefingGameRuleIClassTransformer>() {
       @Mock(invocations = 1)
-      byte[] transformMobGriefingGameRule(byte[] basicClass) {
+      byte[] transformMobGriefingGameRule(String transformedName, byte[] basicClass) {
         Assert.assertThat("Bytes to be transformed does not match the expected bytes.", basicClass,
             CoreMatchers.is(inputBasicClass));
         return basicClass;
@@ -108,7 +116,7 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
 
     new MockUp<BetterMobGriefingGameRuleIClassTransformer>() {
       @Mock(invocations = 1)
-      byte[] transformMobGriefingGameRule(byte[] basicClass) {
+      byte[] transformMobGriefingGameRule(String transformedName, byte[] basicClass) {
         Assert.assertThat("Bytes to be transformed does not match the expected bytes.", basicClass,
             CoreMatchers.is(inputBasicClass));
         return basicClass;
@@ -132,7 +140,7 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
 
     byte[] transformedBytes =
         Deencapsulation.invoke(BetterMobGriefingGameRuleIClassTransformer.class,
-            "transformMobGriefingGameRule", entityEndermanBytes);
+            "transformMobGriefingGameRule", EntityEnderman.class.getName(), entityEndermanBytes);
 
     Assert.assertThat("mobGriefing game rule was still found in the transformed bytes.",
         Bytes.indexOf(transformedBytes, "\"mobGriefing\"".getBytes()), CoreMatchers.is(-1));
@@ -156,7 +164,7 @@ public class BetterMobGriefingGameRuleIClassTransformerTest {
 
     byte[] transformedBytes =
         Deencapsulation.invoke(BetterMobGriefingGameRuleIClassTransformer.class,
-            "transformMobGriefingGameRule", entityLivingBaseBytes);
+            "transformMobGriefingGameRule", "", entityLivingBaseBytes);
 
     Assert.assertThat("mobGriefing game rule was still found in the transformed bytes.",
         transformedBytes, CoreMatchers.is(entityLivingBaseBytes));

@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
@@ -36,12 +35,9 @@ import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefi
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import mockit.Deencapsulation;
-import mockit.Invocation;
 import mockit.Mock;
 import mockit.MockUp;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
@@ -50,18 +46,15 @@ import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityLargeFireball;
-import net.minecraft.init.Blocks;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.world.ExplosionEvent.Detonate;
 
 /**
@@ -527,266 +520,5 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
     Entity entity = Deencapsulation.newUninitializedInstance(Entity.class);
     EntityJoinWorldEvent entityJoinWorldEvent = new EntityJoinWorldEvent(entity, world);
     eventHandler.onEntityJoinWorldEvent(entityJoinWorldEvent);
-  }
-
-  /**
-   * Test that handleSilverfishSummonAlly is called when LivingUpdateEvent is for an
-   * EntitySilverfish
-   */
-  @Test
-  public void testOnLivingUpdateEvent_entitySilverfish_handleSilverfishSummonAllyCalled() {
-    new MockUp<BetterMobGriefingGameRuleEventHandler>() {
-      @Mock(invocations = 1)
-      void handleSilverfishSummonAlly(EntitySilverfish entitySilverfish) {
-
-      }
-    };
-
-    LivingUpdateEvent livingUpdateEvent = new LivingUpdateEvent(new EntitySilverfish(null));
-    eventHandler.onLivingUpdateEvent(livingUpdateEvent);
-  }
-
-  /**
-   * Test that the original cooldown is disabled and the new cooldown is set when the original
-   * cooldown is greater than one, this means that after decrementing the cooldown it will still be
-   * greater than zero and no processing occurs.
-   */
-  @Test
-  public void testHandleSilverfishSummonAlly_originalCooldownGreaterThanOne_originalCooldownDisabledNewCooldownSetNoSummon() {
-    EntitySilverfish entitySilverfish = new EntitySilverfish(null);
-    Deencapsulation.setField(entitySilverfish, "allySummonCooldown", 10);
-    Deencapsulation.setField(entitySilverfish, "worldObj", world);
-
-    Deencapsulation.invoke(BetterMobGriefingGameRuleEventHandler.class,
-        "handleSilverfishSummonAlly", entitySilverfish);
-
-    int originalAllySummonCooldown =
-        Deencapsulation.getField(entitySilverfish, "allySummonCooldown");
-    Assert.assertThat("Original ally summon should have been disabled.", originalAllySummonCooldown,
-        CoreMatchers.is(-1));
-
-    int overrideAllySummonCooldown =
-        entitySilverfish.getEntityData().getInteger("bettermobgriefinggamerulecooldown");
-    Assert.assertThat("Ally summon cooldown should have been set in to the entity data.",
-        overrideAllySummonCooldown, CoreMatchers.is(9));
-  }
-
-  /**
-   * Test that the original cooldown is disabled and the new cooldown is set when the original
-   * cooldown is one, this means that after decrementing the cooldown it will be zero and processing
-   * occurs. mobGriefing is true so block damage should occur.
-   */
-  @Test
-  public void testHandleSilverfishSummonAlly_originalCooldownIsOneMobGriefingTrue_originalCooldownDisabledNewCooldownSetDoSummonDoMobGriefing() {
-    new MockUp<World>() {
-      @Mock
-      Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_) {
-        return Blocks.monster_egg;
-      }
-
-      @Mock
-      int getBlockMetadata(int p_72805_1_, int p_72805_2_, int p_72805_3_) {
-        return -1;
-      }
-
-      @Mock(invocations = 0)
-      boolean setBlock(int p_147465_1_, int p_147465_2_, int p_147465_3_, Block p_147465_4_,
-          int p_147465_5_, int p_147465_6_) {
-        return true;
-      }
-
-      @Mock(minInvocations = 1)
-      public boolean func_147480_a(int p_147480_1_, int p_147480_2_, int p_147480_3_,
-          boolean p_147480_4_) {
-        return true;
-      }
-    };
-
-    new MockUp<Block>() {
-      @Mock
-      void onBlockDestroyedByPlayer(World p_149664_1_, int p_149664_2_, int p_149664_3_,
-          int p_149664_4_, int p_149664_5_) {
-
-      }
-    };
-
-    new MockUp<Random>() {
-      @Mock
-      boolean nextBoolean(Invocation invocation) {
-        return invocation.getInvocationCount() >= 500;
-      }
-    };
-
-    new MockUp<BetterMobGriefingGameRule>() {
-      @Mock
-      boolean isMobGriefingEnabled(Entity entity) {
-        return true;
-      }
-    };
-
-    Block block = Deencapsulation.newUninitializedInstance(Block.class);
-    Deencapsulation.setField(Blocks.class, "monster_egg", block);
-
-    EntitySilverfish entitySilverfish = new EntitySilverfish(null);
-    Deencapsulation.setField(entitySilverfish, "allySummonCooldown", 1);
-    Deencapsulation.setField(entitySilverfish, "rand", new Random());
-    Deencapsulation.setField(entitySilverfish, "worldObj", world);
-
-    Deencapsulation.invoke(BetterMobGriefingGameRuleEventHandler.class,
-        "handleSilverfishSummonAlly", entitySilverfish);
-
-    int originalAllySummonCooldown =
-        Deencapsulation.getField(entitySilverfish, "allySummonCooldown");
-    Assert.assertThat("Original ally summon should have been disabled.", originalAllySummonCooldown,
-        CoreMatchers.is(-1));
-
-    int overrideAllySummonCooldown =
-        entitySilverfish.getEntityData().getInteger("bettermobgriefinggamerulecooldown");
-    Assert.assertThat("Ally summon cooldown should have been set in to the entity data.",
-        overrideAllySummonCooldown, CoreMatchers.is(0));
-  }
-
-  /**
-   * Test that the original cooldown is disabled and the new cooldown is set when the original
-   * cooldown is one, this means that after decrementing the cooldown it will be zero and processing
-   * occurs. mobGriefing is false so no block damage should occur.
-   */
-  @Test
-  public void testHandleSilverfishSummonAlly_originalCooldownIsOneMobGriefingFalse_originalCooldownDisabledNewCooldownSetDoSummonNoMobGriefing() {
-    new MockUp<World>() {
-      @Mock
-      Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_) {
-        return Blocks.monster_egg;
-      }
-
-      @Mock
-      int getBlockMetadata(int p_72805_1_, int p_72805_2_, int p_72805_3_) {
-        return -1;
-      }
-
-      @Mock(minInvocations = 1)
-      boolean setBlock(int p_147465_1_, int p_147465_2_, int p_147465_3_, Block p_147465_4_,
-          int p_147465_5_, int p_147465_6_) {
-        return true;
-      }
-
-      @Mock(invocations = 0)
-      public boolean func_147480_a(int p_147480_1_, int p_147480_2_, int p_147480_3_,
-          boolean p_147480_4_) {
-        return true;
-      }
-    };
-
-    new MockUp<Block>() {
-      @Mock
-      void onBlockDestroyedByPlayer(World p_149664_1_, int p_149664_2_, int p_149664_3_,
-          int p_149664_4_, int p_149664_5_) {
-
-      }
-    };
-
-    new MockUp<Random>() {
-      @Mock
-      boolean nextBoolean(Invocation invocation) {
-        return invocation.getInvocationCount() > 500;
-      }
-    };
-
-    new MockUp<BetterMobGriefingGameRule>() {
-      @Mock
-      boolean isMobGriefingEnabled(Entity entity) {
-        return false;
-      }
-    };
-
-    Block block = Deencapsulation.newUninitializedInstance(Block.class);
-    Deencapsulation.setField(Blocks.class, "monster_egg", block);
-
-    EntitySilverfish entitySilverfish = new EntitySilverfish(null);
-    Deencapsulation.setField(entitySilverfish, "allySummonCooldown", 1);
-    Deencapsulation.setField(entitySilverfish, "rand", new Random());
-    Deencapsulation.setField(entitySilverfish, "worldObj", world);
-
-    Deencapsulation.invoke(BetterMobGriefingGameRuleEventHandler.class,
-        "handleSilverfishSummonAlly", entitySilverfish);
-
-    int originalAllySummonCooldown =
-        Deencapsulation.getField(entitySilverfish, "allySummonCooldown");
-    Assert.assertThat("Original ally summon should have been disabled.", originalAllySummonCooldown,
-        CoreMatchers.is(-1));
-
-    int overrideAllySummonCooldown =
-        entitySilverfish.getEntityData().getInteger("bettermobgriefinggamerulecooldown");
-    Assert.assertThat("Ally summon cooldown should have been set in to the entity data.",
-        overrideAllySummonCooldown, CoreMatchers.is(0));
-  }
-
-  /**
-   * Test that the original cooldown is disabled and the new cooldown is set when the original
-   * cooldown is zero.
-   */
-  @Test
-  public void testHandleSilverfishSummonAlly_originalCooldownIsZero_originalCooldownDisabledNewCooldownSetNoSummon() {
-    EntitySilverfish entitySilverfish = new EntitySilverfish(null);
-    Deencapsulation.setField(entitySilverfish, "allySummonCooldown", 0);
-    Deencapsulation.setField(entitySilverfish, "worldObj", world);
-
-    Deencapsulation.invoke(BetterMobGriefingGameRuleEventHandler.class,
-        "handleSilverfishSummonAlly", entitySilverfish);
-
-    int originalAllySummonCooldown =
-        Deencapsulation.getField(entitySilverfish, "allySummonCooldown");
-    Assert.assertThat("Original ally summon should have been disabled.", originalAllySummonCooldown,
-        CoreMatchers.is(-1));
-
-    boolean hasKey = entitySilverfish.getEntityData().hasKey("bettermobgriefinggamerulecooldown");
-    Assert.assertThat("Ally summon cooldown should have been set in to the entity data.", hasKey,
-        CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that when the original cooldown is disabled the new cooldown is used if it was already
-   * populated
-   */
-  @Test
-  public void testHandleSilverfishSummonAlly_originalCooldownIsDisabledNewCooldownExists_newCooldownUsed() {
-    EntitySilverfish entitySilverfish = new EntitySilverfish(null);
-    Deencapsulation.setField(entitySilverfish, "allySummonCooldown", -1);
-    Deencapsulation.setField(entitySilverfish, "worldObj", world);
-    entitySilverfish.getEntityData().setInteger("bettermobgriefinggamerulecooldown", 10);
-
-    Deencapsulation.invoke(BetterMobGriefingGameRuleEventHandler.class,
-        "handleSilverfishSummonAlly", entitySilverfish);
-
-    int originalAllySummonCooldown =
-        Deencapsulation.getField(entitySilverfish, "allySummonCooldown");
-    Assert.assertThat("Original ally summon should have been disabled.", originalAllySummonCooldown,
-        CoreMatchers.is(-1));
-
-    int overrideAllySummonCooldown =
-        entitySilverfish.getEntityData().getInteger("bettermobgriefinggamerulecooldown");
-    Assert.assertThat("Ally summon cooldown should have been set in to the entity data.",
-        overrideAllySummonCooldown, CoreMatchers.is(9));
-  }
-
-  /**
-   * Test that if the world is a client world no processing is done, all processing should be done
-   * in the server world only.
-   */
-  @Test
-  public void testHandleSilverfishSummonAlly_isRemoteWorld_skipProcessing() {
-    new MockUp<ObfuscationReflectionHelper>() {
-      @Mock(invocations = 0)
-      <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, String... fieldNames) {
-        return null;
-      }
-    };
-
-    EntitySilverfish entitySilverfish = new EntitySilverfish(null);
-    world.isRemote = true;
-    Deencapsulation.setField(entitySilverfish, "worldObj", world);
-
-    Deencapsulation.invoke(BetterMobGriefingGameRuleEventHandler.class,
-        "handleSilverfishSummonAlly", entitySilverfish);
   }
 }

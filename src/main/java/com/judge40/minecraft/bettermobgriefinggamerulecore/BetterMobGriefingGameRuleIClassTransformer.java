@@ -54,7 +54,7 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
     TRANSFORM_TARGETS.put("net.minecraft.block.BlockFarmland", blockFarmLandTargets);
 
     Map<String, Integer> entityDragonTargets = new HashMap<>();
-    entityDragonTargets.put(deobfuscated ? "destroyBlocksInAABB" : "func_70972_a", 5);
+    entityDragonTargets.put(deobfuscated ? "destroyBlocksInAABB" : "func_70972_a", 0);
     TRANSFORM_TARGETS.put("net.minecraft.entity.boss.EntityDragon", entityDragonTargets);
 
     Map<String, Integer> entityEndermanTargets = new HashMap<>();
@@ -64,6 +64,10 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
     Map<String, Integer> entityLivingTargets = new HashMap<>();
     entityLivingTargets.put(deobfuscated ? "onLivingUpdate" : "func_70636_d", 0);
     TRANSFORM_TARGETS.put("net.minecraft.entity.EntityLiving", entityLivingTargets);
+
+    Map<String, Integer> entitySilverfishTargets = new HashMap<>();
+    entitySilverfishTargets.put(deobfuscated ? "onLivingUpdate" : "func_70636_d", 0);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntitySilverfish", entitySilverfishTargets);
   }
 
   /*

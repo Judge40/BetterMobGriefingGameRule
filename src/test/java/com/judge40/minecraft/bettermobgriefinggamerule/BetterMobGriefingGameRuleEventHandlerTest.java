@@ -32,7 +32,6 @@ import org.junit.Test;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIBreakDoor;
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIEatGrass;
-import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import mockit.Deencapsulation;
@@ -43,7 +42,6 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAIEatGrass;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
-import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntityZombie;
@@ -390,32 +388,6 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
     Assert.assertThat("Affected block position list size should be 0.",
         explosion.affectedBlockPositions.size(), CoreMatchers.is(0));
     Assert.assertThat("isSmoking should be false", explosion.isSmoking, CoreMatchers.is(false));
-  }
-
-  /**
-   * Test that when the entity is an EntityWither the mobGriefing override task is added to the task
-   * list
-   */
-  @Test
-  public void testOnEntityJoinWorldEvent_entityWither_mobGriefingOverrideTaskAdded() {
-    EntityWither entityWither = new EntityWither(null);
-    EntityJoinWorldEvent entityJoinWorldEvent = new EntityJoinWorldEvent(entityWither, world);
-    eventHandler.onEntityJoinWorldEvent(entityJoinWorldEvent);
-
-    Iterator<?> entityAiTaskEntryIterator = entityWither.tasks.taskEntries.iterator();
-
-    while (entityAiTaskEntryIterator.hasNext()) {
-      EntityAITaskEntry entityAiTaskEntry = (EntityAITaskEntry) entityAiTaskEntryIterator.next();
-
-      if (entityAiTaskEntry.action instanceof BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour) {
-        break;
-      }
-
-      if (!entityAiTaskEntryIterator.hasNext()) {
-        Assert.fail(
-            "BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour task was not found in the Wither's task list.");
-      }
-    }
   }
 
   /**

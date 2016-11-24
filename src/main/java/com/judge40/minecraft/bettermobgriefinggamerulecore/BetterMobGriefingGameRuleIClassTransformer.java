@@ -68,6 +68,10 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
     Map<String, Integer> entitySilverfishTargets = new HashMap<>();
     entitySilverfishTargets.put(deobfuscated ? "onLivingUpdate" : "func_70636_d", 0);
     TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntitySilverfish", entitySilverfishTargets);
+
+    Map<String, Integer> entityWitherTargets = new HashMap<>();
+    entityWitherTargets.put(deobfuscated ? "updateAITasks" : "func_70619_bc", 0);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.boss.EntityWither", entityWitherTargets);
   }
 
   /*

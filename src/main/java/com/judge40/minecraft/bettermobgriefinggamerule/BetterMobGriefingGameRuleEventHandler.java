@@ -22,7 +22,6 @@ import java.util.Iterator;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIBreakDoor;
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIEatGrass;
-import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -33,7 +32,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAIEatGrass;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
-import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.world.Explosion;
@@ -129,12 +127,7 @@ public class BetterMobGriefingGameRuleEventHandler {
    */
   @SubscribeEvent
   public void onEntityJoinWorldEvent(EntityJoinWorldEvent entityJoinWorldEvent) {
-
-    if (entityJoinWorldEvent.entity instanceof EntityWither) {
-      EntityWither entityWither = (EntityWither) entityJoinWorldEvent.entity;
-      entityWither.tasks.addTask(0,
-          new BetterMobGriefingGameRuleEntityAIOverrideMobGriefingBehaviour(entityWither));
-    } else if (entityJoinWorldEvent.entity instanceof EntityZombie) {
+    if (entityJoinWorldEvent.entity instanceof EntityZombie) {
       EntityZombie entityZombie = (EntityZombie) entityJoinWorldEvent.entity;
 
       // Get existing "BreakDoor" task

@@ -21,7 +21,6 @@ package com.judge40.minecraft.bettermobgriefinggamerule;
 import java.util.Iterator;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIBreakDoor;
-import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIEatGrass;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -30,7 +29,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
-import net.minecraft.entity.ai.EntityAIEatGrass;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.projectile.EntityFireball;
@@ -158,26 +156,6 @@ public class BetterMobGriefingGameRuleEventHandler {
       if (priority > -1) {
         entityZombie.tasks.removeTask(entityAiBreakDoor);
         entityZombie.tasks.addTask(priority, betterMobGriefingGameRuleEntityAiBreakDoor);
-      }
-    }
-
-    // If entity has the EntityAIEatGrass task then replace it with a new
-    // BetterMobGriefingGameRuleEntityAIEatGrass task
-    if (entityJoinWorldEvent.entity instanceof EntityLiving) {
-      EntityLiving entityLiving = (EntityLiving) entityJoinWorldEvent.entity;
-
-      if (entityLiving.tasks != null) {
-        Iterator<?> entityAiTaskEntryIterator = entityLiving.tasks.taskEntries.iterator();
-
-        while (entityAiTaskEntryIterator.hasNext()) {
-          EntityAITaskEntry entityAiTaskEntry =
-              (EntityAITaskEntry) entityAiTaskEntryIterator.next();
-
-          if (entityAiTaskEntry.action instanceof EntityAIEatGrass) {
-            entityAiTaskEntry.action = new BetterMobGriefingGameRuleEntityAIEatGrass(entityLiving);
-            break;
-          }
-        }
       }
     }
   }

@@ -18,8 +18,11 @@
  */
 package com.judge40.minecraft.bettermobgriefinggamerulecore;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
@@ -28,6 +31,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -44,33 +48,52 @@ import net.minecraft.launchwrapper.Launch;
  */
 public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransformer {
 
-  private static final Map<String, Map<String, Integer>> TRANSFORM_TARGETS = new HashMap<>();
+  private static final Map<String, Map<String, List<AbstractInsnNode>>> TRANSFORM_TARGETS =
+      new HashMap<>();
 
   static {
     boolean deobfuscated = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 
-    Map<String, Integer> blockFarmLandTargets = new HashMap<>();
-    blockFarmLandTargets.put(deobfuscated ? "onFallenUpon" : "func_180658_a", 5);
+    Map<String, List<AbstractInsnNode>> blockFarmLandTargets = new HashMap<>();
+    blockFarmLandTargets.put(deobfuscated ? "onFallenUpon" : "func_180658_a",
+        Collections.singletonList(new VarInsnNode(Opcodes.ALOAD, 5)));
     TRANSFORM_TARGETS.put("net.minecraft.block.BlockFarmland", blockFarmLandTargets);
 
-    Map<String, Integer> entityDragonTargets = new HashMap<>();
-    entityDragonTargets.put(deobfuscated ? "destroyBlocksInAABB" : "func_70972_a", 0);
+    VarInsnNode instanceVariable = new VarInsnNode(Opcodes.ALOAD, 0);
+
+    FieldInsnNode entityAiEatGrassFieldNode =
+        new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
+            "field_151500_b", "Lnet/minecraft/entity/EntityLiving;");
+    List<AbstractInsnNode> entityAiEatGrassTargetInstructions =
+        Arrays.asList(instanceVariable, entityAiEatGrassFieldNode);
+    Map<String, List<AbstractInsnNode>> entityAiEatGrassTargets = new HashMap<>();
+    entityAiEatGrassTargets.put(deobfuscated ? "updateTask" : "func_75246_d",
+        entityAiEatGrassTargetInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.ai.EntityAIEatGrass", entityAiEatGrassTargets);
+
+    List<AbstractInsnNode> instanceInstructions = Collections.singletonList(instanceVariable);
+
+    Map<String, List<AbstractInsnNode>> entityDragonTargets = new HashMap<>();
+    entityDragonTargets.put(deobfuscated ? "destroyBlocksInAABB" : "func_70972_a",
+        instanceInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.boss.EntityDragon", entityDragonTargets);
 
-    Map<String, Integer> entityEndermanTargets = new HashMap<>();
-    entityEndermanTargets.put(deobfuscated ? "onLivingUpdate" : "func_70636_d", 0);
+    Map<String, List<AbstractInsnNode>> entityEndermanTargets = new HashMap<>();
+    entityEndermanTargets.put(deobfuscated ? "onLivingUpdate" : "func_70636_d",
+        instanceInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntityEnderman", entityEndermanTargets);
 
-    Map<String, Integer> entityLivingTargets = new HashMap<>();
-    entityLivingTargets.put(deobfuscated ? "onLivingUpdate" : "func_70636_d", 0);
+    Map<String, List<AbstractInsnNode>> entityLivingTargets = new HashMap<>();
+    entityLivingTargets.put(deobfuscated ? "onLivingUpdate" : "func_70636_d", instanceInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.EntityLiving", entityLivingTargets);
 
-    Map<String, Integer> entitySilverfishTargets = new HashMap<>();
-    entitySilverfishTargets.put(deobfuscated ? "onLivingUpdate" : "func_70636_d", 0);
+    Map<String, List<AbstractInsnNode>> entitySilverfishTargets = new HashMap<>();
+    entitySilverfishTargets.put(deobfuscated ? "onLivingUpdate" : "func_70636_d",
+        instanceInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntitySilverfish", entitySilverfishTargets);
 
-    Map<String, Integer> entityWitherTargets = new HashMap<>();
-    entityWitherTargets.put(deobfuscated ? "updateAITasks" : "func_70619_bc", 0);
+    Map<String, List<AbstractInsnNode>> entityWitherTargets = new HashMap<>();
+    entityWitherTargets.put(deobfuscated ? "updateAITasks" : "func_70619_bc", instanceInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.boss.EntityWither", entityWitherTargets);
   }
 
@@ -97,7 +120,7 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
    * @returnThe transformed byte array
    */
   private static byte[] transformMobGriefingGameRule(String transformedName, byte[] basicClass) {
-    Map<String, Integer> transformTarget = TRANSFORM_TARGETS.get(transformedName);
+    Map<String, List<AbstractInsnNode>> transformTarget = TRANSFORM_TARGETS.get(transformedName);
 
     if (transformTarget == null) {
       return basicClass;
@@ -111,11 +134,14 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
 
     while (methodNodeIterator.hasNext()) {
       MethodNode methodNode = methodNodeIterator.next();
-      int entityIndex = transformTarget.getOrDefault(methodNode.name, -1);
+      List<AbstractInsnNode> replacementNodes =
+          transformTarget.getOrDefault(methodNode.name, Collections.emptyList());
 
-      if (entityIndex == -1) {
+      if (replacementNodes.isEmpty()) {
         continue;
       }
+
+      int instanceCount = 0;
 
       for (ListIterator<AbstractInsnNode> instructionIterator =
           methodNode.instructions.iterator(); instructionIterator.hasNext();) {
@@ -136,11 +162,21 @@ public class BetterMobGriefingGameRuleIClassTransformer implements IClassTransfo
                 instruction = instructionIterator.previous();
 
                 if (instruction instanceof VarInsnNode) {
-                  ((VarInsnNode) instruction).var = entityIndex;
-                  instructionIterator.next();
+                  instructionIterator.remove();
+
+                  for (AbstractInsnNode replacementNode : replacementNodes) {
+                    // Can not reuse the same instruction, so clone it if multiple are needed
+                    if (instanceCount > 0) {
+                      replacementNode = replacementNode.clone(Collections.emptyMap());
+                    }
+
+                    instructionIterator.add(replacementNode);
+                  }
+
                   instructionIterator.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
                       "com/judge40/minecraft/bettermobgriefinggamerule/BetterMobGriefingGameRule",
                       "isMobGriefingEnabled", "(Lnet/minecraft/entity/Entity;)Z", false));
+                  instanceCount++;
                   break;
                 }
               }

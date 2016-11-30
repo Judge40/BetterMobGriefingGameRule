@@ -31,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIBreakDoor;
-import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIEatGrass;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import mockit.Deencapsulation;
@@ -40,12 +39,10 @@ import mockit.MockUp;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
-import net.minecraft.entity.ai.EntityAIEatGrass;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.world.Explosion;
@@ -454,34 +451,6 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
             "BetterMobGriefingGameRuleEntityAIBreakDoor task was not found in the Zombie's task list.");
       }
     }
-  }
-
-  /**
-   * Test that EntityAIEatGrass tasks are replaced when they exist
-   */
-  @Test
-  public void testOnEntityJoinWorldEvent_entitySheepWithEatGrassTask_taskReplaced() {
-    EntitySheep entitySheep = new EntitySheep(null);
-    EntityJoinWorldEvent entityJoinWorldEvent = new EntityJoinWorldEvent(entitySheep, world);
-    eventHandler.onEntityJoinWorldEvent(entityJoinWorldEvent);
-
-    // Check that the eat grass task in the Sheep's task list was replaced
-    Iterator<?> entityAiTaskEntryIterator = entitySheep.tasks.taskEntries.iterator();
-    boolean taskFound = false;
-
-    while (entityAiTaskEntryIterator.hasNext()) {
-      EntityAITaskEntry entityAiTaskEntry = (EntityAITaskEntry) entityAiTaskEntryIterator.next();
-
-      if (entityAiTaskEntry.action.getClass().equals(EntityAIEatGrass.class)) {
-        Assert.fail(
-            "Original EntityAIEatGrass task was found in the Sheep's task list, but should have been replaced.");
-      } else if (entityAiTaskEntry.action instanceof BetterMobGriefingGameRuleEntityAIEatGrass) {
-        taskFound = true;
-      }
-    }
-
-    Assert.assertThat("Override version of the EntityAIEatGrass task was not found.", taskFound,
-        CoreMatchers.is(true));
   }
 
   /**

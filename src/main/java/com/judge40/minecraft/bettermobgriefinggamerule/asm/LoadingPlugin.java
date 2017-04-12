@@ -16,21 +16,33 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.judge40.minecraft.bettermobgriefinggamerulecore;
+package com.judge40.minecraft.bettermobgriefinggamerule.asm;
 
 import java.util.Map;
+
+import com.judge40.minecraft.bettermobgriefinggamerule.ModInfoConstants;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 
 /**
- * Loading plugin for BetterMobGriefingGameRule core mod
+ * The loading plugin for the BetterMobGriefingGameRule core mod.
  */
 
-@IFMLLoadingPlugin.Name(value = "Better mobGriefing GameRule Core")
-@IFMLLoadingPlugin.MCVersion(value = "1.7.10")
-@IFMLLoadingPlugin.TransformerExclusions(value = "com.judge40.minecraft.bettermobgriefingrulecore")
+@IFMLLoadingPlugin.Name(value = ModInfoConstants.DISPLAY_NAME_CORE)
+@IFMLLoadingPlugin.MCVersion(value = ModInfoConstants.MINECRAFT_VERSION)
+@IFMLLoadingPlugin.TransformerExclusions(value = ModInfoConstants.BASE_PACKAGE)
 @IFMLLoadingPlugin.SortingIndex(Integer.MAX_VALUE)
-public class BetterMobGriefingGameRuleIFMLLoadingPlugin implements IFMLLoadingPlugin {
+public class LoadingPlugin implements IFMLLoadingPlugin {
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see cpw.mods.fml.relauncher.IFMLLoadingPlugin#getAccessTransformerClass()
+   */
+  @Override
+  public String getAccessTransformerClass() {
+    return null;
+  }
 
   /*
    * (non-Javadoc)
@@ -39,7 +51,7 @@ public class BetterMobGriefingGameRuleIFMLLoadingPlugin implements IFMLLoadingPl
    */
   @Override
   public String[] getASMTransformerClass() {
-    return new String[] {BetterMobGriefingGameRuleIClassTransformer.class.getName()};
+    return new String[] {ClassTransformer.class.getName()};
   }
 
   /*
@@ -70,15 +82,5 @@ public class BetterMobGriefingGameRuleIFMLLoadingPlugin implements IFMLLoadingPl
   @Override
   public void injectData(Map<String, Object> data) {
 
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see cpw.mods.fml.relauncher.IFMLLoadingPlugin#getAccessTransformerClass()
-   */
-  @Override
-  public String getAccessTransformerClass() {
-    return null;
   }
 }

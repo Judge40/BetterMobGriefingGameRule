@@ -48,7 +48,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes "FMLCorePlugin":"com.judge40.minecraft.bettermobgriefinggamerulecore.BetterMobGriefingGameRuleIFMLLoadingPlugin",
+        attributes "FMLCorePlugin":"com.judge40.minecraft.bettermobgriefinggamerule.asm.LoadingPlugin",
             "FMLCorePluginContainsFMLMod":"true"
     }
 }

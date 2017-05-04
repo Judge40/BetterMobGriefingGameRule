@@ -98,13 +98,6 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
   @Test
   public void testOnConfigChangedEvent_betterMobGriefingGameRuleConfigChanged_handleChange(
       @Mocked DefaultMobGriefingConfiguration configuration) {
-    new MockUp<BetterMobGriefingGameRule>() {
-      @Mock(invocations = 1)
-      void populateDefaultMobGriefingRulesFromConfiguration() {
-
-      }
-    };
-
     new MockUp<Configuration>() {
       @Mock(invocations = 1)
       void save() {
@@ -123,13 +116,6 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
    */
   @Test
   public void testOnConfigChangedEvent_nonBetterMobGriefingGameRuleConfigChanged_doNotHandleChange() {
-    new MockUp<BetterMobGriefingGameRule>() {
-      @Mock(invocations = 0)
-      void populateDefaultMobGriefingRulesFromConfiguration() {
-
-      }
-    };
-
     new MockUp<Configuration>() {
       @Mock(invocations = 0)
       void save() {

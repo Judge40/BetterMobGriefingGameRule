@@ -51,7 +51,6 @@ public class BetterMobGriefingGameRuleEventHandler {
   public void onConfigChangedEvent(OnConfigChangedEvent configChangedEvent) {
     if (configChangedEvent.modID.equals(BetterMobGriefingGameRule.MODID)) {
       BetterMobGriefingGameRule.configuration.save();
-      BetterMobGriefingGameRule.populateDefaultMobGriefingRulesFromConfiguration();
     }
   }
 

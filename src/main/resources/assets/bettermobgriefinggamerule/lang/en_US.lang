@@ -12,3 +12,6 @@ bettermobgriefinggamerule.config.entityRules.tooltip=The entity specific mobGrie
 
 
 bettermobgriefinggamerule.config.validValues=[valid values: %s]
+
+
+bettermobgriefinggamerule.commandLine.entityValues=Entity Specific mobGriefing Values:

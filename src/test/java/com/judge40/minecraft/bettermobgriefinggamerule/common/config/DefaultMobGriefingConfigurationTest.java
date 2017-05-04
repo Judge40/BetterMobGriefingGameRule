@@ -27,6 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
+import com.judge40.minecraft.bettermobgriefinggamerule.MobGriefingValue;
 
 import mockit.Deencapsulation;
 import mockit.Expectations;
@@ -149,13 +150,12 @@ public class DefaultMobGriefingConfigurationTest {
         configuration.getString(defaultEntityName,
             DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY, "inherit", anyString,
             new String[] {"true", "false", "inherit"});
-        result = "entityValue";
-        times = 1;
+        result = "true";
 
         configuration.getString(anyString,
             DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY, "inherit", anyString,
             new String[] {"true", "false", "inherit"});
-        result = "entityValue";
+        result = "false";
 
         configuration.hasChanged();
         result = false;
@@ -163,7 +163,7 @@ public class DefaultMobGriefingConfigurationTest {
     };
 
     // Call the method under test.
-    Map<String, String> entityValues = configuration.getEntityMobGriefingValues();
+    Map<String, MobGriefingValue> entityValues = configuration.getEntityMobGriefingValues();
 
     // Perform assertions.
     Assert.assertThat(
@@ -203,13 +203,12 @@ public class DefaultMobGriefingConfigurationTest {
         configuration.getString(defaultEntityName,
             DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY, "inherit", anyString,
             new String[] {"true", "false", "inherit"});
-        result = "entityValue";
-        times = 1;
+        result = "true";
 
         configuration.getString(anyString,
             DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY, "inherit", anyString,
             new String[] {"true", "false", "inherit"});
-        result = "entityValue";
+        result = "false";
 
         configuration.hasChanged();
         result = true;
@@ -217,7 +216,7 @@ public class DefaultMobGriefingConfigurationTest {
     };
 
     // Call the method under test.
-    Map<String, String> entityValues = configuration.getEntityMobGriefingValues();
+    Map<String, MobGriefingValue> entityValues = configuration.getEntityMobGriefingValues();
 
     // Perform assertions.
     Assert.assertThat(
@@ -239,13 +238,10 @@ public class DefaultMobGriefingConfigurationTest {
   @Test
   public void testGetEntityMobGriefingValues_supportedEntityInConfig_entityIncluded() {
     // Set up test data.
-    ConfigCategory configCategory = new ConfigCategory("entityRules");
-    configCategory.put("SupportedEntity", new Property("SupportedEntity", "inherit", Type.STRING));
+    String entityName = (String) EntityList.classToStringMapping.get(EntityLiving.class);
 
-    @SuppressWarnings("unchecked")
-    Map<String, Class<? extends EntityLiving>> stringToClassMapping =
-        EntityList.stringToClassMapping;
-    stringToClassMapping.put("SupportedEntity", EntityLiving.class);
+    ConfigCategory configCategory = new ConfigCategory("entityRules");
+    configCategory.put(entityName, new Property(entityName, "inherit", Type.STRING));
 
     // Record expectations.
     new Expectations() {
@@ -256,7 +252,7 @@ public class DefaultMobGriefingConfigurationTest {
         configuration.getString(anyString,
             DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY, "inherit", anyString,
             new String[] {"true", "false", "inherit"});
-        result = "entityValue";
+        result = "true";
 
         configuration.hasChanged();
         result = false;
@@ -264,12 +260,12 @@ public class DefaultMobGriefingConfigurationTest {
     };
 
     // Call the method under test.
-    Map<String, String> entityValues = configuration.getEntityMobGriefingValues();
+    Map<String, MobGriefingValue> entityValues = configuration.getEntityMobGriefingValues();
 
     // Perform assertions.
     Assert.assertThat(
         "The entity values from the configuration does not contain an expected entity.",
-        entityValues.keySet(), CoreMatchers.hasItem("SupportedEntity"));
+        entityValues.keySet(), CoreMatchers.hasItem(entityName));
 
     // Verify executions.
     new Verifications() {
@@ -299,7 +295,7 @@ public class DefaultMobGriefingConfigurationTest {
         configuration.getString(anyString,
             DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY, "inherit", anyString,
             new String[] {"true", "false", "inherit"});
-        result = "entityValue";
+        result = "true";
 
         configuration.hasChanged();
         result = false;
@@ -307,7 +303,7 @@ public class DefaultMobGriefingConfigurationTest {
     };
 
     // Call the method under test.
-    Map<String, String> entityValues = configuration.getEntityMobGriefingValues();
+    Map<String, MobGriefingValue> entityValues = configuration.getEntityMobGriefingValues();
 
     // Perform assertions.
     Assert.assertThat("The entity values from the configuration contains an unsupported entity.",
@@ -340,7 +336,7 @@ public class DefaultMobGriefingConfigurationTest {
         configuration.getString(anyString,
             DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY, "inherit", anyString,
             new String[] {"true", "false", "inherit"});
-        result = "entityValue";
+        result = "true";
 
         configuration.hasChanged();
         result = false;
@@ -348,7 +344,7 @@ public class DefaultMobGriefingConfigurationTest {
     };
 
     // Call the method under test.
-    Map<String, String> entityValues = configuration.getEntityMobGriefingValues();
+    Map<String, MobGriefingValue> entityValues = configuration.getEntityMobGriefingValues();
 
     // Perform assertions.
     Assert.assertThat("The entity values from the configuration contains an invalid entity.",

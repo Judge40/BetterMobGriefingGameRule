@@ -1,5 +1,5 @@
 /*
- * Better mobGriefing GameRule Copyright (c) 2016 Judge40
+ * Better mobGriefing GameRule Copyright (c) 2017 Judge40
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -18,25 +18,31 @@
  */
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
-import net.minecraft.client.resources.I18n;
+import java.util.Locale;
 
 /**
- * Localizable UI messages for BetterMobGriefingGameRule
+ * An enumeration representing the valid values for the mobGriefing game rule.
  */
-public class BetterMobGriefingGameRuleMessages {
-  // Configuration message keys.
-  public static final String DEFAULT_MOBGRIEFING_VALUES_KEY =
-      "bettermobgriefinggamerule.config.defaultMobGriefingValues";
-  public static final String GLOBAL_RULE_KEY = "bettermobgriefinggamerule.config.globalRule";
-  public static final String ENTITY_RULES_KEY = "bettermobgriefinggamerule.config.entityRules";
+public enum MobGriefingValue {
+  FALSE, INHERIT, TRUE;
 
-  // Configuration messages.
-  public static final String DEFAULT_MOBGRIEFING_VALUES =
-      I18n.format(DEFAULT_MOBGRIEFING_VALUES_KEY);
-  public static final String GLOBAL_RULE = I18n.format(GLOBAL_RULE_KEY);
-  public static final String ENTITY_RULES = I18n.format(ENTITY_RULES_KEY);
+  /**
+   * Convert an enumeration's external form to the enumeration.
+   * 
+   * @param externalForm The external form of the enumeration, which is its name.
+   * @return The enumeration matching the name.
+   * @throws IllegalArgumentException If the external form does not match an enumeration.
+   */
+  public static MobGriefingValue toEnumeration(String externalForm) {
+    return valueOf(externalForm.toUpperCase(Locale.ENGLISH));
+  }
 
-  public static final String VALID_VALUES(Object validValues) {
-    return I18n.format("bettermobgriefinggamerule.config.validValues", validValues);
+  /**
+   * Converts the enumeration to its external form, which is its name as lower case.
+   * 
+   * @return The enumeration's external form.
+   */
+  public String toExternalForm() {
+    return name().toLowerCase(Locale.ENGLISH);
   }
 }

@@ -30,12 +30,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterMobGriefingGameRuleEntityAIBreakDoor;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import mockit.Deencapsulation;
 import mockit.Mock;
 import mockit.MockUp;
+import mockit.Mocked;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
@@ -94,7 +96,8 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
    * Test that the change is handled when it is from the BetterMobGriefingGameRule configuration
    */
   @Test
-  public void testOnConfigChangedEvent_betterMobGriefingGameRuleConfigChanged_handleChange() {
+  public void testOnConfigChangedEvent_betterMobGriefingGameRuleConfigChanged_handleChange(
+      @Mocked DefaultMobGriefingConfiguration configuration) {
     new MockUp<BetterMobGriefingGameRule>() {
       @Mock(invocations = 1)
       void populateDefaultMobGriefingRulesFromConfiguration() {
@@ -109,7 +112,7 @@ public class BetterMobGriefingGameRuleEventHandlerTest {
       }
     };
 
-    BetterMobGriefingGameRule.configuration = new Configuration();
+    BetterMobGriefingGameRule.configuration = configuration;
     eventHandler.onConfigChangedEvent(
         new OnConfigChangedEvent(BetterMobGriefingGameRule.MODID, "", false, false));
   }

@@ -18,17 +18,14 @@
  */
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.command.BetterMobGriefingGameRuleCommandGameRule;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.world.BetterMobGriefingGameRuleWorldSavedData;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -43,20 +40,9 @@ import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.boss.EntityWither;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntitySilverfish;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
 
 /**
  * Base class for 'Better mobGriefing GameRule' mod
@@ -70,31 +56,21 @@ public class BetterMobGriefingGameRule {
   public static final String NAME = "Better mobGriefing GameRule";
   public static final String VERSION = "1.7.10-0.4.0";
   public static final String GUI_FACTORY =
-      "com.judge40.minecraft.bettermobgriefinggamerule.client.BetterMobGriefingGameRuleConfigGuiFactory";
+      "com.judge40.minecraft.bettermobgriefinggamerule.client.gui.DefaultMobGriefingConfigGuiFactory";
 
   // Constants for the mobGriefing rules
   public static final String ORIGINAL = "mobGriefing";
   public static final String TRUE = Boolean.toString(true);
   public static final String FALSE = Boolean.toString(false);
   public static final String INHERIT = "inherit";
-  public static final String DEFAULT_MOBGRIEFING_VALUES_CONFIGURATION_CATEGORY =
-      "defaultmobgriefingvalues";
-  public static final String DEFAULT_GLOBAL_RULES_CONFIGURATION_CATEGORY =
-      DEFAULT_MOBGRIEFING_VALUES_CONFIGURATION_CATEGORY.concat(".globalrules");
-  public static final String DEFAULT_ENTITY_RULES_CONFIGURATION_CATEGORY =
-      DEFAULT_MOBGRIEFING_VALUES_CONFIGURATION_CATEGORY.concat(".entityrules");
 
-  private static final List<Class<? extends EntityLiving>> MOB_GRIEFING_ENTITY_CLASSES = Arrays
-      .asList(EntityCreeper.class, EntityDragon.class, EntityEnderman.class, EntityGhast.class,
-          EntitySheep.class, EntitySilverfish.class, EntityWither.class, EntityZombie.class);
-
-  public static Configuration configuration;
+  public static DefaultMobGriefingConfiguration configuration;
 
   private static String defaultGlobalRule;
   private static Map<String, String> defaultEntityRules = new HashMap<>();
 
   /**
-   * Perform pre-initialisation actions. The configuration file is loaded and the default
+   * Perform pre-initialization actions. The configuration file is loaded and the default
    * mobGriefing rule values are retrieved.
    * 
    * @param preInitializationEvent The FMLPreInitializationEvent
@@ -102,19 +78,8 @@ public class BetterMobGriefingGameRule {
   @EventHandler
   public void onFMLPreInitializationEvent(FMLPreInitializationEvent preInitializationEvent) {
     // Create and/or load the configuration
-    configuration = new Configuration(preInitializationEvent.getSuggestedConfigurationFile());
-    configuration.load();
-
-    // Set configuration category language keys
-    configuration.setCategoryLanguageKey(
-        BetterMobGriefingGameRule.DEFAULT_MOBGRIEFING_VALUES_CONFIGURATION_CATEGORY,
-        BetterMobGriefingGameRuleMessages.DEFAULT_MOBGRIEFING_VALUES_KEY);
-    configuration.setCategoryLanguageKey(
-        BetterMobGriefingGameRule.DEFAULT_GLOBAL_RULES_CONFIGURATION_CATEGORY,
-        BetterMobGriefingGameRuleMessages.GLOBAL_RULE_KEY);
-    configuration.setCategoryLanguageKey(
-        BetterMobGriefingGameRule.DEFAULT_ENTITY_RULES_CONFIGURATION_CATEGORY,
-        BetterMobGriefingGameRuleMessages.ENTITY_RULES_KEY);
+    configuration =
+        new DefaultMobGriefingConfiguration(preInitializationEvent.getSuggestedConfigurationFile());
 
     populateDefaultMobGriefingRulesFromConfiguration();
   }
@@ -123,52 +88,12 @@ public class BetterMobGriefingGameRule {
    * Populate the default mobGriefing rules map based on the configuration values
    */
   public static void populateDefaultMobGriefingRulesFromConfiguration() {
-    List<String> validValues = new ArrayList<>();
-    validValues.add(BetterMobGriefingGameRule.TRUE);
-    validValues.add(BetterMobGriefingGameRule.FALSE);
-
-    // Get the configuration value for global mobGriefing, if the configuration entry is missing
-    // then a new entry is created
-    defaultGlobalRule = configuration.getString(BetterMobGriefingGameRule.ORIGINAL,
-        BetterMobGriefingGameRule.DEFAULT_GLOBAL_RULES_CONFIGURATION_CATEGORY,
-        BetterMobGriefingGameRule.TRUE, BetterMobGriefingGameRuleMessages.VALID_VALUES(validValues),
-        validValues.toArray(new String[validValues.size()]));
-
-    // Get all entities included in the configuration, merge all the entities supported by default
-    ConfigCategory category = configuration
-        .getCategory(BetterMobGriefingGameRule.DEFAULT_ENTITY_RULES_CONFIGURATION_CATEGORY);
-    Set<String> entityNames = new HashSet<>(category.keySet());
-
-    for (Class<? extends EntityLiving> entityClass : MOB_GRIEFING_ENTITY_CLASSES) {
-      String entityName = (String) EntityList.classToStringMapping.get(entityClass);
-      entityNames.add(entityName);
-    }
-
-    defaultEntityRules = new HashMap<>();
-    validValues.add(BetterMobGriefingGameRule.INHERIT);
-
-    // Get the configuration value for each entity, if the configuration entry is missing for an
-    // entity then a new entry is created
-    for (String entityName : entityNames) {
-      Class<?> entityClass = (Class<?>) EntityList.stringToClassMapping.get(entityName);
-
-      if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
-        String propertyValue = configuration.getString(entityName,
-            DEFAULT_ENTITY_RULES_CONFIGURATION_CATEGORY, BetterMobGriefingGameRule.INHERIT,
-            BetterMobGriefingGameRuleMessages.VALID_VALUES(validValues),
-            validValues.toArray(new String[validValues.size()]));
-        defaultEntityRules.put(entityName, propertyValue);
-      }
-    }
-
-    // Persist any changes to the configuration
-    if (configuration.hasChanged()) {
-      configuration.save();
-    }
+    defaultGlobalRule = configuration.getGlobalMobGriefingValue();
+    defaultEntityRules = configuration.getEntityMobGriefingValues();
   }
 
   /**
-   * On initialisation registers the event handler
+   * On initialization registers the event handler
    * 
    * @param event The FMLInitializationEvent
    */
@@ -215,7 +140,8 @@ public class BetterMobGriefingGameRule {
 
     // Set the global mobGriefing game rule value if this is a new world
     if (world.getTotalWorldTime() == 0) {
-      world.getGameRules().setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL, defaultGlobalRule);
+      world.getGameRules().setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL,
+          defaultGlobalRule);
     }
 
     // Add the entity rules

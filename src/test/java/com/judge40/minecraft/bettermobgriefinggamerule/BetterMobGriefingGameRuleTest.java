@@ -19,10 +19,7 @@
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.command.BetterMobGriefingGameRuleCommandGameRule;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.world.BetterMobGriefingGameRuleWorldSavedData;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -41,18 +39,16 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import mockit.Deencapsulation;
-import mockit.Invocation;
+import mockit.Expectations;
+import mockit.Injectable;
 import mockit.Mock;
 import mockit.MockUp;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.resources.Locale;
 import net.minecraft.command.CommandGameRule;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -60,7 +56,6 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldInfo;
-import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 
 /**
@@ -304,7 +299,8 @@ public class BetterMobGriefingGameRuleTest {
     };
 
     Deencapsulation.setField(world.getWorldInfo(), "totalTime", 0);
-    Deencapsulation.setField(BetterMobGriefingGameRule.class, "defaultGlobalRule", BetterMobGriefingGameRule.FALSE);
+    Deencapsulation.setField(BetterMobGriefingGameRule.class, "defaultGlobalRule",
+        BetterMobGriefingGameRule.FALSE);
 
     BetterMobGriefingGameRule.addMobGriefingGameRules();
   }
@@ -337,7 +333,8 @@ public class BetterMobGriefingGameRuleTest {
     };
 
     Deencapsulation.setField(world.getWorldInfo(), "totalTime", 1);
-    Deencapsulation.setField(BetterMobGriefingGameRule.class, "defaultGlobalRule", BetterMobGriefingGameRule.FALSE);
+    Deencapsulation.setField(BetterMobGriefingGameRule.class, "defaultGlobalRule",
+        BetterMobGriefingGameRule.FALSE);
 
     BetterMobGriefingGameRule.addMobGriefingGameRules();
   }
@@ -487,240 +484,39 @@ public class BetterMobGriefingGameRuleTest {
   }
 
   /**
-   * Test that the default global rule is populated as expected from the configuration
+   * Test that the default values are populated when there is a valid configuration.
    */
   @Test
-  public void testPopulateDefaultMobGriefingRulesFromConfiguration_configurationHasDefaultGlobal_defaultGlobalRuleFieldPopulated() {
-    new MockUp<Configuration>() {
-      @Mock(minInvocations = 1)
-      String getString(String name, String category, String defaultValue, String comment,
-          String[] validValues) {
-        if (name.equals(BetterMobGriefingGameRule.ORIGINAL)) {
-          // Verify that the correct category is used
-          Assert.assertThat(
-              "The global rule configurations category was not set to the expected value.",
-              category, CoreMatchers
-                  .is(BetterMobGriefingGameRule.DEFAULT_GLOBAL_RULES_CONFIGURATION_CATEGORY));
+  public void testPopulateDefaultMobGriefingRulesFromConfiguration_validConfiguration_defaultValuesPopulated(
+      @Injectable DefaultMobGriefingConfiguration configuration) {
+    // Set up test data.
+    BetterMobGriefingGameRule.configuration = configuration;
+    String defaultGlobalValue = "defaultGlobalValue";
+    Map<String, String> defaultEntityValues = new HashMap<>();
+    defaultEntityValues.put("entityName1", "entityValue1");
+    defaultEntityValues.put("entityName2", "entityValue2");
 
-          // Verify that the correct default value is used
-          Assert.assertThat(
-              "The global rule configurations default value was not set to the expected value.",
-              defaultValue, CoreMatchers.is(BetterMobGriefingGameRule.TRUE));
+    // Record expectations.
+    new Expectations() {
+      {
+        configuration.getGlobalMobGriefingValue();
+        result = defaultGlobalValue;
 
-          // Verify that the correct valid values are used
-          List<String> validValuesList = new ArrayList<>();
-          Collections.addAll(validValuesList, validValues);
-          Assert.assertThat(
-              "The global rule configurations valid values was not set to the expected value.",
-              validValuesList, CoreMatchers.hasItems(BetterMobGriefingGameRule.TRUE,
-                  BetterMobGriefingGameRule.FALSE));
-
-          return "dummyPropertyValue001";
-        }
-        return null;
-      }
-
-      @Mock(invocations = 1)
-      void save() {
-
+        configuration.getEntityMobGriefingValues();
+        result = defaultEntityValues;
       }
     };
 
-    Deencapsulation.setField(I18n.class, "i18nLocale", new Locale());
-    BetterMobGriefingGameRule.configuration = new Configuration();
-
-    // Reset default global field so it's value can be checked properly in assertions
-    Deencapsulation.setField(BetterMobGriefingGameRule.class, "defaultGlobalRule", null);
-
+    // Call the method under test.
     BetterMobGriefingGameRule.populateDefaultMobGriefingRulesFromConfiguration();
 
-    String defaultGlobalRule =
-        Deencapsulation.getField(BetterMobGriefingGameRule.class, "defaultGlobalRule");
-    Assert.assertThat("The default global rule value does not match the expected value.",
-        defaultGlobalRule, CoreMatchers.is("dummyPropertyValue001"));
-  }
-
-  /**
-   * Test that an entity which is not handled out of the box is included in the default entity rules
-   */
-  @Test
-  public void testPopulateDefaultMobGriefingRulesFromConfiguration_nonOOTBEntityConfiguration_nonOOTBEntityAddedToDefaultEntityRules() {
-    String entityLivingName = (String) EntityList.classToStringMapping.get(EntityLiving.class);
-
-    new MockUp<Configuration>() {
-      @Mock
-      ConfigCategory getCategory(Invocation invocation, String category) {
-        ConfigCategory configCategory = new ConfigCategory("dummyConfigCategory001");
-        configCategory.put(entityLivingName, null);
-        return configCategory;
-      }
-
-      @Mock(minInvocations = 1)
-      String getString(String name, String category, String defaultValue, String comment,
-          String[] validValues) {
-        if (name.equals(entityLivingName)) {
-          // Verify that the correct category is used
-          Assert.assertThat(
-              "The entity rule configurations category was not set to the expected value.",
-              category, CoreMatchers
-                  .is(BetterMobGriefingGameRule.DEFAULT_ENTITY_RULES_CONFIGURATION_CATEGORY));
-
-          // Verify that the correct default value is used
-          Assert.assertThat(
-              "The entity rule configurations default value was not set to the expected value.",
-              defaultValue, CoreMatchers.is(BetterMobGriefingGameRule.INHERIT));
-
-          // Verify that the correct valid values are used
-          List<String> validValuesList = new ArrayList<>();
-          Collections.addAll(validValuesList, validValues);
-          Assert.assertThat(
-              "The entity rule configurations valid values was not set to the expected value.",
-              validValuesList, CoreMatchers.hasItems(BetterMobGriefingGameRule.TRUE,
-                  BetterMobGriefingGameRule.FALSE, BetterMobGriefingGameRule.INHERIT));
-
-          return "dummyPropertyValue001";
-        }
-        return null;
-      }
-    };
-
-    Deencapsulation.setField(I18n.class, "i18nLocale", new Locale());
-    BetterMobGriefingGameRule.configuration = new Configuration();
-
-    BetterMobGriefingGameRule.populateDefaultMobGriefingRulesFromConfiguration();
-
-    Map<String, String> defaultEntityRules =
-        Deencapsulation.getField(BetterMobGriefingGameRule.class, "defaultEntityRules");
-    Assert.assertThat("The default entity rule value does not match the expected value.",
-        defaultEntityRules.get(entityLivingName), CoreMatchers.is("dummyPropertyValue001"));
-  }
-
-  /**
-   * Test that an entity which is handled out of the box is included in the default entity rules
-   */
-  @Test
-  public void testPopulateDefaultMobGriefingRulesFromConfiguration_ootbEntityConfiguration_ootbEntityAddedToDefaultEntityRules() {
-    new MockUp<Configuration>() {
-      @Mock(minInvocations = 1)
-      String getString(String name, String category, String defaultValue, String comment,
-          String[] validValues) {
-        if (category
-            .equals(BetterMobGriefingGameRule.DEFAULT_ENTITY_RULES_CONFIGURATION_CATEGORY)) {
-          // Verify that the correct default value is used
-          Assert.assertThat(
-              "The entity rule configurations default value was not set to the expected value.",
-              defaultValue, CoreMatchers.is(BetterMobGriefingGameRule.INHERIT));
-
-          // Verify that the correct valid values are used
-          List<String> validValuesList = new ArrayList<>();
-          Collections.addAll(validValuesList, validValues);
-          Assert.assertThat(
-              "The entity rule configurations valid values was not set to the expected value.",
-              validValuesList, CoreMatchers.hasItems(BetterMobGriefingGameRule.TRUE,
-                  BetterMobGriefingGameRule.FALSE, BetterMobGriefingGameRule.INHERIT));
-
-          return "dummyPropertyValue001";
-        }
-        return null;
-      }
-
-      @Mock(invocations = 1)
-      void save() {
-
-      }
-    };
-
-    Deencapsulation.setField(I18n.class, "i18nLocale", new Locale());
-    BetterMobGriefingGameRule.configuration = new Configuration();
-
-    BetterMobGriefingGameRule.populateDefaultMobGriefingRulesFromConfiguration();
-
-    Map<String, String> defaultEntityRules =
-        Deencapsulation.getField(BetterMobGriefingGameRule.class, "defaultEntityRules");
-    List<Class<? extends EntityLiving>> mobGriefingEntityClasses =
-        Deencapsulation.getField(BetterMobGriefingGameRule.class, "MOB_GRIEFING_ENTITY_CLASSES");
-
-    for (Class<? extends EntityLiving> mobGriefingEntityClass : mobGriefingEntityClasses) {
-      String entityName = (String) EntityList.classToStringMapping.get(mobGriefingEntityClass);
-
-      Assert.assertThat("The default entity rule value does not match the expected value.",
-          defaultEntityRules.get(entityName), CoreMatchers.is("dummyPropertyValue001"));
-    }
-  }
-
-  /**
-   * Test that when an unregistered entity is found in the configuration it is not added to the
-   * default entity rules map
-   */
-  @Test
-  public void testPopulateDefaultMobGriefingRulesFromConfiguration_unregisteredEntity_entityValueNotAddedToDefaultEntityRules() {
-    String entityName = "unregisteredEntity";
-
-    new MockUp<Configuration>() {
-      @Mock
-      ConfigCategory getCategory(Invocation invocation, String category) {
-        ConfigCategory configCategory = new ConfigCategory("dummyConfigCategory001");
-        configCategory.put(entityName, null);
-        return configCategory;
-      }
-    };
-
-    Deencapsulation.setField(I18n.class, "i18nLocale", new Locale());
-    BetterMobGriefingGameRule.configuration = new Configuration();
-
-    BetterMobGriefingGameRule.populateDefaultMobGriefingRulesFromConfiguration();
-
-    Map<String, String> defaultEntityRules =
-        Deencapsulation.getField(BetterMobGriefingGameRule.class, "defaultEntityRules");
-    Assert.assertThat("The default entity rule should not have been added for an invalid entity.",
-        defaultEntityRules.keySet(), CoreMatchers.not(CoreMatchers.hasItem(entityName)));
-  }
-
-  /**
-   * Test that when an unsupported entity is found in the configuration it is not added to the
-   * default entity rules map
-   */
-  @Test
-  public void testPopulateDefaultMobGriefingRulesFromConfiguration_unsupportedEntity_entityValueNotAddedToDefaultEntityRules() {
-    String entityName = (String) EntityList.classToStringMapping.get(EntityItem.class);
-
-    new MockUp<Configuration>() {
-      @Mock
-      ConfigCategory getCategory(Invocation invocation, String category) {
-        ConfigCategory configCategory = new ConfigCategory("dummyConfigCategory001");
-        configCategory.put(entityName, null);
-        return configCategory;
-      }
-    };
-
-    Deencapsulation.setField(I18n.class, "i18nLocale", new Locale());
-    BetterMobGriefingGameRule.configuration = new Configuration();
-
-    BetterMobGriefingGameRule.populateDefaultMobGriefingRulesFromConfiguration();
-
-    Map<String, String> defaultEntityRules =
-        Deencapsulation.getField(BetterMobGriefingGameRule.class, "defaultEntityRules");
-    Assert.assertThat("The default entity rule should not have been added for an invalid entity.",
-        defaultEntityRules.keySet(), CoreMatchers.not(CoreMatchers.hasItem(entityName)));
-  }
-
-  /**
-   * Test that the configuration is not saved needlessly when it has not been changed
-   */
-  @Test
-  public void testPopulateDefaultMobGriefingRulesFromConfiguration_noConfigurationChanges_noConfigurationSave() {
-    new MockUp<Configuration>() {
-      @Mock
-      ConfigCategory getCategory(Invocation invocation, String category) {
-        return new ConfigCategory("dummyConfigCategory001");
-      }
-
-      @Mock(invocations = 0)
-      void save() {
-
-      }
-    };
-
-    BetterMobGriefingGameRule.populateDefaultMobGriefingRulesFromConfiguration();
+    // Perform assertions.
+    Assert.assertThat("The default global mobGriefing value was not populated as expected.",
+        Deencapsulation.getField(BetterMobGriefingGameRule.class, "defaultGlobalRule"),
+        CoreMatchers.is(defaultGlobalValue));
+    Assert.assertThat("The default entity mobGriefing values were not populated as expected.",
+        Deencapsulation.getField(BetterMobGriefingGameRule.class, "defaultEntityRules"),
+        CoreMatchers.is(defaultEntityValues));
   }
 }
+

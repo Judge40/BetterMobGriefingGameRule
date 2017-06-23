@@ -37,22 +37,29 @@ public class ObfuscationHelperTest {
   private static final String MCP_NAME = "mcpName";
   private static final String SRG_NAME = "srgName";
 
+  private static final String DEENCAPULSATION_FIELD = "fml.deobfuscatedEnvironment";
+
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
     // Set the deobfuscation flag.
-    Map<String, Object> blackboard = new HashMap<>();
-    blackboard.put("fml.deobfuscatedEnvironment", true);
-    Launch.blackboard = blackboard;
+    Launch.blackboard = new HashMap<>();
 
     // Populate MCP to SRG map with dummy data.
-    Map<String, String> mcpToSrg = new HashMap<>();
+    Map<String, String> mcpToSrg = Deencapsulation.getField(ObfuscationHelper.class, "mcpToSrg");
     mcpToSrg.put(MCP_NAME, SRG_NAME);
-    Deencapsulation.setField(ObfuscationHelper.class, "mcpToSrg", mcpToSrg);
 
     // Populate SRG to MCP map with dummy data.
-    Map<String, String> srgToMcp = new HashMap<>();
+    Map<String, String> srgToMcp = Deencapsulation.getField(ObfuscationHelper.class, "srgToMcp");
     srgToMcp.put(SRG_NAME, MCP_NAME);
-    Deencapsulation.setField(ObfuscationHelper.class, "srgToMcp", srgToMcp);
+  }
+
+  /**
+   * Test that an IllegalArgumentException is thrown when passing a null name.
+   */
+  @Test(expected = IllegalArgumentException.class)
+  public void testConvertName_nullName_illegalArgumentException() {
+    // Call method under test.
+    ObfuscationHelper.convertName(null);
   }
 
   /**
@@ -60,8 +67,8 @@ public class ObfuscationHelperTest {
    */
   @Test
   public void testConvertName_deobfuscatedEnvironmentMcpName_mcpNameReturned() {
-    // Set up test inputs.
-    Deencapsulation.setField(ObfuscationHelper.class, "deobfuscated", true);
+    // Set up test data.
+    Launch.blackboard.put(DEENCAPULSATION_FIELD, true);
 
     // Call method under test.
     String convertedName = ObfuscationHelper.convertName(MCP_NAME);
@@ -76,8 +83,8 @@ public class ObfuscationHelperTest {
    */
   @Test
   public void testConvertName_deobfuscatedEnvironmentSrgName_mcpNameReturned() {
-    // Set up test inputs.
-    Deencapsulation.setField(ObfuscationHelper.class, "deobfuscated", true);
+    // Set up test data.
+    Launch.blackboard.put(DEENCAPULSATION_FIELD, true);
 
     // Call method under test.
     String convertedName = ObfuscationHelper.convertName(SRG_NAME);
@@ -93,8 +100,8 @@ public class ObfuscationHelperTest {
    */
   @Test(expected = IllegalArgumentException.class)
   public void testConvertName_deobfuscatedEnvironmentUnmappedName_illegalArgumentException() {
-    // Set up test inputs.
-    Deencapsulation.setField(ObfuscationHelper.class, "deobfuscated", true);
+    // Set up test data.
+    Launch.blackboard.put(DEENCAPULSATION_FIELD, true);
 
     // Call method under test.
     ObfuscationHelper.convertName("unmappedName");
@@ -104,9 +111,9 @@ public class ObfuscationHelperTest {
    * Test that the SRG name is returned when passing an MCP name in an obfuscated environment.
    */
   @Test
-  public void testConvertName_obfuscatedEnvironmentMcgName_srgNameReturned() {
-    // Set up test inputs.
-    Deencapsulation.setField(ObfuscationHelper.class, "deobfuscated", false);
+  public void testConvertName_obfuscatedEnvironmentMcpName_srgNameReturned() {
+    // Set up test data.
+    Launch.blackboard.put(DEENCAPULSATION_FIELD, false);
 
     // Call method under test.
     String convertedName = ObfuscationHelper.convertName(MCP_NAME);
@@ -121,8 +128,8 @@ public class ObfuscationHelperTest {
    */
   @Test
   public void testConvertName_obfuscatedEnvironmentSrgName_srgNameReturned() {
-    // Set up test inputs.
-    Deencapsulation.setField(ObfuscationHelper.class, "deobfuscated", false);
+    // Set up test data.
+    Launch.blackboard.put(DEENCAPULSATION_FIELD, false);
 
     // Call method under test.
     String convertedName = ObfuscationHelper.convertName(SRG_NAME);
@@ -138,8 +145,8 @@ public class ObfuscationHelperTest {
    */
   @Test(expected = IllegalArgumentException.class)
   public void testConvertName_obfuscatedEnvironmentUnmappedName_illegalArgumentException() {
-    // Set up test inputs.
-    Deencapsulation.setField(ObfuscationHelper.class, "deobfuscated", false);
+    // Set up test data.
+    Launch.blackboard.put(DEENCAPULSATION_FIELD, false);
 
     // Call method under test.
     ObfuscationHelper.convertName("unmappedName");

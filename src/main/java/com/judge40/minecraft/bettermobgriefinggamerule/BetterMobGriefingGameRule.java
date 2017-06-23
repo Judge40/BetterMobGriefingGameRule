@@ -28,31 +28,23 @@ import com.judge40.minecraft.bettermobgriefinggamerule.world.EntityMobGriefingDa
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.command.CommandGameRule;
 import net.minecraft.command.CommandHandler;
-import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
- * Base class for 'Better mobGriefing GameRule' mod
+ * Base class for 'Better mobGriefing GameRule' mod.
  */
-@Mod(modid = BetterMobGriefingGameRule.MODID, name = BetterMobGriefingGameRule.NAME,
-    version = BetterMobGriefingGameRule.VERSION, guiFactory = BetterMobGriefingGameRule.GUI_FACTORY)
+@Mod(modid = ModInfoConstants.ID, name = ModInfoConstants.DISPLAY_NAME,
+    version = ModInfoConstants.MINECRAFT_VERSION, guiFactory = ModInfoConstants.GUI_FACTORY)
 public class BetterMobGriefingGameRule {
-
-  // Constants for mod attributes
-  public static final String MODID = "bettermobgriefinggamerule";
-  public static final String NAME = "Better mobGriefing GameRule";
-  public static final String VERSION = "1.7.10-0.4.0";
-  public static final String GUI_FACTORY =
-      "com.judge40.minecraft.bettermobgriefinggamerule.client.gui.DefaultMobGriefingConfigGuiFactory";
 
   // Constants for the mobGriefing rules
   public static final String ORIGINAL = "mobGriefing";
@@ -63,13 +55,12 @@ public class BetterMobGriefingGameRule {
    * Perform pre-initialization actions. The configuration file is loaded and the default
    * mobGriefing rule values are retrieved.
    * 
-   * @param preInitializationEvent The FMLPreInitializationEvent
+   * @param event The FMLPreInitializationEvent
    */
   @EventHandler
-  public void onFMLPreInitializationEvent(FMLPreInitializationEvent preInitializationEvent) {
+  public void onFMLPreInitializationEvent(FMLPreInitializationEvent event) {
     // Create and/or load the configuration
-    configuration =
-        new DefaultMobGriefingConfiguration(preInitializationEvent.getSuggestedConfigurationFile());
+    configuration = new DefaultMobGriefingConfiguration(event.getSuggestedConfigurationFile());
   }
 
   /**
@@ -78,9 +69,8 @@ public class BetterMobGriefingGameRule {
    * @param event The FMLInitializationEvent
    */
   @EventHandler
-  public void onFMLInitializationEvent(FMLInitializationEvent initializationEvent) {
-    BetterMobGriefingGameRuleEventHandler eventHandler =
-        new BetterMobGriefingGameRuleEventHandler();
+  public void onFMLInitializationEvent(FMLInitializationEvent event) {
+    MobGriefingEventHandler eventHandler = new MobGriefingEventHandler();
     FMLCommonHandler.instance().bus().register(eventHandler);
     MinecraftForge.EVENT_BUS.register(eventHandler);
   }
@@ -88,34 +78,34 @@ public class BetterMobGriefingGameRule {
   /**
    * On server starting add new mobGriefing game rules
    * 
-   * @param serverStartingEvent The FMLServerStartingEvent
+   * @param event The FMLServerStartingEvent
    */
   @EventHandler()
-  public void onFMLServerStartingEvent(FMLServerStartingEvent serverStartingEvent) {
-    CommandHandler commandHandler =
-        (CommandHandler) serverStartingEvent.getServer().getCommandManager();
+  public void onFMLServerStartingEvent(FMLServerStartingEvent event) {
+    CommandHandler commandHandler = (CommandHandler) event.getServer().getCommandManager();
 
-    // Get original gamerule command and register the new gamerule command
-    CommandGameRule newCommandGameRule = new BetterMobGriefingCommand();
-    ICommand originalCommandGameRule =
-        (ICommand) commandHandler.getCommands().get(newCommandGameRule.getCommandName());
-    commandHandler.registerCommand(newCommandGameRule);
+    // Create a new game rule command handler and retrieve the original handler.
+    BetterMobGriefingCommand newGameRuleHandler = new BetterMobGriefingCommand();
+    CommandGameRule originalGameRuleHandler =
+        (CommandGameRule) commandHandler.getCommands().get(newGameRuleHandler.getCommandName());
 
-    // Remove original gamerule command from the command set
-    Set<?> commandSet = ObfuscationReflectionHelper.getPrivateValue(CommandHandler.class,
-        commandHandler, "commandSet", "field_71561_b");
-    commandSet.remove(originalCommandGameRule);
+    // Remove the original game rule command handler from the command set and register the new
+    // handler.
+    Set<?> commandSet = ReflectionHelper.getPrivateValue(CommandHandler.class, commandHandler,
+        ObfuscationHelper.convertName("field_71561_b"));
+    commandSet.remove(originalGameRuleHandler);
+    commandHandler.registerCommand(newGameRuleHandler);
 
     // Add new game rules to world data
-    World world = serverStartingEvent.getServer().getEntityWorld();
+    World world = event.getServer().getEntityWorld();
 
-    // Set the global mobGriefing game rule value if this is a new world
+    // Set the global mob griefing game rule value if this is a new world.
     if (world.getTotalWorldTime() == 0) {
       world.getGameRules().setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL,
           configuration.getGlobalMobGriefingValue().toExternalForm());
     }
 
-    // Add the entity rules
+    // Add the entity mob griefing game rules.
     EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forWorld(world);
     entityMobGriefingData.populateFromConfiguration(configuration, false);
   }

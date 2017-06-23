@@ -29,13 +29,13 @@ import net.minecraft.launchwrapper.Launch;
  * not the environment is obfuscated.
  */
 public class ObfuscationHelper {
-  private static final boolean deobfuscated =
-      (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 
   private static final Map<String, String> srgToMcp = new HashMap<>();
   private static final Map<String, String> mcpToSrg = new HashMap<>();
 
   static {
+    srgToMcp.put("field_146075_bs", "field_146075_bs");
+    srgToMcp.put("field_71561_b", "commandSet");
     srgToMcp.put("func_180658_a", "onFallenUpon");
     srgToMcp.put("func_70619_bc", "updateAITasks");
     srgToMcp.put("func_70626_be", "updateEntityActionState");
@@ -61,12 +61,16 @@ public class ObfuscationHelper {
   public static String convertName(String name) {
     String convertedName = null;
 
-    // If in a deobfuscated environment then attempt conversion from SRG to MCP, otherwise
-    // attempt conversion from MCP to SRG.
-    if (deobfuscated) {
-      convertedName = srgToMcp.getOrDefault(name, mcpToSrg.containsKey(name) ? name : null);
-    } else {
-      convertedName = mcpToSrg.getOrDefault(name, srgToMcp.containsKey(name) ? name : null);
+    if (name != null) {
+      // If in a deobfuscated environment then attempt conversion from SRG to MCP, otherwise
+      // attempt conversion from MCP to SRG.
+      boolean deobfuscated = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+
+      if (deobfuscated) {
+        convertedName = srgToMcp.getOrDefault(name, mcpToSrg.containsKey(name) ? name : null);
+      } else {
+        convertedName = mcpToSrg.getOrDefault(name, srgToMcp.containsKey(name) ? name : null);
+      }
     }
 
     // If there is no mapping available then throw an illegal argument exception.

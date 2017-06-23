@@ -24,15 +24,15 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 
 /**
- * Extension of EntityAIBreakDoor to allow new mobGriefing game rules to be used instead of the
- * original rule
+ * An extension of {@link EntityAIBreakDoor} to allow entity specific mobGriefing game rules to be
+ * used instead of the global rule.
  */
-public class BetterMobGriefingGameRuleEntityAIBreakDoor extends EntityAIBreakDoor {
+public class BetterBreakDoorAiTask extends EntityAIBreakDoor {
 
   /**
    * @param p_i1618_1_ The EntityLiving for this AI task
    */
-  public BetterMobGriefingGameRuleEntityAIBreakDoor(EntityLiving p_i1618_1_) {
+  public BetterBreakDoorAiTask(EntityLiving p_i1618_1_) {
     super(p_i1618_1_);
   }
 
@@ -45,14 +45,13 @@ public class BetterMobGriefingGameRuleEntityAIBreakDoor extends EntityAIBreakDoo
   public boolean shouldExecute() {
     boolean shouldExecute = super.shouldExecute();
 
-    // Get whether mobGriefing is enabled for this entity
+    // Get whether mobGriefing is enabled for this entity.
     boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(theEntity);
 
-    // If shouldExecute from parent class is false and mobGriefing is true then also check
-    // func_150015_f again as that might have been the cause of a false result and should not be
-    // overridden
+    // If shouldExecute from parent class is false then func_150015_f will not have been evaluated
+    // and must be checked if the entity mob griefing overrides the global value.
     if (!shouldExecute && mobGriefingEnabled) {
-      shouldExecute = mobGriefingEnabled && field_151504_e != null
+      shouldExecute = field_151504_e != null
           && !field_151504_e.func_150015_f(theEntity.worldObj, entityPosX, entityPosY, entityPosZ);
     } else {
       shouldExecute = mobGriefingEnabled;

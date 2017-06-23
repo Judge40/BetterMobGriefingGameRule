@@ -19,48 +19,55 @@
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.command.BetterMobGriefingCommand;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.world.EntityMobGriefingData;
 
-import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
-import mockit.Deencapsulation;
-import mockit.Mock;
-import mockit.MockUp;
+import cpw.mods.fml.relauncher.ReflectionHelper;
+import mockit.Expectations;
+import mockit.Mocked;
+import mockit.Verifications;
 import net.minecraft.command.CommandGameRule;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandManager;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.MapStorage;
-import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.MinecraftForge;
 
 /**
- * Tests for BetterMobGriefingGameRule
+ * The unit tests for {@link BetterMobGriefingGameRule}.
  */
 public class BetterMobGriefingGameRuleTest {
 
   private BetterMobGriefingGameRule betterMobGriefingGameRule;
 
-  private World world;
+  @BeforeClass
+  public static void setUpBeforeClass() {
+    // Set the deobfuscation flag.
+    Map<String, Object> blackboard = new HashMap<>();
+    blackboard.put("fml.deobfuscatedEnvironment", true);
+    Launch.blackboard = blackboard;
+  }
 
   /**
    * @throws java.lang.Exception
@@ -68,280 +75,343 @@ public class BetterMobGriefingGameRuleTest {
   @Before
   public void setUp() throws Exception {
     betterMobGriefingGameRule = new BetterMobGriefingGameRule();
-    world = Deencapsulation.newUninitializedInstance(World.class);
-    WorldInfo worldInfo = new WorldInfo(new NBTTagCompound());
-    Deencapsulation.setField(world, "worldInfo", worldInfo);
-
-    MapStorage mapStorage = new MapStorage(null);
-    world.mapStorage = mapStorage;
   }
 
   /**
-   * @throws java.lang.Exception
-   */
-  @After
-  public void tearDown() throws Exception {
-    betterMobGriefingGameRule = null;
-    world = null;
-  }
-
-  /**
-   * Test that the event handler is initialized on FMLInitializationEvent
+   * Test that configuration is loaded when the FML pre-initialization event is fired.
    */
   @Test
-  public void testOnFMLInitializationEvent_eventHandlerInitialized() {
-    new MockUp<FMLCommonHandler>() {
-      @Mock
-      void $init() {
+  public void testOnFMLPreInitializationEvent_configurationLoaded() {
+    // Set up test data.
+    BetterMobGriefingGameRule.configuration = null;
+    FMLPreInitializationEvent event = new FMLPreInitializationEvent(null, null);
+    File configFile = new File("");
 
-      }
+    // Record expectations.
+    new Expectations(event, DefaultMobGriefingConfiguration.class) {
+      {
+        event.getSuggestedConfigurationFile();
+        result = configFile;
 
-      @Mock
-      EventBus bus() {
-        return new EventBus();
-      }
-    };
-
-    new MockUp<EventBus>() {
-      @Mock(invocations = 2)
-      void register(Object target) {
-        Assert.assertThat("Initialized object is not the expected event handler", target,
-            CoreMatchers.instanceOf(BetterMobGriefingGameRuleEventHandler.class));
+        new DefaultMobGriefingConfiguration(configFile);
       }
     };
 
-    betterMobGriefingGameRule.onFMLInitializationEvent(new FMLInitializationEvent());
+    // Call the method under test.
+    betterMobGriefingGameRule.onFMLPreInitializationEvent(event);
+
+    // Perform assertions.
+    Assert.assertThat("The configuration did not match the expected value.",
+        BetterMobGriefingGameRule.configuration,
+        CoreMatchers.isA(DefaultMobGriefingConfiguration.class));
   }
 
   /**
-   * Test that the configuration is loaded as expected
+   * Test that the event handlers are registered when the FML initialization event is fired.
    */
   @Test
-  public void testOnFMLPreInitializationEvent_configLoadedAsExpected() {
-    new MockUp<DefaultMobGriefingConfiguration>() {
-      @Mock(invocations = 1)
-      void $init(File file) {
+  public void testOnFMLInitializationEvent_eventHandlersRegistered(@Mocked EventBus eventBus,
+      @Mocked Loader loader) {
+    // Set up test data.
+    FMLInitializationEvent event = new FMLInitializationEvent();
 
+    // Record expectations.
+    new Expectations(MinecraftForge.class) {
+      {
+        eventBus.register(withInstanceOf(MobGriefingEventHandler.class));
+        times = 2;
       }
     };
 
-    FMLPreInitializationEvent fmlPreInitializationEvent = new MockUp<FMLPreInitializationEvent>() {
-      @Mock
-      void $init(Object... data) {
-
-      }
-
-      @Mock(invocations = 1)
-      File getSuggestedConfigurationFile() {
-        return new File("");
-      }
-    }.getMockInstance();
-
-    betterMobGriefingGameRule.onFMLPreInitializationEvent(fmlPreInitializationEvent);
+    // Call the method under test.
+    betterMobGriefingGameRule.onFMLInitializationEvent(event);
   }
 
   /**
-   * Test that the new game rules are added on FMLServerStartedEvent
+   * Test that the game rule hander is replaced, global rule is replaced and entity rules are
+   * populated when the FML server starting event is fired and the world is new.
    */
   @Test
-  public void testOnFMLServerStartingEvent_mobGriefingGameRulesAndCommandsAdded() {
-    new MockUp<MinecraftServer>() {
-      @Mock
-      void $clinit() {
+  public void testOnFMLServerStartingEvent_newWorld_gameRuleCommandReplacedGlobalRuleReplacedEntityRulesPopulated(
+      @Mocked CommandHandler commandHandler, @Mocked DefaultMobGriefingConfiguration configuration,
+      @Mocked EntityMobGriefingData entityData, @Mocked MinecraftServer server,
+      @Mocked World world) {
+    // Set up test data.
+    FMLServerStartingEvent event = new FMLServerStartingEvent(server);
+    BetterMobGriefingCommand newGameRuleHandler = new BetterMobGriefingCommand();
+    CommandGameRule originalGameRuleHandler = new CommandGameRule();
 
+    Map<String, ICommand> commandMap = new HashMap<>();
+    commandMap.put("commandName", originalGameRuleHandler);
+
+    Set<ICommand> commandSet = new HashSet<>();
+    commandSet.add(originalGameRuleHandler);
+
+    GameRules gameRules = new GameRules();
+
+    BetterMobGriefingGameRule.configuration = configuration;
+
+    // Record expectations.
+    new Expectations(gameRules, BetterMobGriefingCommand.class, ReflectionHelper.class) {
+      {
+        newGameRuleHandler.getCommandName();
+        result = "commandName";
+
+        commandHandler.getCommands();
+        result = commandMap;
+
+        ReflectionHelper.getPrivateValue(CommandHandler.class, commandHandler,
+            ObfuscationHelper.convertName("field_71561_b"));
+        result = commandSet;
+
+        world.getTotalWorldTime();
+        result = 0;
+
+        world.getGameRules();
+        result = gameRules;
+
+        configuration.getGlobalMobGriefingValue();
+        result = MobGriefingValue.FALSE;
       }
     };
 
-    CommandHandler commandHandler = new CommandHandler();
-    CommandGameRule commandGameRule = new CommandGameRule();
-    commandHandler.registerCommand(new CommandGameRule());
+    // Call the method under test.
+    betterMobGriefingGameRule.onFMLServerStartingEvent(event);
 
-    World world = new MockUp<World>() {
-      @Mock
-      long getTotalWorldTime() {
-        return 1l;
-      }
-    }.getMockInstance();
+    // Perform assertions.
+    Assert.assertThat("The command set contained an unexpected game rule command.", commandSet,
+        CoreMatchers.not(CoreMatchers.hasItem(originalGameRuleHandler)));
 
-    MinecraftServer mockServer = new MockUp<MinecraftServer>() {
-      @Mock
-      ICommandManager getCommandManager() {
-        return commandHandler;
-      }
+    // Verify expectations.
+    new Verifications() {
+      {
+        commandHandler.registerCommand(withInstanceOf(BetterMobGriefingCommand.class));
 
-      @Mock
-      World getEntityWorld() {
-        return world;
-      }
-    }.getMockInstance();
+        gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL,
+            MobGriefingValue.FALSE.toExternalForm());
 
-    new MockUp<EntityMobGriefingData>() {
-      @Mock
-      EntityMobGriefingData forWorld(World world) {
-        return new EntityMobGriefingData("");
-      }
-
-      @Mock(invocations = 1)
-      void populateFromConfiguration(DefaultMobGriefingConfiguration configuration,
-          boolean overwrite) {
-
+        entityData.populateFromConfiguration((DefaultMobGriefingConfiguration) any, false);
       }
     };
-
-    betterMobGriefingGameRule.onFMLServerStartingEvent(new FMLServerStartingEvent(mockServer));
-
-    // Test that the command map contains the correct gamerule command
-    ICommand commandMapCommand =
-        (ICommand) commandHandler.getCommands().get(commandGameRule.getCommandName());
-    Assert.assertThat("The game rule command in the command map is not of the expected type.",
-        commandMapCommand, CoreMatchers.instanceOf(BetterMobGriefingCommand.class));
-
-    // Test that the original command was removed from the command set
-    Set<ICommand> commandSet = Deencapsulation.getField(commandHandler, "commandSet");
-    Assert.assertThat("The original game rule command was not removed from the command set.",
-        commandSet, CoreMatchers.not(CoreMatchers.hasItem(commandGameRule)));
   }
 
   /**
-   * Test that mob griefing is enabled when the entity is registered and the world data mob griefing
-   * value for the entity is true
+   * Test that the game rule hander is replaced, global rule is replaced and entity rules are
+   * populated when the FML server starting event is fired and the world is not new.
    */
   @Test
-  public void testIsMobGriefingEnabled_entityRegisteredEntityMobGriefingValueTrue_mobGriefingEnabled() {
-    new MockUp<GameRules>() {
-      @Mock(invocations = 0)
-      boolean getGameRuleBooleanValue(String gameRule) {
-        return false;
+  public void testOnFMLServerStartingEvent_existingWorld_gameRuleCommandReplacedGlobalRuleReplacedEntityRulesPopulated(
+      @Mocked CommandHandler commandHandler, @Mocked EntityMobGriefingData entityData,
+      @Mocked MinecraftServer server, @Mocked World world) {
+    // Set up test data.
+    FMLServerStartingEvent event = new FMLServerStartingEvent(server);
+    BetterMobGriefingCommand newGameRuleHandler = new BetterMobGriefingCommand();
+    CommandGameRule originalGameRuleHandler = new CommandGameRule();
+
+    Map<String, ICommand> commandMap = new HashMap<>();
+    commandMap.put("commandName", originalGameRuleHandler);
+
+    Set<ICommand> commandSet = new HashSet<>();
+    commandSet.add(originalGameRuleHandler);
+
+    // Record expectations.
+    new Expectations(BetterMobGriefingCommand.class, ReflectionHelper.class) {
+      {
+        newGameRuleHandler.getCommandName();
+        result = "commandName";
+
+        commandHandler.getCommands();
+        result = commandMap;
+
+        ReflectionHelper.getPrivateValue(CommandHandler.class, commandHandler,
+            ObfuscationHelper.convertName("field_71561_b"));
+        result = commandSet;
+
+        world.getTotalWorldTime();
+        result = 1;
       }
     };
 
-    EntityLiving entity = new EntityZombie(null);
+    // Call the method under test.
+    betterMobGriefingGameRule.onFMLServerStartingEvent(event);
+
+    // Perform assertions.
+    Assert.assertThat("The command set contained an unexpected game rule command.", commandSet,
+        CoreMatchers.not(CoreMatchers.hasItem(originalGameRuleHandler)));
+
+    // Verify expectations.
+    new Verifications() {
+      {
+        commandHandler.registerCommand(withInstanceOf(BetterMobGriefingCommand.class));
+
+        entityData.populateFromConfiguration((DefaultMobGriefingConfiguration) any, false);
+      }
+    };
+  }
+
+  /**
+   * Test that the global rule's value is returned when the entity's name can not be determined.
+   */
+  @Test
+  public void testIsMobGriefingEnabled_entityNameNotFound_globalValue(@Mocked Entity entity,
+      @Mocked GameRules gameRules, @Mocked World world) {
+    // Set up test data.
     entity.worldObj = world;
 
-    EntityMobGriefingData worldSavedData =
-        new EntityMobGriefingData(BetterMobGriefingGameRule.MODID);
-    worldSavedData.setMobGriefingValue(EntityList.getEntityString(entity), MobGriefingValue.TRUE);
+    // Record expectations.
+    new Expectations(EntityList.class) {
+      {
+        EntityList.getEntityString(entity);
+        result = null;
 
-    MapStorage mapStorage = new MapStorage(null);
-    mapStorage.setData(BetterMobGriefingGameRule.MODID, worldSavedData);
-    world.mapStorage = mapStorage;
-
-    boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
-    Assert.assertThat("Mob griefing should be enabled.", mobGriefingEnabled, CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that mob griefing is disabled when the entity is registered and the world data mob
-   * griefing value for the entity is false
-   */
-  @Test
-  public void testIsMobGriefingEnabled_entityRegisteredEntityMobGriefingValueFalse_mobGriefingDisabled() {
-    new MockUp<GameRules>() {
-      @Mock(invocations = 0)
-      boolean getGameRuleBooleanValue(String gameRule) {
-        return false;
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        result = false;
+        times = 1;
       }
     };
 
-    EntityLiving entity = new EntityZombie(null);
-    entity.worldObj = world;
+    // Call the method under test.
+    boolean isMobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
 
-    EntityMobGriefingData worldSavedData =
-        new EntityMobGriefingData(BetterMobGriefingGameRule.MODID);
-    worldSavedData.setMobGriefingValue(EntityList.getEntityString(entity), MobGriefingValue.FALSE);
-
-    MapStorage mapStorage = new MapStorage(null);
-    mapStorage.setData(BetterMobGriefingGameRule.MODID, worldSavedData);
-    world.mapStorage = mapStorage;
-
-    boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
-    Assert.assertThat("Mob griefing should be disabled.", mobGriefingEnabled,
-        CoreMatchers.is(false));
+    // Perform assertions.
+    Assert.assertThat("The isMobGriefingEnabled flag did not match the expected value.",
+        isMobGriefingEnabled, CoreMatchers.is(false));
   }
 
   /**
-   * Test that mob griefing defaults to the original game rule when the entity is registered and the
-   * world data mob griefing value is inherit
+   * Test that the global rule's value is returned when the entity does not have its own mob
+   * griefing rule.
    */
   @Test
-  public void testIsMobGriefingEnabled_entityRegisteredEntityMobGriefingValueInherit_originalGameRuleValue() {
-    new MockUp<GameRules>() {
-      @Mock(invocations = 1)
-      boolean getGameRuleBooleanValue(String gameRule) {
-        return false;
+  public void testIsMobGriefingEnabled_entityRuleNotFound_globalValue(@Mocked Entity entity,
+      @Mocked EntityMobGriefingData entityData, @Mocked GameRules gameRules, @Mocked World world) {
+    // Set up test data.
+    entity.worldObj = world;
+
+    // Record expectations.
+    new Expectations(EntityList.class) {
+      {
+        EntityList.getEntityString(entity);
+        result = "entityName";
+
+        entityData.getMobGriefingValue("entityName");
+        result = null;
+
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        result = false;
+        times = 1;
       }
     };
 
-    EntityLiving entity = new EntityZombie(null);
-    entity.worldObj = world;
+    // Call the method under test.
+    boolean isMobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
 
-    EntityMobGriefingData worldSavedData =
-        new EntityMobGriefingData(BetterMobGriefingGameRule.MODID);
-    worldSavedData.setMobGriefingValue(EntityList.getEntityString(entity),
-        MobGriefingValue.INHERIT);
-
-    MapStorage mapStorage = new MapStorage(null);
-    mapStorage.setData(BetterMobGriefingGameRule.MODID, worldSavedData);
-    world.mapStorage = mapStorage;
-
-    boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
-    Assert.assertThat("Mob griefing should be disabled.", mobGriefingEnabled,
-        CoreMatchers.is(false));
+    // Perform assertions.
+    Assert.assertThat("The isMobGriefingEnabled flag did not match the expected value.",
+        isMobGriefingEnabled, CoreMatchers.is(false));
   }
 
   /**
-   * Test that mob griefing defaults to the original game rule when the entity is registered but the
-   * world data mob griefing value does not exist
+   * Test that the global rule's value is returned when the entity's mob griefing value is INHERIT.
    */
   @Test
-  public void testIsMobGriefingEnabled_entityRegisteredEntityMobGriefingValueNull_originalGameRuleValue() {
-    new MockUp<GameRules>() {
-      @Mock(invocations = 1)
-      boolean getGameRuleBooleanValue(String gameRule) {
-        return false;
+  public void testIsMobGriefingEnabled_entityValueInherit_globalValue(@Mocked Entity entity,
+      @Mocked EntityMobGriefingData entityData, @Mocked GameRules gameRules, @Mocked World world) {
+    // Set up test data.
+    entity.worldObj = world;
+
+    // Record expectations.
+    new Expectations(EntityList.class) {
+      {
+        EntityList.getEntityString(entity);
+        result = "entityName";
+
+        entityData.getMobGriefingValue("entityName");
+        result = MobGriefingValue.INHERIT;
+
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        result = false;
+        times = 1;
       }
     };
 
-    EntityLiving entity = new EntityZombie(null);
-    entity.worldObj = world;
+    // Call the method under test.
+    boolean isMobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
 
-    EntityMobGriefingData worldSavedData =
-        new EntityMobGriefingData(BetterMobGriefingGameRule.MODID);
-
-    MapStorage mapStorage = new MapStorage(null);
-    mapStorage.setData(BetterMobGriefingGameRule.MODID, worldSavedData);
-    world.mapStorage = mapStorage;
-
-    boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
-    Assert.assertThat("Mob griefing should be disabled.", mobGriefingEnabled,
-        CoreMatchers.is(false));
+    // Perform assertions.
+    Assert.assertThat("The isMobGriefingEnabled flag did not match the expected value.",
+        isMobGriefingEnabled, CoreMatchers.is(false));
   }
 
   /**
-   * Test that mob griefing defaults to the original game rule when the entity is not registered
+   * Test that true is returned when the entity's mob griefing value is TRUE.
    */
   @Test
-  public void testIsMobGriefingEnabled_entityNotRegistered_originalGameRuleValue() {
-    new MockUp<GameRules>() {
-      @Mock(invocations = 1)
-      boolean getGameRuleBooleanValue(String gameRule) {
-        return false;
+  public void testIsMobGriefingEnabled_entityValueTrue_true(@Mocked Entity entity,
+      @Mocked EntityMobGriefingData entityData, @Mocked GameRules gameRules, @Mocked World world) {
+    // Set up test data.
+    entity.worldObj = world;
+
+    // Record expectations.
+    new Expectations(EntityList.class) {
+      {
+        EntityList.getEntityString(entity);
+        result = "entityName";
+
+        entityData.getMobGriefingValue("entityName");
+        result = MobGriefingValue.TRUE;
       }
     };
 
-    EntityLiving entity = new EntityLiving(null) {};
+    // Call the method under test.
+    boolean isMobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
+
+    // Perform assertions.
+    Assert.assertThat("The isMobGriefingEnabled flag did not match the expected value.",
+        isMobGriefingEnabled, CoreMatchers.is(true));
+
+    // Verify expectations.
+    new Verifications() {
+      {
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        times = 0;
+      }
+    };
+  }
+
+  /**
+   * Test that false is returned when the entity's mob griefing value is FALSE.
+   */
+  @Test
+  public void testIsMobGriefingEnabled_entityValueFalse_false(@Mocked Entity entity,
+      @Mocked EntityMobGriefingData entityData, @Mocked GameRules gameRules, @Mocked World world) {
+    // Set up test data.
     entity.worldObj = world;
 
-    EntityMobGriefingData worldSavedData =
-        new EntityMobGriefingData(BetterMobGriefingGameRule.MODID);
+    // Record expectations.
+    new Expectations(EntityList.class) {
+      {
+        EntityList.getEntityString(entity);
+        result = "entityName";
 
-    MapStorage mapStorage = new MapStorage(null);
-    mapStorage.setData(BetterMobGriefingGameRule.MODID, worldSavedData);
-    world.mapStorage = mapStorage;
+        entityData.getMobGriefingValue("entityName");
+        result = MobGriefingValue.FALSE;
+      }
+    };
 
-    boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
-    Assert.assertThat("Mob griefing should be disabled.", mobGriefingEnabled,
-        CoreMatchers.is(false));
+    // Call the method under test.
+    boolean isMobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
+
+    // Perform assertions.
+    Assert.assertThat("The isMobGriefingEnabled flag did not match the expected value.",
+        isMobGriefingEnabled, CoreMatchers.is(false));
+
+    // Verify expectations.
+    new Verifications() {
+      {
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        times = 0;
+      }
+    };
   }
 }
-

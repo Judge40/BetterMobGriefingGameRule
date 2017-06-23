@@ -35,12 +35,15 @@ import net.minecraft.entity.passive.EntitySheep;
  * The constants for default mob griefing configuration information.
  */
 public class DefaultMobGriefingConfigurationConstants {
+  // The constants for the localizable configuration UI message keys.
+  public static final String GLOBAL_RULE_KEY = "bettermobgriefinggamerule.config.defaultGlobalRule";
+  public static final String ENTITY_RULES_KEY =
+      "bettermobgriefinggamerule.config.defaultEntityRules";
+  public static final String VALID_VALUES_KEY = "bettermobgriefinggamerule.config.validValues";
+
   // The constants for the configuration categories.
-  public static final String DEFAULT_MOBGRIEFING_VALUES_CATEGORY = "defaultmobgriefingvalues";
-  public static final String GLOBAL_RULE_CATEGORY =
-      DEFAULT_MOBGRIEFING_VALUES_CATEGORY.concat(".globalrule");
-  public static final String ENTITY_RULES_CATEGORY =
-      DEFAULT_MOBGRIEFING_VALUES_CATEGORY.concat(".entityrules");
+  public static final String GLOBAL_RULE_CATEGORY = "defaultglobalrule";
+  public static final String ENTITY_RULES_CATEGORY = "defaultentityrules";
 
   // The entity classes with configuration support available by default.
   public static final List<Class<? extends EntityLiving>> ENTITY_CLASSES = Arrays.asList(

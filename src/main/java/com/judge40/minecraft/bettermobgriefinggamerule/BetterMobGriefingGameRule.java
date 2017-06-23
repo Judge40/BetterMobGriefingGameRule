@@ -112,7 +112,7 @@ public class BetterMobGriefingGameRule {
     // Set the global mobGriefing game rule value if this is a new world
     if (world.getTotalWorldTime() == 0) {
       world.getGameRules().setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL,
-          configuration.getGlobalMobGriefingValue());
+          configuration.getGlobalMobGriefingValue().toExternalForm());
     }
 
     // Add the entity rules

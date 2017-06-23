@@ -18,7 +18,7 @@
  */
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
-import java.util.Collections;
+import java.util.Arrays;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.ModInfoConstants;
@@ -40,9 +40,11 @@ public class DefaultMobGriefingConfigGui extends GuiConfig {
    */
   public DefaultMobGriefingConfigGui(GuiScreen parent) {
     super(parent,
-        Collections
-            .singletonList(new ConfigElement<>(BetterMobGriefingGameRule.configuration.getCategory(
-                DefaultMobGriefingConfigurationConstants.DEFAULT_MOBGRIEFING_VALUES_CATEGORY))),
+        Arrays.asList(
+            new ConfigElement<>(BetterMobGriefingGameRule.configuration
+                .getCategory(DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY)),
+            new ConfigElement<>(BetterMobGriefingGameRule.configuration
+                .getCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY))),
         ModInfoConstants.ID, false, false,
         getAbridgedConfigPath(BetterMobGriefingGameRule.configuration.toString()));
   }

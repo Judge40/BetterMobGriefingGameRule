@@ -47,17 +47,17 @@ public class DefaultMobGriefingConfigGuiTest {
     // Record expectations.
     new Expectations(GuiConfig.class) {
       {
-        configuration.getCategory(
-            DefaultMobGriefingConfigurationConstants.DEFAULT_MOBGRIEFING_VALUES_CATEGORY);
-        result = new ConfigCategory("dummyCategoryName");;
-        times = 1;
+        configuration.getCategory(DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY);
+        result = new ConfigCategory("globalCategoryName");
+
+        configuration.getCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY);
+        result = new ConfigCategory("entityCategoryName");
 
         configuration.toString();
         result = "parent-folder/.minecraft/config-folder/config-file.cfg";
 
         GuiConfig.getAbridgedConfigPath("parent-folder/.minecraft/config-folder/config-file.cfg");
         result = "/.minecraft/config-folder/config-file.cfg";
-        times = 1;
       }
     };
 

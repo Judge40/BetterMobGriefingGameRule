@@ -19,26 +19,31 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
-import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRuleMessages;
 import com.judge40.minecraft.bettermobgriefinggamerule.MobGriefingValue;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
-import scala.actors.threadpool.Arrays;
 
 /**
  * A custom {@link Configuration} which adds convenience methods for retrieving default mob griefing
  * configurations.
  */
 public class DefaultMobGriefingConfiguration extends Configuration {
+
+  private MobGriefingValue globalMobGriefingValue;
+
+  private Map<String, MobGriefingValue> entityNamesToMobGriefingValue;
 
   /**
    * Creates a new or loads the existing configuration file and sets the category language keys.
@@ -51,47 +56,51 @@ public class DefaultMobGriefingConfiguration extends Configuration {
     load();
 
     // Set configuration category language keys
-    setCategoryLanguageKey(
-        DefaultMobGriefingConfigurationConstants.DEFAULT_MOBGRIEFING_VALUES_CATEGORY,
-        BetterMobGriefingGameRuleMessages.DEFAULT_MOBGRIEFING_VALUES_KEY);
     setCategoryLanguageKey(DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-        BetterMobGriefingGameRuleMessages.GLOBAL_RULE_KEY);
+        DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_KEY);
     setCategoryLanguageKey(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
-        BetterMobGriefingGameRuleMessages.ENTITY_RULES_KEY);
+        DefaultMobGriefingConfigurationConstants.ENTITY_RULES_KEY);
+
+    // Synchronize the configuration values.
+    synchronize();
   }
 
   /**
-   * Get the configured default global mobGriefing value.
-   * 
-   * @return The configured default value for global mobGriefing.
+   * Synchronize the configuration's mob griefing values, the current values are retrieved from the
+   * configuration file and stored in the {@link DefaultMobGriefingConfiguration}. Any property
+   * values which are missing or invalid will be populated with their default values.
    */
-  public String getGlobalMobGriefingValue() {
-    String[] validValues = new String[] {MobGriefingValue.TRUE.toExternalForm(),
-        MobGriefingValue.FALSE.toExternalForm()};
+  public void synchronize() {
+    synchronizeGlobalValue();
+    synchronizeEntityValues();
 
-    String globalValue = getString(BetterMobGriefingGameRule.ORIGINAL,
-        DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-        MobGriefingValue.TRUE.toExternalForm(),
-        BetterMobGriefingGameRuleMessages.VALID_VALUES(Arrays.asList(validValues)), validValues);
-
-    // Save any changes to the configuration.
+    // Save any changes made to the configuration.
     if (hasChanged()) {
       save();
     }
-
-    return globalValue;
   }
 
   /**
-   * Get the default mobGriefing values for all configured entities.
-   * 
-   * @return A map where the key is the entity name and the value is the configured default
-   *         mobGriefing value.
+   * Synchronize the configuration's global mob griefing value, the current value is retrieved from
+   * the configuration file and stored in the {@link DefaultMobGriefingConfiguration}. If the
+   * property value is missing or invalid it will be populated with its default value.
    */
-  public Map<String, MobGriefingValue> getEntityMobGriefingValues() {
-    String[] validValues = new String[] {MobGriefingValue.TRUE.toExternalForm(),
-        MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm()};
+  private void synchronizeGlobalValue() {
+    List<String> validValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
+        MobGriefingValue.FALSE.toExternalForm());
 
+    String globalPropertyValue = getString(
+        DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
+        BetterMobGriefingGameRule.ORIGINAL, MobGriefingValue.TRUE.toExternalForm(), validValues);
+    globalMobGriefingValue = MobGriefingValue.toEnumeration(globalPropertyValue);
+  }
+
+  /**
+   * Synchronize the configuration's entity mob griefing values, the current values are retrieved
+   * from the configuration file and stored in the {@link DefaultMobGriefingConfiguration}. Any
+   * property values which are missing or invalid will be populated with their default values.
+   */
+  private void synchronizeEntityValues() {
     // Get the names of all configured entities.
     ConfigCategory category =
         getCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY);
@@ -104,29 +113,64 @@ public class DefaultMobGriefingConfiguration extends Configuration {
       entityNames.add(entityName);
     }
 
-    // Get the configured default value for each entity, if the configuration entry is missing for
-    // an entity then a new entry is created.
-    Map<String, MobGriefingValue> defaultEntityRules = new HashMap<>();
+    // Get the property value for each entity.
+    entityNamesToMobGriefingValue = new HashMap<>();
+    List<String> validValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
+        MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
     for (String entityName : entityNames) {
       Class<?> entityClass = (Class<?>) EntityList.stringToClassMapping.get(entityName);
 
       // Verify that the entity is a valid entity.
       if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
-        String propertyValue =
-            getString(entityName, DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
-                MobGriefingValue.INHERIT.toExternalForm(),
-                BetterMobGriefingGameRuleMessages.VALID_VALUES(Arrays.asList(validValues)),
-                validValues);
-        defaultEntityRules.put(entityName, MobGriefingValue.toEnumeration(propertyValue));
+        String entityPropertyValue =
+            getString(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY, entityName,
+                MobGriefingValue.INHERIT.toExternalForm(), validValues);
+        entityNamesToMobGriefingValue.put(entityName,
+            MobGriefingValue.toEnumeration(entityPropertyValue));
       }
     }
+  }
 
-    // Save any changes to the configuration.
-    if (hasChanged()) {
-      save();
+  /**
+   * Get the string value of a property from the configuration file, any property values which are
+   * missing or invalid will be populated with the default value.
+   * 
+   * @param categoryName The name of the property's category.
+   * @param propertyName The name of the property.
+   * @param defaultValue The default value for the property.
+   * @param validValues The valid values for the property.
+   * @return The property string value.
+   */
+  private String getString(String categoryName, String propertyName, String defaultValue,
+      List<String> validValues) {
+    String propertyValue = getString(propertyName, categoryName, defaultValue,
+        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validValues),
+        validValues.toArray(new String[validValues.size()]));
+
+    if (!validValues.contains(propertyValue)) {
+      propertyValue = defaultValue;
     }
 
-    return defaultEntityRules;
+    return propertyValue;
+  }
+
+  /**
+   * Get the configured default global mobGriefing value.
+   * 
+   * @return The configured default value for global mobGriefing.
+   */
+  public MobGriefingValue getGlobalMobGriefingValue() {
+    return globalMobGriefingValue;
+  }
+
+  /**
+   * Get the configured default mobGriefing values for all entities.
+   * 
+   * @return A map where the key is the entity name and the value is the configured default
+   *         mobGriefing value.
+   */
+  public Map<String, MobGriefingValue> getEntityMobGriefingValues() {
+    return entityNamesToMobGriefingValue;
   }
 }

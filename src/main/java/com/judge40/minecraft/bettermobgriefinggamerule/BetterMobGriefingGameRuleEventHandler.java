@@ -50,7 +50,7 @@ public class BetterMobGriefingGameRuleEventHandler {
   @SubscribeEvent
   public void onConfigChangedEvent(OnConfigChangedEvent configChangedEvent) {
     if (configChangedEvent.modID.equals(BetterMobGriefingGameRule.MODID)) {
-      BetterMobGriefingGameRule.configuration.save();
+      BetterMobGriefingGameRule.configuration.synchronize();
     }
   }
 

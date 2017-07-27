@@ -233,12 +233,15 @@ public class BetterMobGriefingCommandTest {
     String[] commandWords = new String[] {"mobGriefing"};
 
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+    entityMobGriefingData.setMobGriefingValue("entityName1", MobGriefingValue.TRUE);
+    entityMobGriefingData.setMobGriefingValue("entityName2", MobGriefingValue.FALSE);
+    entityMobGriefingData.setMobGriefingValue("entityName3", MobGriefingValue.INHERIT);
     GameRules gameRules = new GameRules();
 
     List<ChatComponentText> capturedChatText = new ArrayList<>();
 
     // Record Expectations.
-    new Expectations(entityMobGriefingData, gameRules) {
+    new Expectations(EntityMobGriefingData.class, gameRules) {
       {
         commandSender.getEntityWorld();
         result = world;
@@ -251,10 +254,6 @@ public class BetterMobGriefingCommandTest {
 
         gameRules.getGameRuleStringValue("mobGriefing");
         result = "globalValue";
-
-        entityMobGriefingData.toString();
-        result =
-            "entityName1 = entityValue1, entityName2 = entityValue2, entityName3 = entityValue3";
 
         commandSender.addChatMessage(withCapture(capturedChatText));
       }
@@ -270,13 +269,13 @@ public class BetterMobGriefingCommandTest {
         capturedChatText.get(0).getUnformattedText(), CoreMatchers.is("mobGriefing = globalValue"));
     Assert.assertThat("The chat output did not contain the expected value.",
         capturedChatText.get(1).getUnformattedText(),
-        CoreMatchers.is("mobGriefing entityName1 = entityValue1"));
+        CoreMatchers.is("mobGriefing entityName1 = true"));
     Assert.assertThat("The chat output did not contain the expected value.",
         capturedChatText.get(2).getUnformattedText(),
-        CoreMatchers.is("mobGriefing entityName2 = entityValue2"));
+        CoreMatchers.is("mobGriefing entityName2 = false"));
     Assert.assertThat("The chat output did not contain the expected value.",
         capturedChatText.get(3).getUnformattedText(),
-        CoreMatchers.is("mobGriefing entityName3 = entityValue3"));
+        CoreMatchers.is("mobGriefing entityName3 = inherit"));
   }
 
   /**
@@ -519,15 +518,13 @@ public class BetterMobGriefingCommandTest {
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
     // Record Expectations.
-    new Expectations(entityMobGriefingData, WrongUsageException.class) {
+    new Expectations(entityMobGriefingData) {
       {
         commandSender.getEntityWorld();
         result = world;
 
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
-
-        new WrongUsageException("/gamerule mobGriefing <entity name> true|false|inherit");
       }
     };
 

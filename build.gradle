@@ -39,9 +39,7 @@ minecraft {
 
 dependencies {
     // JMockit dependency
-    testCompile "org.jmockit:jmockit:1.19"
-    // JMockit Coverage dependency
-    testCompile "org.jmockit:jmockit-coverage:1.19"
+    testCompile "org.jmockit:jmockit:1.33"
     // JUnit dependency
     testCompile "junit:junit:4.12"
 }

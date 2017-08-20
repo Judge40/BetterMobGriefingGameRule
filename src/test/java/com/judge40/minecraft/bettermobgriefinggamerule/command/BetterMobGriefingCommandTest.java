@@ -560,8 +560,6 @@ public class BetterMobGriefingCommandTest {
 
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
-
-        new WrongUsageException(entityName + " is not a valid entity name");
       }
     };
 
@@ -596,8 +594,6 @@ public class BetterMobGriefingCommandTest {
 
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
-
-        new WrongUsageException("entityName1 is not a valid entity name");
       }
     };
 
@@ -632,8 +628,6 @@ public class BetterMobGriefingCommandTest {
 
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
-
-        new WrongUsageException("/gamerule mobGriefing <entity name> true|false|inherit");
       }
     };
 

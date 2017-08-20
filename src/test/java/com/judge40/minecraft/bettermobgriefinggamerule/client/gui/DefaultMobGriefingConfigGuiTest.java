@@ -25,6 +25,8 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobG
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfigurationConstants;
 
 import cpw.mods.fml.client.config.GuiConfig;
+import cpw.mods.fml.common.FMLModContainer;
+import cpw.mods.fml.common.Loader;
 import mockit.Expectations;
 import mockit.Mocked;
 import net.minecraftforge.common.config.ConfigCategory;
@@ -40,13 +42,20 @@ public class DefaultMobGriefingConfigGuiTest {
    */
   @Test
   public void testConstructor_configurationElementsAndTitleRetrieved(
-      @Mocked DefaultMobGriefingConfiguration configuration) {
+      @Mocked DefaultMobGriefingConfiguration configuration, @Mocked FMLModContainer modContainer,
+      @Mocked Loader loader) {
     // Set up test data.
-    BetterMobGriefingGameRule.configuration = configuration;
+    BetterMobGriefingGameRule entryPoint = new BetterMobGriefingGameRule();
 
     // Record expectations.
-    new Expectations(GuiConfig.class) {
+    new Expectations(entryPoint, GuiConfig.class) {
       {
+        BetterMobGriefingGameRule.getInstance();
+        result = entryPoint;
+
+        entryPoint.getDefaultMobGriefingConfiguration();
+        result = configuration;
+
         configuration.getCategory(DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY);
         result = new ConfigCategory("globalCategoryName");
 

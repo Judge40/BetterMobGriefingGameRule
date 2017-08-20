@@ -19,6 +19,7 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.entity.EntityLiving;
@@ -46,7 +47,8 @@ public class DefaultMobGriefingConfigurationConstants {
   public static final String ENTITY_RULES_CATEGORY = "defaultentityrules";
 
   // The entity classes with configuration support available by default.
-  public static final List<Class<? extends EntityLiving>> ENTITY_CLASSES = Arrays.asList(
-      EntityCreeper.class, EntityDragon.class, EntityEnderman.class, EntityGhast.class,
-      EntitySheep.class, EntitySilverfish.class, EntityWither.class, EntityZombie.class);
+  public static final List<Class<? extends EntityLiving>> ENTITY_CLASSES =
+      Collections.unmodifiableList(Arrays.asList(EntityCreeper.class, EntityDragon.class,
+          EntityEnderman.class, EntityGhast.class, EntitySheep.class, EntitySilverfish.class,
+          EntityWither.class, EntityZombie.class));
 }

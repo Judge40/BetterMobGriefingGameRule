@@ -48,7 +48,7 @@ public class MobGriefingEventHandler {
   @SubscribeEvent
   public void onConfigChangedEvent(OnConfigChangedEvent configChangedEvent) {
     if (configChangedEvent.modID.equals(ModInfoConstants.ID)) {
-      BetterMobGriefingGameRule.configuration.synchronize();
+      BetterMobGriefingGameRule.getInstance().getDefaultMobGriefingConfiguration().synchronize();
     }
   }
 
@@ -78,9 +78,9 @@ public class MobGriefingEventHandler {
 
           // Compare the fireball and explosion positions to determine if the fireball is the source
           // of the explosion.
-          if (entityFireball.posX == detonateEvent.explosion.explosionX
-              && entityFireball.posY == detonateEvent.explosion.explosionY
-              && entityFireball.posZ == detonateEvent.explosion.explosionZ
+          if (Math.abs(entityFireball.posX - detonateEvent.explosion.explosionX) == 0
+              && Math.abs(entityFireball.posY - detonateEvent.explosion.explosionY) == 0
+              && Math.abs(entityFireball.posZ - detonateEvent.explosion.explosionZ) == 0
               && entityFireball.shootingEntity instanceof EntityLiving) {
             explosionSource = entityFireball.shootingEntity;
             break;

@@ -22,7 +22,7 @@ package com.judge40.minecraft.bettermobgriefinggamerule;
  * The constants for BetterMobGriefingGameRule mod information.
  */
 public class ModInfoConstants {
-  public static final String BASE_PACKAGE = "com.judge40.minecraft.bettermobgreifinggamerule";
+  public static final String BASE_PACKAGE = "com.judge40.minecraft.bettermobgriefinggamerule";
 
   public static final String DISPLAY_NAME = "Better mobGriefing GameRule";
 

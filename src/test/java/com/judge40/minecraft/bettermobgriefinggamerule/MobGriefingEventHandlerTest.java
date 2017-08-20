@@ -73,7 +73,7 @@ public class MobGriefingEventHandlerTest {
   }
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     eventHandler = new MobGriefingEventHandler();
   }
 
@@ -85,18 +85,29 @@ public class MobGriefingEventHandlerTest {
   public void testOnConfigChangedEvent_defaultMobGriefingConfigurationChanged_handleChange(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
-    BetterMobGriefingGameRule.configuration = configuration;
     OnConfigChangedEvent event = new OnConfigChangedEvent(ModInfoConstants.ID, "", false, false);
+    BetterMobGriefingGameRule entryPoint = new BetterMobGriefingGameRule();
 
     // Record expectations.
-    new Expectations() {
+    new Expectations(entryPoint) {
       {
-        configuration.synchronize();
+        BetterMobGriefingGameRule.getInstance();
+        result = entryPoint;
+
+        entryPoint.getDefaultMobGriefingConfiguration();
+        result = configuration;
       }
     };
 
     // Call the method under test.
     eventHandler.onConfigChangedEvent(event);
+
+    // Verify expectations.
+    new Verifications() {
+      {
+        configuration.synchronize();
+      }
+    };
   }
 
   /**
@@ -107,7 +118,6 @@ public class MobGriefingEventHandlerTest {
   public void testOnConfigChangedEvent_nonDefaultMobGriefingConfigurationChanged_doNotHandleChange(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
-    BetterMobGriefingGameRule.configuration = configuration;
     OnConfigChangedEvent event = new OnConfigChangedEvent("dummyModId001", "", false, false);
 
     // Call the method under test.

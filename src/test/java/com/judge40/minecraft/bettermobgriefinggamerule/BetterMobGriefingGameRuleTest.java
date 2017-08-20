@@ -19,6 +19,7 @@
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,12 +35,14 @@ import com.judge40.minecraft.bettermobgriefinggamerule.command.BetterMobGriefing
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.world.EntityMobGriefingData;
 
+import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.EventBus;
 import cpw.mods.fml.relauncher.ReflectionHelper;
+import mockit.Deencapsulation;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
@@ -78,12 +81,39 @@ public class BetterMobGriefingGameRuleTest {
   }
 
   /**
+   * Test that the entry point instance is retrieved from the Loader's mod list.
+   */
+  @Test
+  public void testGetInstance(@Mocked FMLModContainer modContainer, @Mocked Loader loader) {
+    // Set up test data.
+    BetterMobGriefingGameRule entryPoint = new BetterMobGriefingGameRule();
+
+    // Record expectations.
+    new Expectations() {
+      {
+        loader.getIndexedModList();
+        result = Collections.singletonMap(ModInfoConstants.ID, modContainer);
+
+        modContainer.getMod();
+        result = entryPoint;
+      }
+    };
+
+    // Call the method under test.
+    BetterMobGriefingGameRule instance = BetterMobGriefingGameRule.getInstance();
+
+    // Perform assertions.
+    Assert.assertThat("The expected instance was not retrieved from the Loader.", entryPoint,
+        CoreMatchers.sameInstance(instance));
+  }
+
+
+  /**
    * Test that configuration is loaded when the FML pre-initialization event is fired.
    */
   @Test
   public void testOnFMLPreInitializationEvent_configurationLoaded() {
     // Set up test data.
-    BetterMobGriefingGameRule.configuration = null;
     FMLPreInitializationEvent event = new FMLPreInitializationEvent(null, null);
     File configFile = new File("");
 
@@ -102,7 +132,7 @@ public class BetterMobGriefingGameRuleTest {
 
     // Perform assertions.
     Assert.assertThat("The configuration did not match the expected value.",
-        BetterMobGriefingGameRule.configuration,
+        betterMobGriefingGameRule.getDefaultMobGriefingConfiguration(),
         CoreMatchers.isA(DefaultMobGriefingConfiguration.class));
   }
 
@@ -149,7 +179,7 @@ public class BetterMobGriefingGameRuleTest {
 
     GameRules gameRules = new GameRules();
 
-    BetterMobGriefingGameRule.configuration = configuration;
+    Deencapsulation.setField(betterMobGriefingGameRule, configuration);
 
     // Record expectations.
     new Expectations(gameRules, BetterMobGriefingCommand.class, ReflectionHelper.class) {

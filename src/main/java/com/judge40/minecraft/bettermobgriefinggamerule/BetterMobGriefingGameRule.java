@@ -18,6 +18,7 @@
  */
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -26,8 +27,11 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobG
 import com.judge40.minecraft.bettermobgriefinggamerule.world.EntityMobGriefingData;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLModContainer;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
@@ -49,7 +53,19 @@ public class BetterMobGriefingGameRule {
   // Constants for the mobGriefing rules
   public static final String ORIGINAL = "mobGriefing";
 
-  public static DefaultMobGriefingConfiguration configuration;
+  private DefaultMobGriefingConfiguration configuration = null;
+
+  /**
+   * Get the instance of {@link BetterMobGriefingGameRule} from the {@link Loader}'s mod list.
+   * 
+   * @return The instance of the {@code BetterMobGriefingGameRule} mod.
+   */
+  public static BetterMobGriefingGameRule getInstance() {
+    Map<String, ModContainer> modList = Loader.instance().getIndexedModList();
+    FMLModContainer modContainer = (FMLModContainer) modList.get(ModInfoConstants.ID);
+
+    return (BetterMobGriefingGameRule) modContainer.getMod();
+  }
 
   /**
    * Perform pre-initialization actions. The configuration file is loaded and the default
@@ -136,5 +152,13 @@ public class BetterMobGriefingGameRule {
     }
 
     return mobGriefingEnabled;
+  }
+
+  /**
+   * @return The {@link DefaultMobGriefingConfiguration}, will be null until the
+   *         {@link FMLPreInitializationEvent} fires.
+   */
+  public DefaultMobGriefingConfiguration getDefaultMobGriefingConfiguration() {
+    return configuration;
   }
 }

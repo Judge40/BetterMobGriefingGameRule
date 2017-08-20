@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.ModInfoConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfigurationConstants;
 
 import cpw.mods.fml.client.config.GuiConfig;
@@ -41,11 +42,21 @@ public class DefaultMobGriefingConfigGui extends GuiConfig {
   public DefaultMobGriefingConfigGui(GuiScreen parent) {
     super(parent,
         Arrays.asList(
-            new ConfigElement<>(BetterMobGriefingGameRule.configuration
+            new ConfigElement<>(getConfiguration()
                 .getCategory(DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY)),
-            new ConfigElement<>(BetterMobGriefingGameRule.configuration
+            new ConfigElement<>(getConfiguration()
                 .getCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY))),
-        ModInfoConstants.ID, false, false,
-        getAbridgedConfigPath(BetterMobGriefingGameRule.configuration.toString()));
+        ModInfoConstants.ID, false, false, getAbridgedConfigPath(getConfiguration().toString()));
+  }
+
+  /**
+   * Get the {@link DefaultMobGriefingConfiguration} from the {@link BetterMobGriefingGameRule}
+   * instance.
+   * 
+   * @return The configuration.
+   */
+  private static DefaultMobGriefingConfiguration getConfiguration() {
+    BetterMobGriefingGameRule entryPoint = BetterMobGriefingGameRule.getInstance();
+    return entryPoint.getDefaultMobGriefingConfiguration();
   }
 }

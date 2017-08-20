@@ -19,12 +19,14 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.asm;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -49,13 +51,16 @@ public class ClassTransformerTest {
 
   private ClassTransformer classTransformer;
 
-  @Before
-  public void setUp() {
+  @BeforeClass
+  public static void setUpBeforeClass() {
     // Set the deobfuscation flag.
     Map<String, Object> blackboard = new HashMap<>();
     blackboard.put("fml.deobfuscatedEnvironment", true);
     Launch.blackboard = blackboard;
+  }
 
+  @Before
+  public void setUp() {
     classTransformer = new ClassTransformer();
   }
 
@@ -99,13 +104,14 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes =
-        String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL).getBytes();
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+        .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
         Bytes.indexOf(transformedBytes, originalSearchBytes), CoreMatchers.is(-1));
 
-    byte[] replacementSearchBytes = BetterMobGriefingGameRule.class.getSimpleName().getBytes();
+    byte[] replacementSearchBytes =
+        BetterMobGriefingGameRule.class.getSimpleName().getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the better mobGriefing game rule was not found in the transformed class.",
         Bytes.indexOf(transformedBytes, replacementSearchBytes), CoreMatchers.not(-1));
@@ -129,13 +135,14 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes =
-        String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL).getBytes();
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+        .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
         Bytes.indexOf(transformedBytes, originalSearchBytes), CoreMatchers.is(-1));
 
-    byte[] replacementSearchBytes = BetterMobGriefingGameRule.class.getSimpleName().getBytes();
+    byte[] replacementSearchBytes =
+        BetterMobGriefingGameRule.class.getSimpleName().getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the better mobGriefing game rule was not found in the transformed class.",
         Bytes.indexOf(transformedBytes, replacementSearchBytes), CoreMatchers.not(-1));
@@ -159,13 +166,14 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes =
-        String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL).getBytes();
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+        .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
         Bytes.indexOf(transformedBytes, originalSearchBytes), CoreMatchers.is(-1));
 
-    byte[] replacementSearchBytes = BetterMobGriefingGameRule.class.getSimpleName().getBytes();
+    byte[] replacementSearchBytes =
+        BetterMobGriefingGameRule.class.getSimpleName().getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the better mobGriefing game rule was not found in the transformed class.",
         Bytes.indexOf(transformedBytes, replacementSearchBytes), CoreMatchers.not(-1));
@@ -189,13 +197,14 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes =
-        String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL).getBytes();
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+        .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
         Bytes.indexOf(transformedBytes, originalSearchBytes), CoreMatchers.is(-1));
 
-    byte[] replacementSearchBytes = BetterMobGriefingGameRule.class.getSimpleName().getBytes();
+    byte[] replacementSearchBytes =
+        BetterMobGriefingGameRule.class.getSimpleName().getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the better mobGriefing game rule was not found in the transformed class.",
         Bytes.indexOf(transformedBytes, replacementSearchBytes), CoreMatchers.not(-1));
@@ -219,13 +228,14 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes =
-        String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL).getBytes();
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+        .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
         Bytes.indexOf(transformedBytes, originalSearchBytes), CoreMatchers.is(-1));
 
-    byte[] replacementSearchBytes = BetterMobGriefingGameRule.class.getSimpleName().getBytes();
+    byte[] replacementSearchBytes =
+        BetterMobGriefingGameRule.class.getSimpleName().getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the better mobGriefing game rule was not found in the transformed class.",
         Bytes.indexOf(transformedBytes, replacementSearchBytes), CoreMatchers.not(-1));
@@ -249,13 +259,14 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes =
-        String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL).getBytes();
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+        .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
         Bytes.indexOf(transformedBytes, originalSearchBytes), CoreMatchers.is(-1));
 
-    byte[] replacementSearchBytes = BetterMobGriefingGameRule.class.getSimpleName().getBytes();
+    byte[] replacementSearchBytes =
+        BetterMobGriefingGameRule.class.getSimpleName().getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the better mobGriefing game rule was not found in the transformed class.",
         Bytes.indexOf(transformedBytes, replacementSearchBytes), CoreMatchers.not(-1));
@@ -279,13 +290,14 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes =
-        String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL).getBytes();
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+        .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
         Bytes.indexOf(transformedBytes, originalSearchBytes), CoreMatchers.is(-1));
 
-    byte[] replacementSearchBytes = BetterMobGriefingGameRule.class.getSimpleName().getBytes();
+    byte[] replacementSearchBytes =
+        BetterMobGriefingGameRule.class.getSimpleName().getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the better mobGriefing game rule was not found in the transformed class.",
         Bytes.indexOf(transformedBytes, replacementSearchBytes), CoreMatchers.not(-1));

@@ -16,11 +16,8 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.judge40.minecraft.bettermobgriefinggamerule;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+package com.judge40.minecraft.bettermobgriefinggamerule;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.command.BetterMobGriefingCommand;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
@@ -42,6 +39,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Base class for 'Better mobGriefing GameRule' mod.
@@ -71,33 +72,33 @@ public class BetterMobGriefingGameRule {
    * Perform pre-initialization actions. The configuration file is loaded and the default
    * mobGriefing rule values are retrieved.
    * 
-   * @param event The FMLPreInitializationEvent
+   * @param event The FMLPreInitializationEvent.
    */
   @EventHandler
-  public void onFMLPreInitializationEvent(FMLPreInitializationEvent event) {
+  public void onFmlPreInitializationEvent(FMLPreInitializationEvent event) {
     // Create and/or load the configuration
     configuration = new DefaultMobGriefingConfiguration(event.getSuggestedConfigurationFile());
   }
 
   /**
-   * On initialization registers the event handler
+   * On initialization registers the event handler.
    * 
-   * @param event The FMLInitializationEvent
+   * @param event The FMLInitializationEvent.
    */
   @EventHandler
-  public void onFMLInitializationEvent(FMLInitializationEvent event) {
+  public void onFmlInitializationEvent(FMLInitializationEvent event) {
     MobGriefingEventHandler eventHandler = new MobGriefingEventHandler();
     FMLCommonHandler.instance().bus().register(eventHandler);
     MinecraftForge.EVENT_BUS.register(eventHandler);
   }
 
   /**
-   * On server starting add new mobGriefing game rules
+   * On server starting add new mobGriefing game rules.
    * 
-   * @param event The FMLServerStartingEvent
+   * @param event The FMLServerStartingEvent.
    */
   @EventHandler()
-  public void onFMLServerStartingEvent(FMLServerStartingEvent event) {
+  public void onFmlServerStartingEvent(FMLServerStartingEvent event) {
     CommandHandler commandHandler = (CommandHandler) event.getServer().getCommandManager();
 
     // Create a new game rule command handler and retrieve the original handler.
@@ -127,10 +128,10 @@ public class BetterMobGriefingGameRule {
   }
 
   /**
-   * Whether mob griefing is enabled to the given {@link Entity}
+   * Whether mob griefing is enabled to the given {@link Entity}.
    * 
-   * @param entity The Entity to get the mob griefing value for
-   * @return Whether mob griefing is enabled
+   * @param entity The Entity to get the mob griefing value for.
+   * @return Whether mob griefing is enabled.
    */
   public static boolean isMobGriefingEnabled(Entity entity) {
     Boolean mobGriefingEnabled = null;

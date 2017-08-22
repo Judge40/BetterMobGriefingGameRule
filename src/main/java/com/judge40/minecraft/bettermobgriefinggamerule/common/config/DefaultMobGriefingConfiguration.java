@@ -16,15 +16,8 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.MobGriefingValue;
@@ -34,6 +27,14 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A custom {@link Configuration} which adds convenience methods for retrieving default mob griefing
@@ -56,10 +57,10 @@ public class DefaultMobGriefingConfiguration extends Configuration {
     load();
 
     // Set configuration category language keys
-    setCategoryLanguageKey(DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-        DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_KEY);
-    setCategoryLanguageKey(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
-        DefaultMobGriefingConfigurationConstants.ENTITY_RULES_KEY);
+    setCategoryLanguageKey(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
+        ConfigurationConstants.GLOBAL_RULE_KEY);
+    setCategoryLanguageKey(ConfigurationConstants.ENTITY_RULES_CATEGORY,
+        ConfigurationConstants.ENTITY_RULES_KEY);
 
     // Synchronize the configuration values.
     synchronize();
@@ -89,8 +90,7 @@ public class DefaultMobGriefingConfiguration extends Configuration {
     List<String> validValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
         MobGriefingValue.FALSE.toExternalForm());
 
-    String globalPropertyValue = getString(
-        DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
+    String globalPropertyValue = getString(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
         BetterMobGriefingGameRule.ORIGINAL, MobGriefingValue.TRUE.toExternalForm(), validValues);
     globalMobGriefingValue = MobGriefingValue.toEnumeration(globalPropertyValue);
   }
@@ -102,13 +102,12 @@ public class DefaultMobGriefingConfiguration extends Configuration {
    */
   private void synchronizeEntityValues() {
     // Get the names of all configured entities.
-    ConfigCategory category =
-        getCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY);
+    ConfigCategory category = getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
     Set<String> entityNames = new HashSet<>(category.keySet());
 
     // Add all entities supported by default, this will cover newly supported entities and any
     // entities which have been removed from the configuration.
-    for (Class<? extends EntityLiving> entityClass : DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES) {
+    for (Class<? extends EntityLiving> entityClass : ConfigurationConstants.ENTITY_CLASSES) {
       String entityName = (String) EntityList.classToStringMapping.get(entityClass);
       entityNames.add(entityName);
     }
@@ -123,9 +122,8 @@ public class DefaultMobGriefingConfiguration extends Configuration {
 
       // Verify that the entity is a valid entity.
       if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
-        String entityPropertyValue =
-            getString(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY, entityName,
-                MobGriefingValue.INHERIT.toExternalForm(), validValues);
+        String entityPropertyValue = getString(ConfigurationConstants.ENTITY_RULES_CATEGORY,
+            entityName, MobGriefingValue.INHERIT.toExternalForm(), validValues);
         entityNamesToMobGriefingValue.put(entityName,
             MobGriefingValue.toEnumeration(entityPropertyValue));
       }
@@ -145,7 +143,7 @@ public class DefaultMobGriefingConfiguration extends Configuration {
   private String getString(String categoryName, String propertyName, String defaultValue,
       List<String> validValues) {
     String propertyValue = getString(propertyName, categoryName, defaultValue,
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validValues),
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validValues),
         validValues.toArray(new String[validValues.size()]));
 
     if (!validValues.contains(propertyValue)) {

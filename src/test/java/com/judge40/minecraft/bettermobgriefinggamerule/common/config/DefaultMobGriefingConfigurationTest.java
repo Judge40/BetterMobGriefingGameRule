@@ -16,15 +16,8 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Test;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.MobGriefingValue;
@@ -40,6 +33,13 @@ import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.config.Property.Type;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The unit tests for {@link DefaultMobGriefingConfiguration}.
@@ -64,24 +64,22 @@ public class DefaultMobGriefingConfigurationTest {
     // Record expectations.
     new Expectations(I18n.class) {
       {
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
         result = "validGlobalValues";
 
         parentConfiguration.getString(BetterMobGriefingGameRule.ORIGINAL,
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-            MobGriefingValue.TRUE.toExternalForm(), "validGlobalValues",
-            validGlobalValues.toArray(new String[validGlobalValues.size()]));
+            ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
+            "validGlobalValues", validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = MobGriefingValue.TRUE.toExternalForm();
 
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validEntityValues);
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validEntityValues);
         result = "validEntityValues";
 
-        parentConfiguration.getString(anyString,
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
+        parentConfiguration.getString(anyString, ConfigurationConstants.ENTITY_RULES_CATEGORY,
             MobGriefingValue.INHERIT.toExternalForm(), "validEntityValues",
             validEntityValues.toArray(new String[validEntityValues.size()]));
         result = MobGriefingValue.INHERIT.toExternalForm();
-        times = DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES.size();
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
 
         parentConfiguration.hasChanged();
         result = true;
@@ -98,8 +96,7 @@ public class DefaultMobGriefingConfigurationTest {
 
     Map<String, MobGriefingValue> entityNamesToValue = configuration.getEntityMobGriefingValues();
     Assert.assertThat("The number of entity mob grieving values did not match the expected number.",
-        entityNamesToValue.size(),
-        CoreMatchers.is(DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES.size()));
+        entityNamesToValue.size(), CoreMatchers.is(ConfigurationConstants.ENTITY_CLASSES.size()));
 
     for (MobGriefingValue entityValue : entityNamesToValue.values()) {
       Assert.assertThat("The entity mob griefing value did not match the expected value.",
@@ -111,12 +108,10 @@ public class DefaultMobGriefingConfigurationTest {
       {
         parentConfiguration.load();
 
-        parentConfiguration.setCategoryLanguageKey(
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_KEY);
-        parentConfiguration.setCategoryLanguageKey(
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
+            ConfigurationConstants.GLOBAL_RULE_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.ENTITY_RULES_CATEGORY,
+            ConfigurationConstants.ENTITY_RULES_KEY);
 
         parentConfiguration.save();
       }
@@ -138,24 +133,22 @@ public class DefaultMobGriefingConfigurationTest {
     // Record expectations.
     new Expectations(I18n.class) {
       {
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
         result = "validGlobalValues";
 
         parentConfiguration.getString(BetterMobGriefingGameRule.ORIGINAL,
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-            MobGriefingValue.TRUE.toExternalForm(), "validGlobalValues",
-            validGlobalValues.toArray(new String[validGlobalValues.size()]));
+            ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
+            "validGlobalValues", validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = "invalidValue";
 
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validEntityValues);
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validEntityValues);
         result = "validEntityValues";
 
-        parentConfiguration.getString(anyString,
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
+        parentConfiguration.getString(anyString, ConfigurationConstants.ENTITY_RULES_CATEGORY,
             MobGriefingValue.INHERIT.toExternalForm(), "validEntityValues",
             validEntityValues.toArray(new String[validEntityValues.size()]));
         result = "invalidValue";
-        times = DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES.size();
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
 
         parentConfiguration.hasChanged();
         result = true;
@@ -172,8 +165,7 @@ public class DefaultMobGriefingConfigurationTest {
 
     Map<String, MobGriefingValue> entityNamesToValue = configuration.getEntityMobGriefingValues();
     Assert.assertThat("The number of entity mob grieving values did not match the expected number.",
-        entityNamesToValue.size(),
-        CoreMatchers.is(DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES.size()));
+        entityNamesToValue.size(), CoreMatchers.is(ConfigurationConstants.ENTITY_CLASSES.size()));
 
     for (MobGriefingValue entityValue : entityNamesToValue.values()) {
       Assert.assertThat("The entity mob griefing value did not match the expected value.",
@@ -185,12 +177,10 @@ public class DefaultMobGriefingConfigurationTest {
       {
         parentConfiguration.load();
 
-        parentConfiguration.setCategoryLanguageKey(
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_KEY);
-        parentConfiguration.setCategoryLanguageKey(
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
+            ConfigurationConstants.GLOBAL_RULE_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.ENTITY_RULES_CATEGORY,
+            ConfigurationConstants.ENTITY_RULES_KEY);
 
         parentConfiguration.save();
       }
@@ -212,24 +202,22 @@ public class DefaultMobGriefingConfigurationTest {
     // Record expectations.
     new Expectations(I18n.class) {
       {
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
         result = "validGlobalValues";
 
         parentConfiguration.getString(BetterMobGriefingGameRule.ORIGINAL,
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-            MobGriefingValue.TRUE.toExternalForm(), "validGlobalValues",
-            validGlobalValues.toArray(new String[validGlobalValues.size()]));
+            ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
+            "validGlobalValues", validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = MobGriefingValue.FALSE.toExternalForm();
 
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validEntityValues);
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validEntityValues);
         result = "validEntityValues";
 
-        parentConfiguration.getString(anyString,
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
+        parentConfiguration.getString(anyString, ConfigurationConstants.ENTITY_RULES_CATEGORY,
             MobGriefingValue.INHERIT.toExternalForm(), "validEntityValues",
             validEntityValues.toArray(new String[validEntityValues.size()]));
         result = MobGriefingValue.TRUE.toExternalForm();
-        times = DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES.size();
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
 
         parentConfiguration.hasChanged();
         result = false;
@@ -246,8 +234,7 @@ public class DefaultMobGriefingConfigurationTest {
 
     Map<String, MobGriefingValue> entityNamesToValue = configuration.getEntityMobGriefingValues();
     Assert.assertThat("The number of entity mob grieving values did not match the expected number.",
-        entityNamesToValue.size(),
-        CoreMatchers.is(DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES.size()));
+        entityNamesToValue.size(), CoreMatchers.is(ConfigurationConstants.ENTITY_CLASSES.size()));
 
     for (MobGriefingValue entityValue : entityNamesToValue.values()) {
       Assert.assertThat("The entity mob griefing value did not match the expected value.",
@@ -259,12 +246,10 @@ public class DefaultMobGriefingConfigurationTest {
       {
         parentConfiguration.load();
 
-        parentConfiguration.setCategoryLanguageKey(
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_KEY);
-        parentConfiguration.setCategoryLanguageKey(
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
+            ConfigurationConstants.GLOBAL_RULE_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.ENTITY_RULES_CATEGORY,
+            ConfigurationConstants.ENTITY_RULES_KEY);
 
         parentConfiguration.save();
         times = 0;
@@ -285,7 +270,7 @@ public class DefaultMobGriefingConfigurationTest {
         MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
     ConfigCategory configCategory =
-        new ConfigCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY);
+        new ConfigCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
     String entityName = "invalidEntity";
     configCategory.put(entityName,
         new Property(entityName, MobGriefingValue.INHERIT.toExternalForm(), Type.STRING));
@@ -293,28 +278,25 @@ public class DefaultMobGriefingConfigurationTest {
     // Record expectations.
     new Expectations(I18n.class) {
       {
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
         result = "validGlobalValues";
 
         parentConfiguration.getString(BetterMobGriefingGameRule.ORIGINAL,
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-            MobGriefingValue.TRUE.toExternalForm(), "validGlobalValues",
-            validGlobalValues.toArray(new String[validGlobalValues.size()]));
+            ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
+            "validGlobalValues", validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = MobGriefingValue.FALSE.toExternalForm();
 
-        parentConfiguration
-            .getCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY);
+        parentConfiguration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
         result = configCategory;
 
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validEntityValues);
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validEntityValues);
         result = "validEntityValues";
 
-        parentConfiguration.getString(anyString,
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
+        parentConfiguration.getString(anyString, ConfigurationConstants.ENTITY_RULES_CATEGORY,
             MobGriefingValue.INHERIT.toExternalForm(), "validEntityValues",
             validEntityValues.toArray(new String[validEntityValues.size()]));
         result = MobGriefingValue.TRUE.toExternalForm();
-        times = DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES.size();
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
 
         parentConfiguration.hasChanged();
         result = false;
@@ -331,8 +313,7 @@ public class DefaultMobGriefingConfigurationTest {
 
     Map<String, MobGriefingValue> entityNamesToValue = configuration.getEntityMobGriefingValues();
     Assert.assertThat("The number of entity mob grieving values did not match the expected number.",
-        entityNamesToValue.size(),
-        CoreMatchers.is(DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES.size()));
+        entityNamesToValue.size(), CoreMatchers.is(ConfigurationConstants.ENTITY_CLASSES.size()));
     Assert.assertThat("The entity mob griefing values contained an unexpected entity.",
         entityNamesToValue.keySet(), CoreMatchers.not(CoreMatchers.hasItems(entityName)));
 
@@ -346,12 +327,10 @@ public class DefaultMobGriefingConfigurationTest {
       {
         parentConfiguration.load();
 
-        parentConfiguration.setCategoryLanguageKey(
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_KEY);
-        parentConfiguration.setCategoryLanguageKey(
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
+            ConfigurationConstants.GLOBAL_RULE_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.ENTITY_RULES_CATEGORY,
+            ConfigurationConstants.ENTITY_RULES_KEY);
 
         parentConfiguration.save();
         times = 0;
@@ -372,7 +351,7 @@ public class DefaultMobGriefingConfigurationTest {
         MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
     ConfigCategory configCategory =
-        new ConfigCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY);
+        new ConfigCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
     String entityName = (String) EntityList.classToStringMapping.get(EntityItem.class);
     configCategory.put(entityName,
         new Property(entityName, MobGriefingValue.INHERIT.toExternalForm(), Type.STRING));
@@ -380,28 +359,25 @@ public class DefaultMobGriefingConfigurationTest {
     // Record expectations.
     new Expectations(I18n.class) {
       {
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
         result = "validGlobalValues";
 
         parentConfiguration.getString(BetterMobGriefingGameRule.ORIGINAL,
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-            MobGriefingValue.TRUE.toExternalForm(), "validGlobalValues",
-            validGlobalValues.toArray(new String[validGlobalValues.size()]));
+            ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
+            "validGlobalValues", validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = MobGriefingValue.FALSE.toExternalForm();
 
-        parentConfiguration
-            .getCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY);
+        parentConfiguration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
         result = configCategory;
 
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validEntityValues);
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validEntityValues);
         result = "validEntityValues";
 
-        parentConfiguration.getString(anyString,
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
+        parentConfiguration.getString(anyString, ConfigurationConstants.ENTITY_RULES_CATEGORY,
             MobGriefingValue.INHERIT.toExternalForm(), "validEntityValues",
             validEntityValues.toArray(new String[validEntityValues.size()]));
         result = MobGriefingValue.TRUE.toExternalForm();
-        times = DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES.size();
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
 
         parentConfiguration.hasChanged();
         result = false;
@@ -418,8 +394,7 @@ public class DefaultMobGriefingConfigurationTest {
 
     Map<String, MobGriefingValue> entityNamesToValue = configuration.getEntityMobGriefingValues();
     Assert.assertThat("The number of entity mob grieving values did not match the expected number.",
-        entityNamesToValue.size(),
-        CoreMatchers.is(DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES.size()));
+        entityNamesToValue.size(), CoreMatchers.is(ConfigurationConstants.ENTITY_CLASSES.size()));
     Assert.assertThat("The entity mob griefing values contained an unexpected entity.",
         entityNamesToValue.keySet(), CoreMatchers.not(CoreMatchers.hasItems(entityName)));
 
@@ -433,12 +408,10 @@ public class DefaultMobGriefingConfigurationTest {
       {
         parentConfiguration.load();
 
-        parentConfiguration.setCategoryLanguageKey(
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_KEY);
-        parentConfiguration.setCategoryLanguageKey(
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
+            ConfigurationConstants.GLOBAL_RULE_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.ENTITY_RULES_CATEGORY,
+            ConfigurationConstants.ENTITY_RULES_KEY);
 
         parentConfiguration.save();
         times = 0;
@@ -459,7 +432,7 @@ public class DefaultMobGriefingConfigurationTest {
         MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
     ConfigCategory configCategory =
-        new ConfigCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY);
+        new ConfigCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
     String entityName = (String) EntityList.classToStringMapping.get(EntityLiving.class);
     configCategory.put(entityName,
         new Property(entityName, MobGriefingValue.INHERIT.toExternalForm(), Type.STRING));
@@ -467,28 +440,25 @@ public class DefaultMobGriefingConfigurationTest {
     // Record expectations.
     new Expectations(I18n.class) {
       {
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
         result = "validGlobalValues";
 
         parentConfiguration.getString(BetterMobGriefingGameRule.ORIGINAL,
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-            MobGriefingValue.TRUE.toExternalForm(), "validGlobalValues",
-            validGlobalValues.toArray(new String[validGlobalValues.size()]));
+            ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
+            "validGlobalValues", validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = MobGriefingValue.FALSE.toExternalForm();
 
-        parentConfiguration
-            .getCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY);
+        parentConfiguration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
         result = configCategory;
 
-        I18n.format(DefaultMobGriefingConfigurationConstants.VALID_VALUES_KEY, validEntityValues);
+        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validEntityValues);
         result = "validEntityValues";
 
-        parentConfiguration.getString(anyString,
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
+        parentConfiguration.getString(anyString, ConfigurationConstants.ENTITY_RULES_CATEGORY,
             MobGriefingValue.INHERIT.toExternalForm(), "validEntityValues",
             validEntityValues.toArray(new String[validEntityValues.size()]));
         result = MobGriefingValue.TRUE.toExternalForm();
-        times = DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES.size() + 1;
+        times = ConfigurationConstants.ENTITY_CLASSES.size() + 1;
 
         parentConfiguration.hasChanged();
         result = false;
@@ -506,7 +476,7 @@ public class DefaultMobGriefingConfigurationTest {
     Map<String, MobGriefingValue> entityNamesToValue = configuration.getEntityMobGriefingValues();
     Assert.assertThat("The number of entity mob grieving values did not match the expected number.",
         entityNamesToValue.size(),
-        CoreMatchers.is(DefaultMobGriefingConfigurationConstants.ENTITY_CLASSES.size() + 1));
+        CoreMatchers.is(ConfigurationConstants.ENTITY_CLASSES.size() + 1));
     Assert.assertThat("The entity mob griefing values contained an unexpected entity.",
         entityNamesToValue.keySet(), CoreMatchers.hasItems(entityName));
 
@@ -520,12 +490,10 @@ public class DefaultMobGriefingConfigurationTest {
       {
         parentConfiguration.load();
 
-        parentConfiguration.setCategoryLanguageKey(
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY,
-            DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_KEY);
-        parentConfiguration.setCategoryLanguageKey(
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY,
-            DefaultMobGriefingConfigurationConstants.ENTITY_RULES_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
+            ConfigurationConstants.GLOBAL_RULE_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.ENTITY_RULES_CATEGORY,
+            ConfigurationConstants.ENTITY_RULES_KEY);
 
         parentConfiguration.save();
         times = 0;

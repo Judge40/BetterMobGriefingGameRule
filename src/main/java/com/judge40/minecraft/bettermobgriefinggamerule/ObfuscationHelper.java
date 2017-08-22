@@ -16,13 +16,14 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package com.judge40.minecraft.bettermobgriefinggamerule;
+
+import net.minecraft.launchwrapper.Launch;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import net.minecraft.launchwrapper.Launch;
 
 /**
  * A helper to assist in conversion between SRG and MCP method and fields names based on whether or

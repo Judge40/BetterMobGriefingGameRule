@@ -16,13 +16,14 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.judge40.minecraft.bettermobgriefinggamerule.asm;
 
-import java.util.Map;
+package com.judge40.minecraft.bettermobgriefinggamerule.asm;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.ModInfoConstants;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+
+import java.util.Map;
 
 /**
  * The loading plugin for the BetterMobGriefingGameRule core mod.

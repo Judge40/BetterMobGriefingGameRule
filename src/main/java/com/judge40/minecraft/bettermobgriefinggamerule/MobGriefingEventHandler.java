@@ -16,9 +16,8 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.judge40.minecraft.bettermobgriefinggamerule;
 
-import java.util.Iterator;
+package com.judge40.minecraft.bettermobgriefinggamerule;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterBreakDoorAiTask;
 
@@ -35,8 +34,10 @@ import net.minecraft.world.GameRules;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.ExplosionEvent.Detonate;
 
+import java.util.Iterator;
+
 /**
- * Event handler for all EVENT_BUS events
+ * Event handler for all EVENT_BUS events.
  */
 public class MobGriefingEventHandler {
 
@@ -46,7 +47,7 @@ public class MobGriefingEventHandler {
    * @param configChangedEvent The OnConfigChangedEvent.
    */
   @SubscribeEvent
-  public void onConfigChangedEvent(OnConfigChangedEvent configChangedEvent) {
+  public void onConfigChanged(OnConfigChangedEvent configChangedEvent) {
     if (configChangedEvent.modID.equals(ModInfoConstants.ID)) {
       BetterMobGriefingGameRule.getInstance().getDefaultMobGriefingConfiguration().synchronize();
     }
@@ -54,12 +55,12 @@ public class MobGriefingEventHandler {
 
   /**
    * On the explosion detonate event check whether mobGriefing is enabled for a specific entity and
-   * update the relevant fields to reflect the desired value
+   * update the relevant fields to reflect the desired value.
    * 
-   * @param detonateEvent The detonate event for the explosion to update
+   * @param detonateEvent The detonate event for the explosion to update.
    */
   @SubscribeEvent
-  public void onDetonateEvent(Detonate detonateEvent) {
+  public void onDetonate(Detonate detonateEvent) {
     Entity explosionSource = null;
 
     // Try and get the explosion source from the explosion.
@@ -116,7 +117,7 @@ public class MobGriefingEventHandler {
    * @param event The {@link EntityJoinWorldEvent} for the {@code Entity} to be updated.
    */
   @SubscribeEvent
-  public void onEntityJoinWorldEvent(EntityJoinWorldEvent event) {
+  public void onEntityJoinWorld(EntityJoinWorldEvent event) {
     if (event.entity instanceof EntityZombie) {
       EntityZombie zombie = (EntityZombie) event.entity;
 

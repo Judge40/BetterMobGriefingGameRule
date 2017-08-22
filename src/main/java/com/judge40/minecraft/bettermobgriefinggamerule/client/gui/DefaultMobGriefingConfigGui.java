@@ -16,18 +16,19 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
-import java.util.Arrays;
+package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.ModInfoConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigurationConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfigurationConstants;
 
 import cpw.mods.fml.client.config.GuiConfig;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.config.ConfigElement;
+
+import java.util.Arrays;
 
 /**
  * The configuration GUI for setting the default value of mobGriefing rules.
@@ -42,10 +43,10 @@ public class DefaultMobGriefingConfigGui extends GuiConfig {
   public DefaultMobGriefingConfigGui(GuiScreen parent) {
     super(parent,
         Arrays.asList(
-            new ConfigElement<>(getConfiguration()
-                .getCategory(DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY)),
-            new ConfigElement<>(getConfiguration()
-                .getCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY))),
+            new ConfigElement<>(
+                getConfiguration().getCategory(ConfigurationConstants.GLOBAL_RULE_CATEGORY)),
+            new ConfigElement<>(
+                getConfiguration().getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY))),
         ModInfoConstants.ID, false, false, getAbridgedConfigPath(getConfiguration().toString()));
   }
 

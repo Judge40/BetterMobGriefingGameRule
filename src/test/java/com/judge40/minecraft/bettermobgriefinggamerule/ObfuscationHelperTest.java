@@ -16,18 +16,18 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import mockit.Deencapsulation;
+import net.minecraft.launchwrapper.Launch;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import mockit.Deencapsulation;
-import net.minecraft.launchwrapper.Launch;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The unit tests for {@link ObfuscationHelper}.
@@ -39,8 +39,11 @@ public class ObfuscationHelperTest {
 
   private static final String DEENCAPULSATION_FIELD = "fml.deobfuscatedEnvironment";
 
+  /**
+   * Populate {@code fml.deobfuscatedEnvironment} and MCP to SRG maps.
+   */
   @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
+  public static void setUpBeforeClass() {
     // Set the deobfuscation flag.
     Launch.blackboard = new HashMap<>();
 

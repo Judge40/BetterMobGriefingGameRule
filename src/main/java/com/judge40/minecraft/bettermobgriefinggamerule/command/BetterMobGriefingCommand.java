@@ -16,11 +16,8 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.judge40.minecraft.bettermobgriefinggamerule.command;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+package com.judge40.minecraft.bettermobgriefinggamerule.command;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.MobGriefingValue;
@@ -33,6 +30,10 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.GameRules;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A custom command handler for the mobGriefing game rule, it allows auto-completion and assignment
@@ -140,7 +141,7 @@ public class BetterMobGriefingCommand extends CommandGameRule {
             MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(commandWords[2]);
             entityMobGriefingData.setMobGriefingValue(entityName, mobGriefingValue);
             func_152373_a(commandSender, this, "commands.gamerule.success", new Object[0]);
-          } catch (IllegalArgumentException e) {
+          } catch (IllegalArgumentException iae) {
             String exceptionMessage = String.format("/gamerule %s <entity name> %s|%s|%s",
                 BetterMobGriefingGameRule.ORIGINAL, MobGriefingValue.TRUE.toExternalForm(),
                 MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());

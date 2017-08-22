@@ -16,11 +16,8 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
@@ -32,10 +29,14 @@ import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntitySheep;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * The constants for default mob griefing configuration information.
  */
-public class DefaultMobGriefingConfigurationConstants {
+public class ConfigurationConstants {
   // The constants for the localizable configuration UI message keys.
   public static final String GLOBAL_RULE_KEY = "bettermobgriefinggamerule.config.defaultGlobalRule";
   public static final String ENTITY_RULES_KEY =

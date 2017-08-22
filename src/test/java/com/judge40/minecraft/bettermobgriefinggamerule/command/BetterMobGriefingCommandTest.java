@@ -16,18 +16,8 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package com.judge40.minecraft.bettermobgriefinggamerule.command;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.world.EntityMobGriefingData;
@@ -44,6 +34,16 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The unit tests for {@link BetterMobGriefingCommand}.
@@ -92,8 +92,6 @@ public class BetterMobGriefingCommandTest {
   public void testAddTabCompletionOptions_mobGriefingCompleteWordTwo_trueFalseEntityNames(
       @Mocked World world) {
     // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing", ""};
-
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
     Set<String> registeredEntityNames =
         new HashSet<>(Arrays.asList("entityName1", "entityName2", "entityName3"));
@@ -101,6 +99,8 @@ public class BetterMobGriefingCommandTest {
     String[] expectedPossibleWords =
         new String[] {"true", "false", "entityName1", "entityName2", "entityName3"};
     List<String> matchingWords = Arrays.asList(expectedPossibleWords);
+
+    String[] commandWords = new String[] {"mobGriefing", ""};
 
     // Record expectations.
     new Expectations(BetterMobGriefingCommand.class, EntityMobGriefingData.class) {
@@ -135,10 +135,10 @@ public class BetterMobGriefingCommandTest {
   @Test
   public void testAddTabCompletionOptions_mobGriefingCompleteWordThree_trueFalseInherit() {
     // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing", "", ""};
-
     String[] expectedPossibleWords = new String[] {"true", "false", "inherit"};
     List<String> matchingWords = Arrays.asList(expectedPossibleWords);
+
+    String[] commandWords = new String[] {"mobGriefing", "", ""};
 
     // Record expectations.
     new Expectations(BetterMobGriefingCommand.class) {
@@ -230,8 +230,6 @@ public class BetterMobGriefingCommandTest {
   public void testProcessCommand_mobGriefingEntityValuesExist_globalAndEntityValuesOutput(
       @Mocked World world) {
     // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing"};
-
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
     entityMobGriefingData.setMobGriefingValue("entityName1", MobGriefingValue.TRUE);
     entityMobGriefingData.setMobGriefingValue("entityName2", MobGriefingValue.FALSE);
@@ -239,9 +237,10 @@ public class BetterMobGriefingCommandTest {
     GameRules gameRules = new GameRules();
 
     List<ChatComponentText> capturedChatText = new ArrayList<>();
+    String[] commandWords = new String[] {"mobGriefing"};
 
     // Record Expectations.
-    new Expectations(EntityMobGriefingData.class, gameRules) {
+    new Expectations(gameRules, EntityMobGriefingData.class) {
       {
         commandSender.getEntityWorld();
         result = world;
@@ -286,12 +285,11 @@ public class BetterMobGriefingCommandTest {
   public void testProcessCommand_mobGriefingEntityValuesNotExists_globalValueOutput(
       @Mocked World world) {
     // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing"};
-
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
     GameRules gameRules = new GameRules();
 
     List<ChatComponentText> capturedChatText = new ArrayList<>();
+    String[] commandWords = new String[] {"mobGriefing"};
 
     // Record Expectations.
     new Expectations(entityMobGriefingData, gameRules) {
@@ -332,9 +330,9 @@ public class BetterMobGriefingCommandTest {
   public void testProcessCommand_mobGriefingTrue_handledByParent(
       @Mocked CommandGameRule parentCommand) {
     // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing", "true"};
-
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+
+    String[] commandWords = new String[] {"mobGriefing", "true"};
 
     // Record Expectations.
     new Expectations(EntityMobGriefingData.class) {
@@ -365,9 +363,9 @@ public class BetterMobGriefingCommandTest {
   public void testProcessCommand_mobGriefingFalse_handledByParent(
       @Mocked CommandGameRule parentCommand) {
     // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing", "false"};
-
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+
+    String[] commandWords = new String[] {"mobGriefing", "false"};
 
     // Record Expectations.
     new Expectations(EntityMobGriefingData.class) {
@@ -398,11 +396,10 @@ public class BetterMobGriefingCommandTest {
   @Test
   public void testProcessCommand_mobGriefingValidEntityName_entityValueOutput() {
     // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing", "entityName1"};
-
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
     List<ChatComponentText> capturedChatText = new ArrayList<>();
+    String[] commandWords = new String[] {"mobGriefing", "entityName1"};
 
     // Record Expectations.
     new Expectations(entityMobGriefingData) {
@@ -438,9 +435,9 @@ public class BetterMobGriefingCommandTest {
   @Test
   public void testProcessCommand_mobGriefingInvalidEntityName_noRuleMessage() {
     // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing", "entityName1"};
-
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+
+    String[] commandWords = new String[] {"mobGriefing", "entityName1"};
 
     // Record Expectations.
     new Expectations(entityMobGriefingData) {
@@ -475,10 +472,10 @@ public class BetterMobGriefingCommandTest {
   @Test
   public void testProcessCommand_mobGriefingValidEntityNameValidValue_entityValueSet() {
     // Set up test data.
+    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+
     String entityName = (String) EntityList.classToStringMapping.get(EntityLiving.class);
     String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
-
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
     // Record Expectations.
     new Expectations(entityMobGriefingData) {
@@ -512,10 +509,10 @@ public class BetterMobGriefingCommandTest {
   @Test(expected = WrongUsageException.class)
   public void testProcessCommand_mobGriefingValidEntityNameInvalidValue_exception() {
     // Set up test data.
+    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+
     String entityName = (String) EntityList.classToStringMapping.get(EntityLiving.class);
     String[] commandWords = new String[] {"mobGriefing", entityName, ""};
-
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
     // Record Expectations.
     new Expectations(entityMobGriefingData) {
@@ -547,10 +544,10 @@ public class BetterMobGriefingCommandTest {
   @Test(expected = WrongUsageException.class)
   public void testProcessCommand_mobGriefingInvalidEntityNameThirdWord_exception() {
     // Set up test data.
+    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+
     String entityName = (String) EntityList.classToStringMapping.get(Entity.class);
     String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
-
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
     // Record Expectations.
     new Expectations(entityMobGriefingData) {
@@ -582,9 +579,9 @@ public class BetterMobGriefingCommandTest {
   @Test(expected = WrongUsageException.class)
   public void testProcessCommand_mobGriefingNotEntityNameThirdWord_exception() {
     // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing", "entityName1", "inherit"};
-
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+
+    String[] commandWords = new String[] {"mobGriefing", "entityName1", "inherit"};
 
     // Record Expectations.
     new Expectations(entityMobGriefingData) {
@@ -616,9 +613,9 @@ public class BetterMobGriefingCommandTest {
   @Test(expected = WrongUsageException.class)
   public void testProcessCommand_mobGriefingFourWords_exception() {
     // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing", "entityName1", "inherit", ""};
-
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+
+    String[] commandWords = new String[] {"mobGriefing", "entityName1", "inherit", ""};
 
     // Record Expectations.
     new Expectations(entityMobGriefingData) {

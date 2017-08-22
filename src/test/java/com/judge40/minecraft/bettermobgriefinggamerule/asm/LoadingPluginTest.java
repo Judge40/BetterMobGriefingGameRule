@@ -16,6 +16,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package com.judge40.minecraft.bettermobgriefinggamerule.asm;
 
 import org.hamcrest.CoreMatchers;
@@ -52,7 +53,7 @@ public class LoadingPluginTest {
    * Test that the BetterMobGriefingGameRule ASMTransformerClass is registered.
    */
   @Test
-  public void testGetASMTransformerClass_transformerClassRegistered() {
+  public void testGetAsmTransformerClass_transformerClassRegistered() {
     // Call the method under test.
     String[] asmTransformerClass = loadingPlugin.getASMTransformerClass();
 

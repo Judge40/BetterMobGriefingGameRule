@@ -16,21 +16,8 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package com.judge40.minecraft.bettermobgriefinggamerule;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterBreakDoorAiTask;
@@ -53,6 +40,19 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.ExplosionEvent.Detonate;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The unit tests for {@link MobGriefingEventHandler}.
@@ -64,6 +64,9 @@ public class MobGriefingEventHandlerTest {
   @Mocked
   private World world;
 
+  /**
+   * Populate {@code fml.deobfuscatedEnvironment}.
+   */
   @BeforeClass
   public static void setUpBeforeClass() {
     // Set the deobfuscation flag.
@@ -82,7 +85,7 @@ public class MobGriefingEventHandlerTest {
    * this mod.
    */
   @Test
-  public void testOnConfigChangedEvent_defaultMobGriefingConfigurationChanged_handleChange(
+  public void testOnConfigChanged_defaultMobGriefingConfigurationChanged_handleChange(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
     OnConfigChangedEvent event = new OnConfigChangedEvent(ModInfoConstants.ID, "", false, false);
@@ -100,7 +103,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onConfigChangedEvent(event);
+    eventHandler.onConfigChanged(event);
 
     // Verify expectations.
     new Verifications() {
@@ -115,13 +118,13 @@ public class MobGriefingEventHandlerTest {
    * not match this mod.
    */
   @Test
-  public void testOnConfigChangedEvent_nonDefaultMobGriefingConfigurationChanged_doNotHandleChange(
+  public void testOnConfigChanged_nonDefaultMobGriefingConfigurationChanged_doNotHandleChange(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
     OnConfigChangedEvent event = new OnConfigChangedEvent("dummyModId001", "", false, false);
 
     // Call the method under test.
-    eventHandler.onConfigChangedEvent(event);
+    eventHandler.onConfigChanged(event);
 
     // Verify expectations.
     new Verifications() {
@@ -137,7 +140,7 @@ public class MobGriefingEventHandlerTest {
    * created by a living entity and the global and entity mob griefing values match.
    */
   @Test
-  public void testOnDetonateEvent_livingEntityGlobalAndEntityMatch_livingSourceUsedDefaultBehavior(
+  public void testOnDetonate_livingEntityGlobalAndEntityMatch_useEntityDefault(
       @Mocked EntityLiving entity) {
     // Set up test data.
     Explosion explosion = new Explosion(null, entity, 0, 0, 0, 0);
@@ -162,7 +165,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -177,7 +180,7 @@ public class MobGriefingEventHandlerTest {
    * is created by a living entity and the global value is true and entity value is false.
    */
   @Test
-  public void testOnDetonateEvent_livingEntityGlobalTrueEntityFalse_livingSourceUsedOverriddenBehavior(
+  public void testOnDetonate_livingEntityGlobalTrueEntityFalse_useEntityOverride(
       @Mocked EntityLiving entity) {
     // Set up test data.
     Explosion explosion = new Explosion(null, entity, 0, 0, 0, 0);
@@ -202,7 +205,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -216,7 +219,7 @@ public class MobGriefingEventHandlerTest {
    * is created by a living entity and the global value is false and entity value is true.
    */
   @Test
-  public void testOnDetonateEvent_livingEntityGlobalFalseEntityTrue_livingSourceUsedOverriddenBehavior(
+  public void testOnDetonate_livingEntityGlobalFalseEntityTrue_useEntityOverride(
       @Mocked EntityLiving entity) {
     // Set up test data.
     Explosion explosion = new Explosion(null, entity, 0, 0, 0, 0);
@@ -241,7 +244,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -256,7 +259,7 @@ public class MobGriefingEventHandlerTest {
    * match.
    */
   @Test
-  public void testOnDetonateEvent_fireBallWithShooterGlobalAndEntityMatch_livingSourceUsedDefaultBehavior(
+  public void testOnDetonate_fireballHasShooterGlobalAndEntityMatch_useShooterDefault(
       @Mocked EntityLiving entity, @Mocked EntityFireball fireball) {
     // Set up test data.
     fireball.shootingEntity = entity;
@@ -283,7 +286,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -299,7 +302,7 @@ public class MobGriefingEventHandlerTest {
    * entity value is false.
    */
   @Test
-  public void testOnDetonateEvent_fireBallWithShooterGlobalTrueEntityFalse_livingSourceUsedOverriddenBehavior(
+  public void testOnDetonate_fireballHasShooterGlobalTrueEntityFalse_useShooterOverride(
       @Mocked EntityLiving entity, @Mocked EntityFireball fireball) {
     // Set up test data.
     fireball.shootingEntity = entity;
@@ -326,7 +329,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -341,7 +344,7 @@ public class MobGriefingEventHandlerTest {
    * entity value is true.
    */
   @Test
-  public void testOnDetonateEvent_fireBallWithShooterGlobalFalseEntityTrue_livingSourceUsedOverriddenBehavior(
+  public void testOnDetonate_fireballHasShooterGlobalFalseEntityTrue_useShooterOverride(
       @Mocked EntityLiving entity, @Mocked EntityFireball fireball) {
     // Set up test data.
     fireball.shootingEntity = entity;
@@ -368,7 +371,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -383,7 +386,7 @@ public class MobGriefingEventHandlerTest {
    * entity and the global and entity mob griefing values match.
    */
   @Test
-  public void testOnDetonateEvent_fireBallWithoutShooterMatchingEntityGlobalAndEntityMatch_livingSourceUsedDefaultBehavior(
+  public void testOnDetonate_fireballNoShooterEntityMatchGlobalAndEntityMatch_useEntityDefault(
       @Mocked EntityLiving entity, @Mocked EntityFireball sourceFireball,
       @Mocked EntityFireball affectedFireball1, @Mocked EntityFireball affectedFireball2,
       @Mocked EntityFireball affectedFireball3, @Mocked EntityFireball affectedFireball4,
@@ -423,7 +426,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -439,7 +442,7 @@ public class MobGriefingEventHandlerTest {
    * entity and the global value is true and entity value is false.
    */
   @Test
-  public void testOnDetonateEvent_fireBallWithoutShooterMatchingEntityGlobalTrueEntityFalse_livingSourceUsedOverriddenBehavior(
+  public void testOnDetonate_fireballNoShooterEntityMatchGlobalTrueEntityFalse_useEntityOverride(
       @Mocked EntityLiving entity, @Mocked EntityFireball sourceFireball,
       @Mocked EntityFireball affectedFireball1, @Mocked EntityFireball affectedFireball2,
       @Mocked EntityFireball affectedFireball3, @Mocked EntityFireball affectedFireball4,
@@ -479,7 +482,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -494,7 +497,7 @@ public class MobGriefingEventHandlerTest {
    * entity and the global value is false and entity value is true.
    */
   @Test
-  public void testOnDetonateEvent_fireBallWithoutShooterMatchingEntityGlobalFalseEntityTrue_livingSourceUsedOverriddenBehavior(
+  public void testOnDetonate_fireballNoShooterEntityMatchGlobalFalseEntityTrue_useEntityOverride(
       @Mocked EntityLiving entity, @Mocked EntityFireball sourceFireball,
       @Mocked EntityFireball affectedFireball1, @Mocked EntityFireball affectedFireball2,
       @Mocked EntityFireball affectedFireball3, @Mocked EntityFireball affectedFireball4,
@@ -534,7 +537,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -548,7 +551,7 @@ public class MobGriefingEventHandlerTest {
    * a shooting entity and there is no matching affected entity.
    */
   @Test
-  public void testOnDetonateEvent_fireBallWithoutShooterNoMatchingEntity_defaultBehaviour(
+  public void testOnDetonate_fireballNoShooterNoEntityMatch_defaultBehaviour(
       @Mocked EntityFireball sourceFireball, @Mocked EntityFireball affectedFireball1,
       @Mocked EntityFireball affectedFireball2, @Mocked EntityFireball affectedFireball3,
       @Mocked EntityFireball affectedFireball4) {
@@ -567,7 +570,7 @@ public class MobGriefingEventHandlerTest {
         affectedFireball2, affectedFireball3, affectedFireball4));
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -582,7 +585,7 @@ public class MobGriefingEventHandlerTest {
    * griefing values match.
    */
   @Test
-  public void testOnDetonateEvent_noSourceWithoutShooterMatchingEntityGlobalAndEntityMatch_livingSourceUsedDefaultBehavior(
+  public void testOnDetonate_noSourceEntityMatchGlobalAndEntityMatch_useEntityDefault(
       @Mocked EntityLiving entity, @Mocked EntityFireball affectedFireball1,
       @Mocked EntityFireball affectedFireball2, @Mocked EntityFireball affectedFireball3,
       @Mocked EntityFireball affectedFireball4, @Mocked EntityFireball affectedFireball5) {
@@ -621,7 +624,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -637,7 +640,7 @@ public class MobGriefingEventHandlerTest {
    * entity value is false.
    */
   @Test
-  public void testOnDetonateEvent_noSourceMatchingEntityGlobalTrueEntityFalse_livingSourceUsedOverriddenBehavior(
+  public void testOnDetonate_noSourceEntityMatchGlobalTrueEntityFalse_useEntityOverride(
       @Mocked EntityLiving entity, @Mocked EntityFireball affectedFireball1,
       @Mocked EntityFireball affectedFireball2, @Mocked EntityFireball affectedFireball3,
       @Mocked EntityFireball affectedFireball4, @Mocked EntityFireball affectedFireball5) {
@@ -676,7 +679,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -691,7 +694,7 @@ public class MobGriefingEventHandlerTest {
    * entity value is true.
    */
   @Test
-  public void testOnDetonateEvent_noSourceMatchingEntityGlobalFalseEntityTrue_livingSourceUsedOverriddenBehavior(
+  public void testOnDetonate_noSourceEntityMatchGlobalFalseEntityTrue_useEntityOverride(
       @Mocked EntityLiving entity, @Mocked EntityFireball affectedFireball1,
       @Mocked EntityFireball affectedFireball2, @Mocked EntityFireball affectedFireball3,
       @Mocked EntityFireball affectedFireball4, @Mocked EntityFireball affectedFireball5) {
@@ -730,7 +733,7 @@ public class MobGriefingEventHandlerTest {
     };
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -744,7 +747,7 @@ public class MobGriefingEventHandlerTest {
    * matching affected entity.
    */
   @Test
-  public void testOnDetonateEvent_noSourceNoMatchingEntity_defaultBehaviour(
+  public void testOnDetonate_noSourceNoEntityMatch_defaultBehaviour(
       @Mocked EntityFireball affectedFireball1, @Mocked EntityFireball affectedFireball2,
       @Mocked EntityFireball affectedFireball3, @Mocked EntityFireball affectedFireball4) {
     // Set up test data.
@@ -762,7 +765,7 @@ public class MobGriefingEventHandlerTest {
         affectedFireball2, affectedFireball3, affectedFireball4));
 
     // Call the method under test.
-    eventHandler.onDetonateEvent(detonateEvent);
+    eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -776,13 +779,13 @@ public class MobGriefingEventHandlerTest {
    * AI task list is not already populated.
    */
   @Test
-  public void testOnEntityJoinWorldEvent_zombieTaskNotPopulated_fieldUpdatedTaskNotPopulated() {
+  public void testOnEntityJoinWorld_zombieTaskNotPopulated_fieldUpdatedTaskNotPopulated() {
     // Set up test data.
     EntityZombie zombie = new EntityZombie(null);
     EntityJoinWorldEvent event = new EntityJoinWorldEvent(zombie, null);
 
     // Call the method under test.
-    eventHandler.onEntityJoinWorldEvent(event);
+    eventHandler.onEntityJoinWorld(event);
 
     // Perform assertions.
     EntityAIBreakDoor breakDoorAiTask =
@@ -797,9 +800,7 @@ public class MobGriefingEventHandlerTest {
       taskActions.add(aiTaskEntry.action);
     }
 
-    Assert.assertThat(
-        "A break door AI task was found in the Zombie's task list, but should not have existed.",
-        taskActions,
+    Assert.assertThat("A break door AI task was found in the Zombie's task list.", taskActions,
         CoreMatchers.not(CoreMatchers.hasItem(CoreMatchers.instanceOf(EntityAIBreakDoor.class))));
   }
 
@@ -808,7 +809,7 @@ public class MobGriefingEventHandlerTest {
    * task list is already populated.
    */
   @Test
-  public void testOnEntityJoinWorldEvent_zombieTaskPopulated_fieldUpdatedTaskReplaced() {
+  public void testOnEntityJoinWorld_zombieTaskPopulated_fieldUpdatedTaskReplaced() {
     // Set up test data.
     EntityZombie zombie = new EntityZombie(null);
 
@@ -819,7 +820,7 @@ public class MobGriefingEventHandlerTest {
     EntityJoinWorldEvent event = new EntityJoinWorldEvent(zombie, null);
 
     // Call the method under test.
-    eventHandler.onEntityJoinWorldEvent(event);
+    eventHandler.onEntityJoinWorld(event);
 
     // Perform assertions.
     EntityAIBreakDoor breakDoorAiTask = Deencapsulation.getField(zombie, breakDoorAiField);
@@ -833,11 +834,9 @@ public class MobGriefingEventHandlerTest {
       taskActions.add(aiTaskEntry.action);
     }
 
-    Assert.assertThat(
-        "An original break door AI task was found in the Zombie's task list, but should not have existed.",
+    Assert.assertThat("An original break door AI task was found in the Zombie's task list.",
         taskActions, CoreMatchers.not(CoreMatchers.hasItem(originalBreakDoorAiTask)));
-    Assert.assertThat(
-        "A better break door AI task was not found in the Zombie's task list, but should have existed.",
+    Assert.assertThat("A better break door AI task was not found in the Zombie's task list.",
         taskActions, CoreMatchers.hasItem(CoreMatchers.instanceOf(BetterBreakDoorAiTask.class)));
   }
 
@@ -845,8 +844,8 @@ public class MobGriefingEventHandlerTest {
    * Test that no exception is thrown when an unhandled Entity is passed to the event handler.
    */
   @Test
-  public void testOnEntityJoinWorldEvent_notZombie_noException(@Mocked Entity entity) {
+  public void testOnEntityJoinWorld_notZombie_noException(@Mocked Entity entity) {
     EntityJoinWorldEvent entityJoinWorldEvent = new EntityJoinWorldEvent(entity, null);
-    eventHandler.onEntityJoinWorldEvent(entityJoinWorldEvent);
+    eventHandler.onEntityJoinWorld(entityJoinWorldEvent);
   }
 }

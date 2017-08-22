@@ -16,6 +16,7 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package com.judge40.minecraft.bettermobgriefinggamerule.entity.ai;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
@@ -30,10 +31,10 @@ import net.minecraft.entity.ai.EntityAIBreakDoor;
 public class BetterBreakDoorAiTask extends EntityAIBreakDoor {
 
   /**
-   * @param p_i1618_1_ The EntityLiving for this AI task
+   * @param entity The EntityLiving for this AI task.
    */
-  public BetterBreakDoorAiTask(EntityLiving p_i1618_1_) {
-    super(p_i1618_1_);
+  public BetterBreakDoorAiTask(EntityLiving entity) {
+    super(entity);
   }
 
   /*

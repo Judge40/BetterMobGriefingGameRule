@@ -16,13 +16,12 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
-import org.junit.Test;
-
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigurationConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfigurationConstants;
 
 import cpw.mods.fml.client.config.GuiConfig;
 import cpw.mods.fml.common.FMLModContainer;
@@ -30,6 +29,7 @@ import cpw.mods.fml.common.Loader;
 import mockit.Expectations;
 import mockit.Mocked;
 import net.minecraftforge.common.config.ConfigCategory;
+import org.junit.Test;
 
 /**
  * The unit tests for {@link DefaultMobGriefingConfigGui}.
@@ -56,10 +56,10 @@ public class DefaultMobGriefingConfigGuiTest {
         entryPoint.getDefaultMobGriefingConfiguration();
         result = configuration;
 
-        configuration.getCategory(DefaultMobGriefingConfigurationConstants.GLOBAL_RULE_CATEGORY);
+        configuration.getCategory(ConfigurationConstants.GLOBAL_RULE_CATEGORY);
         result = new ConfigCategory("globalCategoryName");
 
-        configuration.getCategory(DefaultMobGriefingConfigurationConstants.ENTITY_RULES_CATEGORY);
+        configuration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
         result = new ConfigCategory("entityCategoryName");
 
         configuration.toString();

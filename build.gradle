@@ -15,6 +15,7 @@ buildscript {
     }
 }
 
+apply plugin: "checkstyle"
 apply plugin: "findbugs"
 apply plugin: "forge"
 apply plugin: "pmd"

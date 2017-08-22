@@ -16,16 +16,8 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package com.judge40.minecraft.bettermobgriefinggamerule.world;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.ModInfoConstants;
@@ -37,6 +29,14 @@ import mockit.Verifications;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The unit tests for {@link EntityMobGriefingData}.
@@ -122,7 +122,7 @@ public class EntityMobGriefingDataTest {
    * match, all configured {@link MobGriefingValue}s match and overwrite is true.
    */
   @Test
-  public void testPopulateFromConfiguration_matchedNamesMatchedValuesOverwrite_entityDataNotUpdated(
+  public void testPopulateFromConfiguration_matchedNamesMatchedValuesOverwrite_dataNotUpdated(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
     Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
@@ -166,7 +166,7 @@ public class EntityMobGriefingDataTest {
    * match, all configured {@link MobGriefingValue}s match and overwrite is false.
    */
   @Test
-  public void testPopulateFromConfiguration_matchedNamesMatchedValuesNotOverwrite_entityDataNotUpdated(
+  public void testPopulateFromConfiguration_matchedNamesMatchedValuesNotOverwrite_dataNotUpdated(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
     Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
@@ -210,7 +210,7 @@ public class EntityMobGriefingDataTest {
    * not all configured {@link MobGriefingValue}s match and overwrite is true.
    */
   @Test
-  public void testPopulateFromConfiguration_matchedNamesNotMatchedValuesOverwrite_entityDataUpdated(
+  public void testPopulateFromConfiguration_matchedNamesNotMatchedValuesOverwrite_dataUpdated(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
     Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
@@ -254,7 +254,7 @@ public class EntityMobGriefingDataTest {
    * match, not all configured {@link MobGriefingValue}s match and overwrite is false.
    */
   @Test
-  public void testPopulateFromConfiguration_matchedNamesNotMatchedValuesNotOverwrite_entityDataNotUpdated(
+  public void testPopulateFromConfiguration_matchedNamesNotMatchedValuesNotOverwrite_dataNotUpdated(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
     Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
@@ -298,7 +298,7 @@ public class EntityMobGriefingDataTest {
    * match and overwrite is true.
    */
   @Test
-  public void testPopulateFromConfiguration_notMatchedNamesOverwrite_entityDataUpdated(
+  public void testPopulateFromConfiguration_notMatchedNamesOverwrite_dataUpdated(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
     Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
@@ -340,7 +340,7 @@ public class EntityMobGriefingDataTest {
    * match and overwrite is false.
    */
   @Test
-  public void testPopulateFromConfiguration_notMatchedNamesNotOverwrite_entityDataUpdated(
+  public void testPopulateFromConfiguration_notMatchedNamesNotOverwrite_dataUpdated(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
     Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
@@ -382,7 +382,7 @@ public class EntityMobGriefingDataTest {
    * populated.
    */
   @Test
-  public void testReadFromNBT_nbtDataPopulated_entityDataPopulated() {
+  public void testReadFromNbt_nbtDataPopulated_entityDataPopulated() {
     // Set up test data.
     NBTTagCompound nbtTagCompound = new NBTTagCompound();
     nbtTagCompound.setString("entityName1", "true");
@@ -409,7 +409,7 @@ public class EntityMobGriefingDataTest {
    * not populated.
    */
   @Test
-  public void testReadFromNBT_nbtDataNotPopulated_entityDataNotPopulated() {
+  public void testReadFromNbt_nbtDataNotPopulated_entityDataNotPopulated() {
     // Set up test data.
     NBTTagCompound nbtTagCompound = new NBTTagCompound();
 
@@ -426,7 +426,7 @@ public class EntityMobGriefingDataTest {
    * populated.
    */
   @Test
-  public void testWriteToNBT_entityDataPopulated_nbtDataPopulated() {
+  public void testWriteToNbt_entityDataPopulated_nbtDataPopulated() {
     // Set up test data.
     entityMobGriefingData.setMobGriefingValue("entityName1", MobGriefingValue.TRUE);
     entityMobGriefingData.setMobGriefingValue("entityName2", MobGriefingValue.FALSE);
@@ -451,7 +451,7 @@ public class EntityMobGriefingDataTest {
    * not populated.
    */
   @Test
-  public void testWriteToNBT_entityDataNotPopulated_nbtDataNotPopulated() {
+  public void testWriteToNbt_entityDataNotPopulated_nbtDataNotPopulated() {
     // Set up test data.
     NBTTagCompound nbtTagCompound = new NBTTagCompound();
 
@@ -468,7 +468,7 @@ public class EntityMobGriefingDataTest {
    * returned when {@code EntityMobGriefingData} is populated.
    */
   @Test
-  public void testToString_entityDataPopulated_readableString() {
+  public void testToString_dataPopulated_readableString() {
     // Set up test data.
     entityMobGriefingData.setMobGriefingValue("entityName1", MobGriefingValue.TRUE);
     entityMobGriefingData.setMobGriefingValue("entityName2", MobGriefingValue.FALSE);
@@ -485,10 +485,10 @@ public class EntityMobGriefingDataTest {
   }
 
   /**
-   * Test that an empty string is returned when the {@link EntityMobGriefingData} is not populated;
+   * Test that an empty string is returned when the {@link EntityMobGriefingData} is not populated.
    */
   @Test
-  public void testToString_entityDataNotPopulated_emptyString() {
+  public void testToString_dataNotPopulated_emptyString() {
     // Call the method under test.
     String stringRepresentation = entityMobGriefingData.toString();
 

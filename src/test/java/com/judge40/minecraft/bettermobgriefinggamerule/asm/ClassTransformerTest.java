@@ -16,24 +16,12 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package com.judge40.minecraft.bettermobgriefinggamerule.asm;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-
-import com.google.common.primitives.Bytes;
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 
+import com.google.common.primitives.Bytes;
 import net.minecraft.block.BlockFarmland;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -43,6 +31,18 @@ import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.launchwrapper.Launch;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The unit tests for {@link ClassTransformer}.
@@ -51,6 +51,9 @@ public class ClassTransformerTest {
 
   private ClassTransformer classTransformer;
 
+  /**
+   * Populate {@code fml.deobfuscatedEnvironment}.
+   */
   @BeforeClass
   public static void setUpBeforeClass() {
     // Set the deobfuscation flag.
@@ -122,7 +125,7 @@ public class ClassTransformerTest {
    * {@link EntityAIEatGrass}.
    */
   @Test
-  public void testTransform_entityAIEatGrass_mobGriefingTransformed() throws IOException {
+  public void testTransform_entityAiEatGrass_mobGriefingTransformed() throws IOException {
     // Set up test data.
     String targetClassName = EntityAIEatGrass.class.getName();
 

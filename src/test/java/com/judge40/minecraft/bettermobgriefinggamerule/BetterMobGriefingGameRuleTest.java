@@ -16,20 +16,8 @@
  * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package com.judge40.minecraft.bettermobgriefinggamerule;
-
-import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.command.BetterMobGriefingCommand;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
@@ -56,6 +44,18 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.io.File;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The unit tests for {@link BetterMobGriefingGameRule}.
@@ -64,6 +64,9 @@ public class BetterMobGriefingGameRuleTest {
 
   private BetterMobGriefingGameRule betterMobGriefingGameRule;
 
+  /**
+   * Populate {@code fml.deobfuscatedEnvironment}.
+   */
   @BeforeClass
   public static void setUpBeforeClass() {
     // Set the deobfuscation flag.
@@ -72,11 +75,8 @@ public class BetterMobGriefingGameRuleTest {
     Launch.blackboard = blackboard;
   }
 
-  /**
-   * @throws java.lang.Exception
-   */
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     betterMobGriefingGameRule = new BetterMobGriefingGameRule();
   }
 
@@ -112,7 +112,7 @@ public class BetterMobGriefingGameRuleTest {
    * Test that configuration is loaded when the FML pre-initialization event is fired.
    */
   @Test
-  public void testOnFMLPreInitializationEvent_configurationLoaded() {
+  public void testOnFmlPreInitializationEvent_configurationLoaded() {
     // Set up test data.
     FMLPreInitializationEvent event = new FMLPreInitializationEvent(null, null);
     File configFile = new File("");
@@ -128,7 +128,7 @@ public class BetterMobGriefingGameRuleTest {
     };
 
     // Call the method under test.
-    betterMobGriefingGameRule.onFMLPreInitializationEvent(event);
+    betterMobGriefingGameRule.onFmlPreInitializationEvent(event);
 
     // Perform assertions.
     Assert.assertThat("The configuration did not match the expected value.",
@@ -140,7 +140,7 @@ public class BetterMobGriefingGameRuleTest {
    * Test that the event handlers are registered when the FML initialization event is fired.
    */
   @Test
-  public void testOnFMLInitializationEvent_eventHandlersRegistered(@Mocked EventBus eventBus,
+  public void testOnFmlInitializationEvent_eventHandlersRegistered(@Mocked EventBus eventBus,
       @Mocked Loader loader) {
     // Set up test data.
     FMLInitializationEvent event = new FMLInitializationEvent();
@@ -154,7 +154,7 @@ public class BetterMobGriefingGameRuleTest {
     };
 
     // Call the method under test.
-    betterMobGriefingGameRule.onFMLInitializationEvent(event);
+    betterMobGriefingGameRule.onFmlInitializationEvent(event);
   }
 
   /**
@@ -162,12 +162,11 @@ public class BetterMobGriefingGameRuleTest {
    * populated when the FML server starting event is fired and the world is new.
    */
   @Test
-  public void testOnFMLServerStartingEvent_newWorld_gameRuleCommandReplacedGlobalRuleReplacedEntityRulesPopulated(
+  public void testOnFmlServerStartingEvent_newWorld_originalsReplacedEntityRulesPopulated(
       @Mocked CommandHandler commandHandler, @Mocked DefaultMobGriefingConfiguration configuration,
       @Mocked EntityMobGriefingData entityData, @Mocked MinecraftServer server,
       @Mocked World world) {
     // Set up test data.
-    FMLServerStartingEvent event = new FMLServerStartingEvent(server);
     BetterMobGriefingCommand newGameRuleHandler = new BetterMobGriefingCommand();
     CommandGameRule originalGameRuleHandler = new CommandGameRule();
 
@@ -180,6 +179,8 @@ public class BetterMobGriefingGameRuleTest {
     GameRules gameRules = new GameRules();
 
     Deencapsulation.setField(betterMobGriefingGameRule, configuration);
+
+    FMLServerStartingEvent event = new FMLServerStartingEvent(server);
 
     // Record expectations.
     new Expectations(gameRules, BetterMobGriefingCommand.class, ReflectionHelper.class) {
@@ -206,7 +207,7 @@ public class BetterMobGriefingGameRuleTest {
     };
 
     // Call the method under test.
-    betterMobGriefingGameRule.onFMLServerStartingEvent(event);
+    betterMobGriefingGameRule.onFmlServerStartingEvent(event);
 
     // Perform assertions.
     Assert.assertThat("The command set contained an unexpected game rule command.", commandSet,
@@ -230,11 +231,10 @@ public class BetterMobGriefingGameRuleTest {
    * populated when the FML server starting event is fired and the world is not new.
    */
   @Test
-  public void testOnFMLServerStartingEvent_existingWorld_gameRuleCommandReplacedGlobalRuleReplacedEntityRulesPopulated(
+  public void testOnFmlServerStartingEvent_existingWorld_originalsReplacedEntityRulesPopulated(
       @Mocked CommandHandler commandHandler, @Mocked EntityMobGriefingData entityData,
       @Mocked MinecraftServer server, @Mocked World world) {
     // Set up test data.
-    FMLServerStartingEvent event = new FMLServerStartingEvent(server);
     BetterMobGriefingCommand newGameRuleHandler = new BetterMobGriefingCommand();
     CommandGameRule originalGameRuleHandler = new CommandGameRule();
 
@@ -243,6 +243,8 @@ public class BetterMobGriefingGameRuleTest {
 
     Set<ICommand> commandSet = new HashSet<>();
     commandSet.add(originalGameRuleHandler);
+
+    FMLServerStartingEvent event = new FMLServerStartingEvent(server);
 
     // Record expectations.
     new Expectations(BetterMobGriefingCommand.class, ReflectionHelper.class) {
@@ -263,7 +265,7 @@ public class BetterMobGriefingGameRuleTest {
     };
 
     // Call the method under test.
-    betterMobGriefingGameRule.onFMLServerStartingEvent(event);
+    betterMobGriefingGameRule.onFmlServerStartingEvent(event);
 
     // Perform assertions.
     Assert.assertThat("The command set contained an unexpected game rule command.", commandSet,

@@ -93,4 +93,5 @@ processResources {
 
 test {
     systemProperties["jmockit-coverage-metrics"] = "all"
+    systemProperties["jmockit-coverage-outputDir"] = "build/reports/coverage"
 }

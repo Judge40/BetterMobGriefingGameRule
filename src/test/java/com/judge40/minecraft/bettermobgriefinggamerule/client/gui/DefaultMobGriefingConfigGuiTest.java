@@ -20,8 +20,8 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigurationConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.ConfigurationConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 
 import cpw.mods.fml.client.config.GuiConfig;
 import cpw.mods.fml.common.FMLModContainer;

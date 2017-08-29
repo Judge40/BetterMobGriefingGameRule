@@ -17,9 +17,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule;
+package com.judge40.minecraft.bettermobgriefinggamerule.common;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterBreakDoorAiTask;
+import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.entity.ai.BetterBreakDoorAiTask;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -37,7 +38,7 @@ import net.minecraftforge.event.world.ExplosionEvent.Detonate;
 import java.util.Iterator;
 
 /**
- * Event handler for all EVENT_BUS events.
+ * An event handler for all mob griefing events.
  */
 public class MobGriefingEventHandler {
 
@@ -54,7 +55,7 @@ public class MobGriefingEventHandler {
   }
 
   /**
-   * On the explosion detonate event check whether mobGriefing is enabled for a specific entity and
+   * On the explosion detonate event check whether mob griefing is enabled for a specific entity and
    * update the relevant fields to reflect the desired value.
    * 
    * @param detonateEvent The detonate event for the explosion to update.
@@ -96,7 +97,7 @@ public class MobGriefingEventHandler {
 
       GameRules gameRules = detonateEvent.world.getGameRules();
       boolean globalMobGriefing =
-          gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+          gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
 
       // If entity mobGriefing has overridden the global value then update the explosion's flag.
       if (entityMobGriefing != globalMobGriefing) {

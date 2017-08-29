@@ -17,10 +17,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
+package com.judge40.minecraft.bettermobgriefinggamerule.common.configuration;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
-import com.judge40.minecraft.bettermobgriefinggamerule.MobGriefingValue;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityList;
@@ -91,7 +91,7 @@ public class DefaultMobGriefingConfiguration extends Configuration {
         MobGriefingValue.FALSE.toExternalForm());
 
     String globalPropertyValue = getString(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
-        BetterMobGriefingGameRule.ORIGINAL, MobGriefingValue.TRUE.toExternalForm(), validValues);
+        BetterMobGriefingGameRule.GLOBAL_RULE, MobGriefingValue.TRUE.toExternalForm(), validValues);
     globalMobGriefingValue = MobGriefingValue.toEnumeration(globalPropertyValue);
   }
 

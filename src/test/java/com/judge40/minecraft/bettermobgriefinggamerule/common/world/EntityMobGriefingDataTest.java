@@ -17,11 +17,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule.world;
+package com.judge40.minecraft.bettermobgriefinggamerule.common.world;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.MobGriefingValue;
-import com.judge40.minecraft.bettermobgriefinggamerule.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 
 import mockit.Expectations;
 import mockit.Mocked;
@@ -119,10 +120,10 @@ public class EntityMobGriefingDataTest {
 
   /**
    * Test that the {@link EntityMobGriefingData} is not updated when all configured entity names
-   * match, all configured {@link MobGriefingValue}s match and overwrite is true.
+   * match and all configured {@link MobGriefingValue}s match.
    */
   @Test
-  public void testPopulateFromConfiguration_matchedNamesMatchedValuesOverwrite_dataNotUpdated(
+  public void testPopulateFromConfiguration_matchedNamesMatchedValues_dataNotUpdated(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
     Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
@@ -144,7 +145,7 @@ public class EntityMobGriefingDataTest {
     };
 
     // Call the method under test.
-    entityMobGriefingData.populateFromConfiguration(configuration, true);
+    entityMobGriefingData.populateFromConfiguration(configuration);
 
     // Perform assertions.
     Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
@@ -163,54 +164,10 @@ public class EntityMobGriefingDataTest {
 
   /**
    * Test that the {@link EntityMobGriefingData} is not updated when all configured entity names
-   * match, all configured {@link MobGriefingValue}s match and overwrite is false.
+   * match and not all configured {@link MobGriefingValue}s match.
    */
   @Test
-  public void testPopulateFromConfiguration_matchedNamesMatchedValuesNotOverwrite_dataNotUpdated(
-      @Mocked DefaultMobGriefingConfiguration configuration) {
-    // Set up test data.
-    Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
-    entityMobGriefingValues.put("entityName1", MobGriefingValue.TRUE);
-    entityMobGriefingValues.put("entityName2", MobGriefingValue.FALSE);
-    entityMobGriefingValues.put("entityName3", MobGriefingValue.INHERIT);
-
-    entityMobGriefingData.setMobGriefingValue("entityName1", MobGriefingValue.TRUE);
-    entityMobGriefingData.setMobGriefingValue("entityName2", MobGriefingValue.FALSE);
-    entityMobGriefingData.setMobGriefingValue("entityName3", MobGriefingValue.INHERIT);
-    entityMobGriefingData.setDirty(false);
-
-    // Record expectations.
-    new Expectations() {
-      {
-        configuration.getEntityMobGriefingValues();
-        result = entityMobGriefingValues;
-      }
-    };
-
-    // Call the method under test.
-    entityMobGriefingData.populateFromConfiguration(configuration, false);
-
-    // Perform assertions.
-    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-        entityMobGriefingData.getMobGriefingValue("entityName1"),
-        CoreMatchers.is(MobGriefingValue.TRUE));
-    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-        entityMobGriefingData.getMobGriefingValue("entityName2"),
-        CoreMatchers.is(MobGriefingValue.FALSE));
-    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-        entityMobGriefingData.getMobGriefingValue("entityName3"),
-        CoreMatchers.is(MobGriefingValue.INHERIT));
-
-    Assert.assertThat("The EntityMobGriefingData's dirty flag did not match the expected value.",
-        entityMobGriefingData.isDirty(), CoreMatchers.is(false));
-  }
-
-  /**
-   * Test that the {@link EntityMobGriefingData} is updated when all configured entity names match,
-   * not all configured {@link MobGriefingValue}s match and overwrite is true.
-   */
-  @Test
-  public void testPopulateFromConfiguration_matchedNamesNotMatchedValuesOverwrite_dataUpdated(
+  public void testPopulateFromConfiguration_matchedNamesNotMatchedValues_dataNotUpdated(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
     Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
@@ -232,51 +189,7 @@ public class EntityMobGriefingDataTest {
     };
 
     // Call the method under test.
-    entityMobGriefingData.populateFromConfiguration(configuration, true);
-
-    // Perform assertions.
-    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-        entityMobGriefingData.getMobGriefingValue("entityName1"),
-        CoreMatchers.is(MobGriefingValue.TRUE));
-    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-        entityMobGriefingData.getMobGriefingValue("entityName2"),
-        CoreMatchers.is(MobGriefingValue.FALSE));
-    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-        entityMobGriefingData.getMobGriefingValue("entityName3"),
-        CoreMatchers.is(MobGriefingValue.INHERIT));
-
-    Assert.assertThat("The EntityMobGriefingData's dirty flag did not match the expected value.",
-        entityMobGriefingData.isDirty(), CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that the {@link EntityMobGriefingData} is not updated when all configured entity names
-   * match, not all configured {@link MobGriefingValue}s match and overwrite is false.
-   */
-  @Test
-  public void testPopulateFromConfiguration_matchedNamesNotMatchedValuesNotOverwrite_dataNotUpdated(
-      @Mocked DefaultMobGriefingConfiguration configuration) {
-    // Set up test data.
-    Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
-    entityMobGriefingValues.put("entityName1", MobGriefingValue.TRUE);
-    entityMobGriefingValues.put("entityName2", MobGriefingValue.FALSE);
-    entityMobGriefingValues.put("entityName3", MobGriefingValue.INHERIT);
-
-    entityMobGriefingData.setMobGriefingValue("entityName1", MobGriefingValue.INHERIT);
-    entityMobGriefingData.setMobGriefingValue("entityName2", MobGriefingValue.TRUE);
-    entityMobGriefingData.setMobGriefingValue("entityName3", MobGriefingValue.FALSE);
-    entityMobGriefingData.setDirty(false);
-
-    // Record expectations.
-    new Expectations() {
-      {
-        configuration.getEntityMobGriefingValues();
-        result = entityMobGriefingValues;
-      }
-    };
-
-    // Call the method under test.
-    entityMobGriefingData.populateFromConfiguration(configuration, false);
+    entityMobGriefingData.populateFromConfiguration(configuration);
 
     // Perform assertions.
     Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
@@ -295,10 +208,10 @@ public class EntityMobGriefingDataTest {
 
   /**
    * Test that the {@link EntityMobGriefingData} is updated when not all configured entity names
-   * match and overwrite is true.
+   * match.
    */
   @Test
-  public void testPopulateFromConfiguration_notMatchedNamesOverwrite_dataUpdated(
+  public void testPopulateFromConfiguration_notMatchedNames_dataUpdated(
       @Mocked DefaultMobGriefingConfiguration configuration) {
     // Set up test data.
     Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
@@ -318,49 +231,7 @@ public class EntityMobGriefingDataTest {
     };
 
     // Call the method under test.
-    entityMobGriefingData.populateFromConfiguration(configuration, true);
-
-    // Perform assertions.
-    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-        entityMobGriefingData.getMobGriefingValue("entityName1"),
-        CoreMatchers.is(MobGriefingValue.TRUE));
-    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-        entityMobGriefingData.getMobGriefingValue("entityName2"),
-        CoreMatchers.is(MobGriefingValue.FALSE));
-    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-        entityMobGriefingData.getMobGriefingValue("entityName3"),
-        CoreMatchers.is(MobGriefingValue.INHERIT));
-
-    Assert.assertThat("The EntityMobGriefingData's dirty flag did not match the expected value.",
-        entityMobGriefingData.isDirty(), CoreMatchers.is(true));
-  }
-
-  /**
-   * Test that the {@link EntityMobGriefingData} is updated when not all configured entity names
-   * match and overwrite is false.
-   */
-  @Test
-  public void testPopulateFromConfiguration_notMatchedNamesNotOverwrite_dataUpdated(
-      @Mocked DefaultMobGriefingConfiguration configuration) {
-    // Set up test data.
-    Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
-    entityMobGriefingValues.put("entityName1", MobGriefingValue.TRUE);
-    entityMobGriefingValues.put("entityName2", MobGriefingValue.FALSE);
-
-    entityMobGriefingData.setMobGriefingValue("entityName1", MobGriefingValue.INHERIT);
-    entityMobGriefingData.setMobGriefingValue("entityName3", MobGriefingValue.INHERIT);
-    entityMobGriefingData.setDirty(false);
-
-    // Record expectations.
-    new Expectations() {
-      {
-        configuration.getEntityMobGriefingValues();
-        result = entityMobGriefingValues;
-      }
-    };
-
-    // Call the method under test.
-    entityMobGriefingData.populateFromConfiguration(configuration, false);
+    entityMobGriefingData.populateFromConfiguration(configuration);
 
     // Perform assertions.
     Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",

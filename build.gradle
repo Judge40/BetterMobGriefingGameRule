@@ -1,18 +1,18 @@
 buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
+  repositories {
+    mavenCentral()
+    maven {
+      name = "forge"
+      url = "http://files.minecraftforge.net/maven"
     }
-    dependencies {
-        classpath "net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT"
+    maven {
+      name = "sonatype"
+      url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
+  }
+  dependencies {
+    classpath "net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT"
+  }
 }
 
 apply plugin: "checkstyle"
@@ -29,69 +29,67 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-    // MinecraftForge version
-    version = "1.7.10-10.13.4.1558-1.7.10"
+  // MinecraftForge version
+  version = "1.7.10-10.13.4.1558-1.7.10"
 
-    // Use shared run directory if available
-    if (file("../run").exists()) {
-        runDir = "../run"
-    } else {
-        runDir = "run"
-    }
+  // Use shared run directory if available
+  if (file("../run").exists()) {
+    runDir = "../run"
+  } else {
+    runDir = "run"
+  }
 }
 
 dependencies {
-    // JMockit dependency
-    testCompile "org.jmockit:jmockit:1.33"
-    // JUnit dependency
-    testCompile "junit:junit:4.12"
+  // JMockit dependency   
+  testCompile "org.jmockit:jmockit:1.33"
+  // JUnit dependency
+  testCompile "junit:junit:4.12"
 }
 
 findbugs {
-    effort = "max"
-    reportLevel = "low"
+  effort = "max"
+  reportLevel = "low"
 }
 
 findbugsTest {
-    excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilterTest.xml")
+  excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilterTest.xml")
 }
 
 tasks.withType(FindBugs) {
-    reports {
-        xml.enabled = false
-        html.enabled = true
-    }
+  reports {
+    xml.enabled = false
+    html.enabled = true
+  }
 }
 
 jar {
-    manifest {
-        attributes "FMLCorePlugin":"com.judge40.minecraft.bettermobgriefinggamerule.asm.LoadingPlugin",
-            "FMLCorePluginContainsFMLMod":"true"
-    }
+  manifest {
+    attributes "FMLCorePlugin":"com.judge40.minecraft.bettermobgriefinggamerule.asm.LoadingPlugin",
+        "FMLCorePluginContainsFMLMod":"true"
+  }
 }
 
 processResources {
-    // this will ensure that this task is redone when the versions
-    // change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+  // This will ensure that this task is redone when the versions change.
+  inputs.property "version", project.version
+  inputs.property "mcversion", project.minecraft.version
 
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include "mcmod.info"
+  // Replace stuff in mcmod.info, nothing else.
+  from(sourceSets.main.resources.srcDirs) {
+    include "mcmod.info"
 
-        // replace version and mcversion
-        expand "version":project.version,
-            "mcversion":project.minecraft.version
-    }
+    // Replace version and mcversion.
+    expand "version":project.version,"mcversion":project.minecraft.version
+  }
 
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "mcmod.info"
-    }
+  // Copy everything else, thats not the mcmod.info.
+  from(sourceSets.main.resources.srcDirs) {
+    exclude "mcmod.info"
+  }
 }
 
 test {
-    systemProperties["jmockit-coverage-metrics"] = "all"
-    systemProperties["jmockit-coverage-outputDir"] = "build/reports/coverage"
+  systemProperties["jmockit-coverage-metrics"] = "all"
+  systemProperties["jmockit-coverage-outputDir"] = "build/reports/coverage"
 }

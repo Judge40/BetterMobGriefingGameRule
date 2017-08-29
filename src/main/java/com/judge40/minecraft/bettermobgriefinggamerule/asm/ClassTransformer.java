@@ -20,8 +20,8 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.asm;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
-import com.judge40.minecraft.bettermobgriefinggamerule.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.ObfuscationHelper;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ObfuscationHelper;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.apache.logging.log4j.LogManager;
@@ -46,12 +46,12 @@ import java.util.ListIterator;
 import java.util.Map;
 
 /**
- * A class transformer which replaces the mobGriefing game rule calls which can not be handled with
- * events.
+ * A class transformer which replaces the global mob griefing game rule calls which can not be
+ * handled with events.
  */
 public class ClassTransformer implements IClassTransformer {
 
-  private static final Logger logger = LogManager.getLogger(ModInfoConstants.ID);
+  private static final Logger LOGGER = LogManager.getLogger(ModInfoConstants.ID);
 
   // A map where the key is the class name to be transformed and the value is a map of method names
   // to replacement instructions.
@@ -114,11 +114,13 @@ public class ClassTransformer implements IClassTransformer {
     TRANSFORM_TARGETS.put("net.minecraft.entity.boss.EntityWither", entityWitherTargets);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * Perform byte code transformation of the provided class, the name is used to determine how to
+   * perform the transformation.
    * 
-   * @see net.minecraft.launchwrapper.IClassTransformer#transform(java.lang.String,
-   * java.lang.String, byte[])
+   * @param name The name of the class.
+   * @param transformedName The deobfuscated name of the class.
+   * @param basicClass A byte array holding the class's byte code.
    */
   @Override
   public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -126,7 +128,7 @@ public class ClassTransformer implements IClassTransformer {
         TRANSFORM_TARGETS.get(transformedName);
 
     if (methodNamesToReplacementNodes != null) {
-      logger.info("The \"{}\" class has been identified for transformation.", transformedName);
+      LOGGER.info("The \"{}\" class has been identified for transformation.", transformedName);
       basicClass = transformClass(basicClass, methodNamesToReplacementNodes);
     }
     return basicClass;
@@ -156,7 +158,7 @@ public class ClassTransformer implements IClassTransformer {
 
       // If there are replacement instructions then the method is able to be transformed.
       if (!replacementInstructions.isEmpty()) {
-        logger.info("The \"{}\" method has been identified for transformation.", methodNode.name);
+        LOGGER.info("The \"{}\" method has been identified for transformation.", methodNode.name);
         transformMethod(methodNode, replacementInstructions);
       }
     }
@@ -191,12 +193,12 @@ public class ClassTransformer implements IClassTransformer {
         if (methodInsnNode.name.equals(ObfuscationHelper.convertName("func_82766_b"))) {
           LdcInsnNode ldcNode = (LdcInsnNode) methodInsnNode.getPrevious();
 
-          // If the game rule being checked is "mobGriefing" then the correct point to begin
-          // transformation has been found.
-          if (ldcNode.cst.equals(BetterMobGriefingGameRule.ORIGINAL)) {
+          // If the game rule being checked is the global mob griefing rule then the correct point
+          // to begin transformation has been found.
+          if (ldcNode.cst.equals(BetterMobGriefingGameRule.GLOBAL_RULE)) {
             transformInstructions(iterator, replacementInstructions, cloneInstructions);
-            logger.info("An instance of mob griefing has been identified and replaced.");
-            cloneInstructions |= true;
+            LOGGER.info("An instance of mob griefing has been identified and replaced.");
+            cloneInstructions = true;
           }
         }
       }

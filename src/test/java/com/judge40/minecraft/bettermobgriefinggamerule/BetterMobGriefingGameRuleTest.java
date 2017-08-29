@@ -19,9 +19,13 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.command.BetterMobGriefingCommand;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
-import com.judge40.minecraft.bettermobgriefinggamerule.world.EntityMobGriefingData;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingEventHandler;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ObfuscationHelper;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobGriefingCommand;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 
 import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.Loader;
@@ -65,7 +69,7 @@ public class BetterMobGriefingGameRuleTest {
   private BetterMobGriefingGameRule betterMobGriefingGameRule;
 
   /**
-   * Populate {@code fml.deobfuscatedEnvironment}.
+   * Populate the {@code fml.deobfuscatedEnvironment} flag.
    */
   @BeforeClass
   public static void setUpBeforeClass() {
@@ -218,10 +222,10 @@ public class BetterMobGriefingGameRuleTest {
       {
         commandHandler.registerCommand(withInstanceOf(BetterMobGriefingCommand.class));
 
-        gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.ORIGINAL,
+        gameRules.setOrCreateGameRule(BetterMobGriefingGameRule.GLOBAL_RULE,
             MobGriefingValue.FALSE.toExternalForm());
 
-        entityData.populateFromConfiguration((DefaultMobGriefingConfiguration) any, false);
+        entityData.populateFromConfiguration((DefaultMobGriefingConfiguration) any);
       }
     };
   }
@@ -276,7 +280,7 @@ public class BetterMobGriefingGameRuleTest {
       {
         commandHandler.registerCommand(withInstanceOf(BetterMobGriefingCommand.class));
 
-        entityData.populateFromConfiguration((DefaultMobGriefingConfiguration) any, false);
+        entityData.populateFromConfiguration((DefaultMobGriefingConfiguration) any);
       }
     };
   }
@@ -296,7 +300,7 @@ public class BetterMobGriefingGameRuleTest {
         EntityList.getEntityString(entity);
         result = null;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
         times = 1;
       }
@@ -329,7 +333,7 @@ public class BetterMobGriefingGameRuleTest {
         entityData.getMobGriefingValue("entityName");
         result = null;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
         times = 1;
       }
@@ -361,7 +365,7 @@ public class BetterMobGriefingGameRuleTest {
         entityData.getMobGriefingValue("entityName");
         result = MobGriefingValue.INHERIT;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
         times = 1;
       }
@@ -405,7 +409,7 @@ public class BetterMobGriefingGameRuleTest {
     // Verify expectations.
     new Verifications() {
       {
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         times = 0;
       }
     };
@@ -441,7 +445,7 @@ public class BetterMobGriefingGameRuleTest {
     // Verify expectations.
     new Verifications() {
       {
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         times = 0;
       }
     };

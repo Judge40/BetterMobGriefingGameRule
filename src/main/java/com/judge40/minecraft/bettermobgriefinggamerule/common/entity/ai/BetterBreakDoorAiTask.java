@@ -17,7 +17,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule.entity.ai;
+package com.judge40.minecraft.bettermobgriefinggamerule.common.entity.ai;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 
@@ -37,11 +37,6 @@ public class BetterBreakDoorAiTask extends EntityAIBreakDoor {
     super(entity);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see net.minecraft.entity.ai.EntityAIBreakDoor#shouldExecute()
-   */
   @Override
   public boolean shouldExecute() {
     boolean shouldExecute = super.shouldExecute();

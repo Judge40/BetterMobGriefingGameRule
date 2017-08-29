@@ -1,6 +1,5 @@
 <FindBugsFilter>
   <Match>
-<!--     <Class name="mockit.Expectations"/> -->
     <Bug code="RV, SIC"/>
   </Match>
 </FindBugsFilter>

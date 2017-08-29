@@ -52,7 +52,7 @@ public class ClassTransformerTest {
   private ClassTransformer classTransformer;
 
   /**
-   * Populate {@code fml.deobfuscatedEnvironment}.
+   * Populate the {@code fml.deobfuscatedEnvironment} flag.
    */
   @BeforeClass
   public static void setUpBeforeClass() {
@@ -107,7 +107,7 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.GLOBAL_RULE)
         .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
@@ -138,7 +138,7 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.GLOBAL_RULE)
         .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
@@ -169,7 +169,7 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.GLOBAL_RULE)
         .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
@@ -200,7 +200,7 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.GLOBAL_RULE)
         .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
@@ -231,7 +231,7 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.GLOBAL_RULE)
         .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
@@ -262,7 +262,7 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.GLOBAL_RULE)
         .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",
@@ -293,7 +293,7 @@ public class ClassTransformerTest {
     byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
 
     // Perform assertions.
-    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.ORIGINAL)
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.GLOBAL_RULE)
         .getBytes(Charset.defaultCharset());
     Assert.assertThat(
         "A reference to the mobGriefing game rule was still found in the transformed class.",

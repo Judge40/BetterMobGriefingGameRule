@@ -17,22 +17,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule;
+package com.judge40.minecraft.bettermobgriefinggamerule.common;
+
+import java.util.Locale;
 
 /**
- * The constants for BetterMobGriefingGameRule mod information.
+ * An enumeration representing the valid values for the mobGriefing game rules.
  */
-public class ModInfoConstants {
-  public static final String BASE_PACKAGE = "com.judge40.minecraft.bettermobgriefinggamerule";
+public enum MobGriefingValue {
+  FALSE, INHERIT, TRUE;
 
-  public static final String DISPLAY_NAME = "Better mobGriefing GameRule";
+  /**
+   * Convert an enumeration's external form to the enumeration.
+   * 
+   * @param externalForm The external form of the enumeration, which is its name.
+   * @return The enumeration matching the name.
+   * @throws IllegalArgumentException If the external form does not match an enumeration.
+   */
+  public static MobGriefingValue toEnumeration(String externalForm) {
+    return valueOf(externalForm.toUpperCase(Locale.ENGLISH));
+  }
 
-  public static final String DISPLAY_NAME_CORE = "Better mobGriefing GameRule Core";
-
-  public static final String GUI_FACTORY =
-      BASE_PACKAGE + ".client.gui.DefaultMobGriefingConfigGuiFactory";
-
-  public static final String ID = "bettermobgriefinggamerule";
-
-  public static final String MINECRAFT_VERSION = "1.7.10";
+  /**
+   * Converts the enumeration to its external form, which is its name as lower case.
+   * 
+   * @return The enumeration's external form.
+   */
+  public String toExternalForm() {
+    return name().toLowerCase(Locale.ENGLISH);
+  }
 }

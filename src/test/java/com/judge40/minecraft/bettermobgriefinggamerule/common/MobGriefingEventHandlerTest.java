@@ -17,10 +17,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule;
+package com.judge40.minecraft.bettermobgriefinggamerule.common;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
-import com.judge40.minecraft.bettermobgriefinggamerule.entity.ai.BetterBreakDoorAiTask;
+import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingEventHandler;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ObfuscationHelper;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.entity.ai.BetterBreakDoorAiTask;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import mockit.Deencapsulation;
@@ -65,7 +69,7 @@ public class MobGriefingEventHandlerTest {
   private World world;
 
   /**
-   * Populate {@code fml.deobfuscatedEnvironment}.
+   * Populate the {@code fml.deobfuscatedEnvironment} flag.
    */
   @BeforeClass
   public static void setUpBeforeClass() {
@@ -159,7 +163,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -199,7 +203,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -238,7 +242,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
       }
     };
@@ -280,7 +284,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -323,7 +327,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -365,7 +369,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
       }
     };
@@ -420,7 +424,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -476,7 +480,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -531,7 +535,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
       }
     };
@@ -618,7 +622,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -673,7 +677,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -727,7 +731,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.ORIGINAL);
+        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
       }
     };

@@ -17,7 +17,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule;
+package com.judge40.minecraft.bettermobgriefinggamerule.common;
+
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ObfuscationHelper;
 
 import mockit.Deencapsulation;
 import net.minecraft.launchwrapper.Launch;
@@ -40,7 +42,7 @@ public class ObfuscationHelperTest {
   private static final String DEENCAPULSATION_FIELD = "fml.deobfuscatedEnvironment";
 
   /**
-   * Populate {@code fml.deobfuscatedEnvironment} and MCP to SRG maps.
+   * Populate the {@code fml.deobfuscatedEnvironment} flag and MCP to SRG maps.
    */
   @BeforeClass
   public static void setUpBeforeClass() {

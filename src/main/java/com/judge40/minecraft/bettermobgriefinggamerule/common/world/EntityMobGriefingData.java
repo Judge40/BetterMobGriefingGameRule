@@ -17,11 +17,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule.world;
+package com.judge40.minecraft.bettermobgriefinggamerule.common.world;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.MobGriefingValue;
-import com.judge40.minecraft.bettermobgriefinggamerule.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -82,14 +82,11 @@ public class EntityMobGriefingData extends WorldSavedData {
   /**
    * Populate the {@link EntityMobGriefingData} with the {@link DefaultMobGriefingConfiguration}'s
    * values. Only entities which are not already in the {@code EntityMobGriefingData} will be
-   * populated, unless the {@code overwrite} flag is true.
+   * populated.
    * 
    * @param configuration The {@code DefaultMobGriefingConfiguration} to get the values from.
-   * @param overwrite If true then all existing values will be overwritten with matching default
-   *        values, otherwise only the missing entities are populated.
    */
-  public void populateFromConfiguration(DefaultMobGriefingConfiguration configuration,
-      boolean overwrite) {
+  public void populateFromConfiguration(DefaultMobGriefingConfiguration configuration) {
     Set<String> registeredEntityNames = getRegisteredEntityNames();
     Map<String, MobGriefingValue> configEntityNamesToMobGriefingValue =
         configuration.getEntityMobGriefingValues();
@@ -98,19 +95,13 @@ public class EntityMobGriefingData extends WorldSavedData {
     for (Entry<String, MobGriefingValue> entry : configEntityNamesToMobGriefingValue.entrySet()) {
       String entityName = entry.getKey();
 
-      // Only set the MobGriefingValue if the entity is not already in the world data or overwrite
-      // is true.
-      if (overwrite || !registeredEntityNames.contains(entityName)) {
+      // Only set the MobGriefingValue if the entity is not already in the world data.
+      if (!registeredEntityNames.contains(entityName)) {
         setMobGriefingValue(entityName, entry.getValue());
       }
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see net.minecraft.world.WorldSavedData#readFromNBT(net.minecraft.nbt.NBTTagCompound)
-   */
   @Override
   public void readFromNBT(NBTTagCompound nbtTagCompound) {
     // Add the entity name and MobGriefingValue from each NBTTagCompound entry to the world data.
@@ -123,11 +114,6 @@ public class EntityMobGriefingData extends WorldSavedData {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see net.minecraft.world.WorldSavedData#writeToNBT(net.minecraft.nbt.NBTTagCompound)
-   */
   @Override
   public void writeToNBT(NBTTagCompound nbtTagCompound) {
     // Add the entity name and MobGriefingValue from each world data entry to the NBTTagCompound.
@@ -172,11 +158,6 @@ public class EntityMobGriefingData extends WorldSavedData {
     return entityNamesToMobGriefingValue.keySet();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.lang.Object#toString()
-   */
   @Override
   public String toString() {
     StringBuilder stringBuilder = new StringBuilder();

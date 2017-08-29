@@ -26,46 +26,25 @@ import net.minecraft.client.gui.GuiScreen;
 import java.util.Set;
 
 /**
- * The factory for the default mobGriefing value configuration GUI.
+ * The GUI factory for the mob griefing rules's default value configuration GUI.
  */
 public class DefaultMobGriefingConfigGuiFactory implements IModGuiFactory {
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see cpw.mods.fml.client.IModGuiFactory#getHandlerFor(cpw.mods.fml.client.IModGuiFactory.
-   * RuntimeOptionCategoryElement)
-   */
   @Override
   public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
     return null;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see cpw.mods.fml.client.IModGuiFactory#initialize(net.minecraft.client.Minecraft)
-   */
   @Override
   public void initialize(Minecraft minecraftInstance) {
 
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see cpw.mods.fml.client.IModGuiFactory#mainConfigGuiClass()
-   */
   @Override
   public Class<? extends GuiScreen> mainConfigGuiClass() {
     return DefaultMobGriefingConfigGui.class;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see cpw.mods.fml.client.IModGuiFactory#runtimeGuiCategories()
-   */
   @Override
   public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
     return null;

@@ -17,10 +17,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule.command;
+package com.judge40.minecraft.bettermobgriefinggamerule.common.command;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.MobGriefingValue;
-import com.judge40.minecraft.bettermobgriefinggamerule.world.EntityMobGriefingData;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobGriefingCommand;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 
 import mockit.Expectations;
 import mockit.Mocked;

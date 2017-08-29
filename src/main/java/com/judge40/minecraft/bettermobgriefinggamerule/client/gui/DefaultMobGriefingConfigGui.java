@@ -20,9 +20,9 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
-import com.judge40.minecraft.bettermobgriefinggamerule.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigurationConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.DefaultMobGriefingConfiguration;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.ConfigurationConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 
 import cpw.mods.fml.client.config.GuiConfig;
 import net.minecraft.client.gui.GuiScreen;
@@ -31,7 +31,7 @@ import net.minecraftforge.common.config.ConfigElement;
 import java.util.Arrays;
 
 /**
- * The configuration GUI for setting the default value of mobGriefing rules.
+ * The configuration GUI for setting the default value of mob griefing rules.
  */
 public class DefaultMobGriefingConfigGui extends GuiConfig {
 
@@ -51,10 +51,10 @@ public class DefaultMobGriefingConfigGui extends GuiConfig {
   }
 
   /**
-   * Get the {@link DefaultMobGriefingConfiguration} from the {@link BetterMobGriefingGameRule}
-   * instance.
+   * Get the {@link DefaultMobGriefingConfiguration} from the mod's
+   * {@link BetterMobGriefingGameRule} instance.
    * 
-   * @return The configuration.
+   * @return The {@code DefaultMobGriefingConfiguration}.
    */
   private static DefaultMobGriefingConfiguration getConfiguration() {
     BetterMobGriefingGameRule entryPoint = BetterMobGriefingGameRule.getInstance();

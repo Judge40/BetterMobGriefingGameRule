@@ -19,7 +19,7 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.asm;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.ModInfoConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 
@@ -28,58 +28,32 @@ import java.util.Map;
 /**
  * The loading plugin for the BetterMobGriefingGameRule core mod.
  */
-
 @IFMLLoadingPlugin.Name(value = ModInfoConstants.DISPLAY_NAME_CORE)
 @IFMLLoadingPlugin.MCVersion(value = ModInfoConstants.MINECRAFT_VERSION)
 @IFMLLoadingPlugin.TransformerExclusions(value = ModInfoConstants.BASE_PACKAGE)
 @IFMLLoadingPlugin.SortingIndex(Integer.MAX_VALUE)
 public class LoadingPlugin implements IFMLLoadingPlugin {
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see cpw.mods.fml.relauncher.IFMLLoadingPlugin#getAccessTransformerClass()
-   */
   @Override
   public String getAccessTransformerClass() {
     return null;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see cpw.mods.fml.relauncher.IFMLLoadingPlugin#getASMTransformerClass()
-   */
   @Override
   public String[] getASMTransformerClass() {
     return new String[] {ClassTransformer.class.getName()};
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see cpw.mods.fml.relauncher.IFMLLoadingPlugin#getModContainerClass()
-   */
   @Override
   public String getModContainerClass() {
     return null;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see cpw.mods.fml.relauncher.IFMLLoadingPlugin#getSetupClass()
-   */
   @Override
   public String getSetupClass() {
     return null;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see cpw.mods.fml.relauncher.IFMLLoadingPlugin#injectData(java.util.Map)
-   */
   @Override
   public void injectData(Map<String, Object> data) {
 

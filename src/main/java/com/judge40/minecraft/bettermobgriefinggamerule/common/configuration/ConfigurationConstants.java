@@ -17,7 +17,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
+package com.judge40.minecraft.bettermobgriefinggamerule.common.configuration;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The constants for default mob griefing configuration information.
+ * The constants for mob griefing default value configuration information.
  */
 public class ConfigurationConstants {
   // The constants for the localizable configuration UI message keys.

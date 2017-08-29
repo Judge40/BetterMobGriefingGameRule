@@ -17,10 +17,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
+package com.judge40.minecraft.bettermobgriefinggamerule.common.configuration;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
-import com.judge40.minecraft.bettermobgriefinggamerule.MobGriefingValue;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 
 import mockit.Expectations;
 import mockit.Mocked;
@@ -67,7 +67,7 @@ public class DefaultMobGriefingConfigurationTest {
         I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
         result = "validGlobalValues";
 
-        parentConfiguration.getString(BetterMobGriefingGameRule.ORIGINAL,
+        parentConfiguration.getString(BetterMobGriefingGameRule.GLOBAL_RULE,
             ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
             "validGlobalValues", validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = MobGriefingValue.TRUE.toExternalForm();
@@ -136,7 +136,7 @@ public class DefaultMobGriefingConfigurationTest {
         I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
         result = "validGlobalValues";
 
-        parentConfiguration.getString(BetterMobGriefingGameRule.ORIGINAL,
+        parentConfiguration.getString(BetterMobGriefingGameRule.GLOBAL_RULE,
             ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
             "validGlobalValues", validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = "invalidValue";
@@ -205,7 +205,7 @@ public class DefaultMobGriefingConfigurationTest {
         I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
         result = "validGlobalValues";
 
-        parentConfiguration.getString(BetterMobGriefingGameRule.ORIGINAL,
+        parentConfiguration.getString(BetterMobGriefingGameRule.GLOBAL_RULE,
             ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
             "validGlobalValues", validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = MobGriefingValue.FALSE.toExternalForm();
@@ -281,7 +281,7 @@ public class DefaultMobGriefingConfigurationTest {
         I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
         result = "validGlobalValues";
 
-        parentConfiguration.getString(BetterMobGriefingGameRule.ORIGINAL,
+        parentConfiguration.getString(BetterMobGriefingGameRule.GLOBAL_RULE,
             ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
             "validGlobalValues", validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = MobGriefingValue.FALSE.toExternalForm();
@@ -362,7 +362,7 @@ public class DefaultMobGriefingConfigurationTest {
         I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
         result = "validGlobalValues";
 
-        parentConfiguration.getString(BetterMobGriefingGameRule.ORIGINAL,
+        parentConfiguration.getString(BetterMobGriefingGameRule.GLOBAL_RULE,
             ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
             "validGlobalValues", validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = MobGriefingValue.FALSE.toExternalForm();
@@ -443,7 +443,7 @@ public class DefaultMobGriefingConfigurationTest {
         I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validGlobalValues);
         result = "validGlobalValues";
 
-        parentConfiguration.getString(BetterMobGriefingGameRule.ORIGINAL,
+        parentConfiguration.getString(BetterMobGriefingGameRule.GLOBAL_RULE,
             ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
             "validGlobalValues", validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = MobGriefingValue.FALSE.toExternalForm();

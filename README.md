@@ -1,4 +1,4 @@
-# Better mobGriefing GameRule
+![Better mobGriefing GameRule](src/main/resources/assets/bettermobgriefinggamerule/logo.png)
 
 ![Minecraft 1.7.10](https://img.shields.io/badge/Minecraft-1.7.10-lightgrey.svg)
 ![Forge 1.7.10-10.13.4.1558](https://img.shields.io/badge/Forge-1.7.10--10.13.4.1558-lightgrey.svg)  
@@ -26,17 +26,64 @@ instead of the original "mobGriefing" game rule.
 | Wither      | mobGriefing WitherBoss  |
 | Zombie      | mobGriefing Zombie      |
 
-Each rule can be set to "true", "false" or "inherit", when the value is
-"inherit" the entity's mobGriefing behaviour will be inherited from the
+Each rule can be set to `true`, `false` or `inherit`, when the value is
+`inherit` the entity's mobGriefing behaviour will be inherited from the
 original "mobGriefing" game rule.
 
-Full details of the effects of each game rule can be found in this
-projects wiki.
+### Entity Rule Effects
+The following list describe the effect of each of the default entity
+rules.
+
+ - Creeper
+    - Whether the Creeper's explosion can destroy blocks.
+ - EnderDragon
+    - Whether the EnderDragon can destroy blocks upon contact.
+ - Enderman
+    - Whether the Enderman can pick up and/or place blocks.
+ - Ghast
+    - Whether the Ghast's fireball can destroy blocks.
+ - Sheep
+    - Whether the Sheep eating grass damages the grass.
+ - Silverfish
+    - Whether the Silverfish egg hatching can destroy the block.
+ - Wither
+    - Whether the Wither's spawn explosion can destroy blocks.
+    - Whether the Wither's attacks can destroy blocks.
+    - Whether the Wither can destroy blocks upon contact.
+ - Zombie
+    - Whether the Zombie can destroy wooden doors.
+    - Whether the Zombie can pick up loot from the ground.
+
+Several behaviours are handled in common code and so can affect multiple
+entities, these are detailed below with the entities which use them as
+standard.
+ - Whether an entity falling upon farmland reverts it to dirt.
+   (Used by all entities.)
+ - Whether an entity eating grass damages the grass.
+   (Used by Sheep only.)
+ - Whether an entity can destroy wooden doors. (Used by Zombies only.)
+ - Whether an entity can pick up loot from the ground.
+   (Used by PigZombies, Skeletons and Zombies.)
+ - Whether large fireballs can destroy blocks.
+   (Used by Ghasts only.)
+ - Whether wither skull projectiles can destroy blocks.
+   (Used by Wither only.)
+
+Any entities which include these behaviours can be added to be handled
+with a separate entity rule at any time by using the command
+`/gamerule mobGriefing <entity-name> <value>`. For example the loot
+pickup behaviour of Skeletons is not handled by standard but could be
+stopped by using `/gamerule mobGriefing Skeleton false`.
+
+Any changes made by other mods may change the inheritance of mob
+griefing behaviour, so creating new entity rules as above may be
+necessary to account for changes or new mob types which extend the
+original mob types. 
 
 ### Configuration
 The default values of the mobGriefing game rules can be set using the
-in-game configuration menu. Defaults can be changed for both then global
-mobGriefing game rule and each individual entity.
+in-game configuration menu. Default values can be changed for both the
+global mobGriefing game rule and each individual entity.
 
 The specified default values will be used to set the initial mobGriefing
 values during world creation as well as for any existing world in which
@@ -47,7 +94,7 @@ file automatically, additional entities can be added manually to the
 configuration file. Once added the entity can then be managed using the
 in-game configuration menu.
 The entity name specified must match the name as it appears in the
-EntityList for that entity, for example "S:PigZombie=true".
+EntityList for that entity, for example `S:PigZombie=true`.
 
 The structure of the configuration file follows the Forge structure:
 ```
@@ -69,13 +116,7 @@ defaultmobgriefingvalues {
 ## Versioning
 The versioning used for this project uses a combination of the target
 Minecraft version and [SemVer](http://semver.org) in the format
-"MCVERSION-MAJOR.MINOR.PATCH".
-
-Each target Minecraft version is contained within it's own separate
-branches using the
-[GitFlow](https://github.com/petervanderdoes/gitflow-avh) branching
-model. Ensure that the correct branch is selected before using any code
-from this repository.
+`MCVERSION-MAJOR.MINOR.PATCH`.
 
 ## License
 This project is licensed under the [MIT License (MIT)](LICENSE).

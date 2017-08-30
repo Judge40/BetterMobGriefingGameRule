@@ -41,7 +41,6 @@ public class ConfigurationConstants {
   public static final String GLOBAL_RULE_KEY = "bettermobgriefinggamerule.config.defaultGlobalRule";
   public static final String ENTITY_RULES_KEY =
       "bettermobgriefinggamerule.config.defaultEntityRules";
-  public static final String VALID_VALUES_KEY = "bettermobgriefinggamerule.config.validValues";
 
   // The constants for the configuration categories.
   public static final String GLOBAL_RULE_CATEGORY = "defaultglobalrule";

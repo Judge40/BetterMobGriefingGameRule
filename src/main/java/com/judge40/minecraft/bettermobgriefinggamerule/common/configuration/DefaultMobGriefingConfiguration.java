@@ -22,7 +22,6 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.configuration;
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.common.config.ConfigCategory;
@@ -143,7 +142,7 @@ public class DefaultMobGriefingConfiguration extends Configuration {
   private String getString(String categoryName, String propertyName, String defaultValue,
       List<String> validValues) {
     String propertyValue = getString(propertyName, categoryName, defaultValue,
-        I18n.format(ConfigurationConstants.VALID_VALUES_KEY, validValues),
+        String.format("[valid values: %s]", validValues),
         validValues.toArray(new String[validValues.size()]));
 
     if (!validValues.contains(propertyValue)) {

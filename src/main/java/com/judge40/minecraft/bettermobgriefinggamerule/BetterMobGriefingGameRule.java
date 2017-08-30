@@ -52,7 +52,8 @@ import java.util.Set;
  * Base class for Better mobGriefing GameRule mod.
  */
 @Mod(modid = ModInfoConstants.ID, name = ModInfoConstants.DISPLAY_NAME,
-    version = ModInfoConstants.MINECRAFT_VERSION, guiFactory = ModInfoConstants.GUI_FACTORY)
+    version = ModInfoConstants.VERSION, guiFactory = ModInfoConstants.GUI_FACTORY,
+    acceptableRemoteVersions = "*")
 public class BetterMobGriefingGameRule {
 
   public static final String GLOBAL_RULE = "mobGriefing";

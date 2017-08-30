@@ -37,7 +37,7 @@ public class ObfuscationHelper {
   static {
     srgToMcp.put("field_146075_bs", "field_146075_bs");
     srgToMcp.put("field_71561_b", "commandSet");
-    srgToMcp.put("func_180658_a", "onFallenUpon");
+    srgToMcp.put("func_149746_a", "onFallenUpon");
     srgToMcp.put("func_70619_bc", "updateAITasks");
     srgToMcp.put("func_70626_be", "updateEntityActionState");
     srgToMcp.put("func_70636_d", "onLivingUpdate");

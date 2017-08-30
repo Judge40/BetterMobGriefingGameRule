@@ -66,7 +66,7 @@ public class ClassTransformer implements IClassTransformer {
 
     // Add BlockFarmland targets.
     Map<String, List<AbstractInsnNode>> blockFarmLandTargets = new HashMap<>();
-    blockFarmLandTargets.put(ObfuscationHelper.convertName("func_180658_a"),
+    blockFarmLandTargets.put(ObfuscationHelper.convertName("func_149746_a"),
         Arrays.asList(new VarInsnNode(Opcodes.ALOAD, 5), invocation));
     TRANSFORM_TARGETS.put("net.minecraft.block.BlockFarmland", blockFarmLandTargets);
 

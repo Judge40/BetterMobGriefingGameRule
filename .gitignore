@@ -1,15 +1,19 @@
 # ----------------------------------------------------------------------
 # Java
 # ----------------------------------------------------------------------
+# Compiled class file
 *.class
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
+# Package Files
 *.jar
 *.war
 *.ear
+*.zip
+*.tar.gz
+*.rar
 
 # virtual machine crash logs,
 # see http://www.java.com/en/download/help/error_hotspot.xml
@@ -19,7 +23,7 @@ hs_err_pid*
 # Gradle
 # ----------------------------------------------------------------------
 .gradle
-build/
+/build/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -35,8 +39,5 @@ gradle-app.setting
 # Project Specific
 #-----------------------------------------------------------------------
 # Minecraft
-logs/
-run/
-
-# JMockit Coverage
-coverage-report/
+/logs/
+/run/

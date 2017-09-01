@@ -23,12 +23,12 @@ import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.ConfigurationConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 
-import cpw.mods.fml.client.config.GuiConfig;
-import cpw.mods.fml.common.FMLModContainer;
-import cpw.mods.fml.common.Loader;
 import mockit.Expectations;
 import mockit.Mocked;
 import net.minecraftforge.common.config.ConfigCategory;
+import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.common.FMLModContainer;
+import net.minecraftforge.fml.common.Loader;
 import org.junit.Test;
 
 /**

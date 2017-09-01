@@ -184,12 +184,43 @@ public class ClassTransformerTest {
 
   /**
    * Test that the mob griefing instructions are replaced when the transformation target class is
-   * {@link EntityEnderman}.
+   * {@link EntityEnderman}'s AITakeBlock inner class.
    */
   @Test
-  public void testTransform_entityEnderman_mobGriefingTransformed() throws IOException {
+  public void testTransform_entityEndermanTakeBlock_mobGriefingTransformed() throws IOException {
     // Set up test data.
-    String targetClassName = EntityEnderman.class.getName();
+    String targetClassName = EntityEnderman.class.getName() + "$AITakeBlock";
+
+    ClassReader classReader = new ClassReader(targetClassName);
+    ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+    classReader.accept(classWriter, ClassReader.SKIP_DEBUG);
+    byte[] inputBytes = classWriter.toByteArray();
+
+    // Call the method under test.
+    byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
+
+    // Perform assertions.
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.GLOBAL_RULE)
+        .getBytes(Charset.defaultCharset());
+    Assert.assertThat(
+        "A reference to the mobGriefing game rule was still found in the transformed class.",
+        Bytes.indexOf(transformedBytes, originalSearchBytes), CoreMatchers.is(-1));
+
+    byte[] replacementSearchBytes =
+        BetterMobGriefingGameRule.class.getSimpleName().getBytes(Charset.defaultCharset());
+    Assert.assertThat(
+        "A reference to the better mobGriefing game rule was not found in the transformed class.",
+        Bytes.indexOf(transformedBytes, replacementSearchBytes), CoreMatchers.not(-1));
+  }
+
+  /**
+   * Test that the mob griefing instructions are replaced when the transformation target class is
+   * {@link EntityEnderman}'s AIPlaceBlock inner class.
+   */
+  @Test
+  public void testTransform_entityEndermanPlaceBlock_mobGriefingTransformed() throws IOException {
+    // Set up test data.
+    String targetClassName = EntityEnderman.class.getName() + "$AIPlaceBlock";
 
     ClassReader classReader = new ClassReader(targetClassName);
     ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -251,7 +282,7 @@ public class ClassTransformerTest {
   @Test
   public void testTransform_entitySilverfish_mobGriefingTransformed() throws IOException {
     // Set up test data.
-    String targetClassName = EntitySilverfish.class.getName();
+    String targetClassName = EntitySilverfish.class.getName() + "$AISummonSilverfish";
 
     ClassReader classReader = new ClassReader(targetClassName);
     ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);

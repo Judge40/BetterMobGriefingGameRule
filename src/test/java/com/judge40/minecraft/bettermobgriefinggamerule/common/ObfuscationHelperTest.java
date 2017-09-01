@@ -19,8 +19,6 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.common;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.common.ObfuscationHelper;
-
 import mockit.Deencapsulation;
 import net.minecraft.launchwrapper.Launch;
 import org.hamcrest.CoreMatchers;

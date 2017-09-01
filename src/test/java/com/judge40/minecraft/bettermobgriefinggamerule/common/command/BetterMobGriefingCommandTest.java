@@ -20,15 +20,14 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.common.command;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobGriefingCommand;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandGameRule;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -75,12 +74,12 @@ public class BetterMobGriefingCommandTest {
     String[] commandWords = new String[] {"mobGriefing"};
 
     // Call the method under test.
-    command.addTabCompletionOptions(commandSender, commandWords);
+    command.addTabCompletionOptions(commandSender, commandWords, null);
 
     // Verify expectations.
     new Verifications() {
       {
-        parentCommand.addTabCompletionOptions(commandSender, commandWords);
+        parentCommand.addTabCompletionOptions(commandSender, commandWords, null);
       }
     };
   }
@@ -122,7 +121,8 @@ public class BetterMobGriefingCommandTest {
     };
 
     // Call the method under test.
-    List<?> tabCompletionOptions = command.addTabCompletionOptions(commandSender, commandWords);
+    List<?> tabCompletionOptions =
+        command.addTabCompletionOptions(commandSender, commandWords, null);
 
     // Perform assertions.
     Assert.assertThat("The tab completion options did not match the expected options.",
@@ -151,7 +151,8 @@ public class BetterMobGriefingCommandTest {
     };
 
     // Call the method under test.
-    List<?> tabCompletionOptions = command.addTabCompletionOptions(commandSender, commandWords);
+    List<?> tabCompletionOptions =
+        command.addTabCompletionOptions(commandSender, commandWords, null);
 
     // Perform assertions.
     Assert.assertThat("The tab completion options did not match the expected options.",
@@ -169,7 +170,8 @@ public class BetterMobGriefingCommandTest {
     String[] commandWords = new String[] {"mobGriefing", "", "", ""};
 
     // Call the method under test.
-    List<?> tabCompletionOptions = command.addTabCompletionOptions(commandSender, commandWords);
+    List<?> tabCompletionOptions =
+        command.addTabCompletionOptions(commandSender, commandWords, null);
 
     // Perform assertions.
     Assert.assertThat("The tab completion options did not match the expected options.",
@@ -194,12 +196,12 @@ public class BetterMobGriefingCommandTest {
     String[] commandWords = new String[] {"notMobGriefing", ""};
 
     // Call the method under test.
-    command.addTabCompletionOptions(commandSender, commandWords);
+    command.addTabCompletionOptions(commandSender, commandWords, null);
 
     // Verify expectations.
     new Verifications() {
       {
-        parentCommand.addTabCompletionOptions(commandSender, commandWords);
+        parentCommand.addTabCompletionOptions(commandSender, commandWords, null);
       }
     };
   }
@@ -208,7 +210,8 @@ public class BetterMobGriefingCommandTest {
    * Test that the parent handles the command when there are no command words.
    */
   @Test
-  public void testProcessCommand_noWords_handledByParent(@Mocked CommandGameRule parentCommand) {
+  public void testProcessCommand_noWords_handledByParent(@Mocked CommandGameRule parentCommand)
+      throws CommandException {
     // Set up test data.
     String[] commandWords = new String[0];
 
@@ -229,7 +232,7 @@ public class BetterMobGriefingCommandTest {
    */
   @Test
   public void testProcessCommand_mobGriefingEntityValuesExist_globalAndEntityValuesOutput(
-      @Mocked World world) {
+      @Mocked World world) throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
     entityMobGriefingData.setMobGriefingValue("entityName1", MobGriefingValue.TRUE);
@@ -252,7 +255,7 @@ public class BetterMobGriefingCommandTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleStringValue("mobGriefing");
+        gameRules.getString("mobGriefing");
         result = "globalValue";
 
         commandSender.addChatMessage(withCapture(capturedChatText));
@@ -284,7 +287,7 @@ public class BetterMobGriefingCommandTest {
    */
   @Test
   public void testProcessCommand_mobGriefingEntityValuesNotExists_globalValueOutput(
-      @Mocked World world) {
+      @Mocked World world) throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
     GameRules gameRules = new GameRules();
@@ -304,7 +307,7 @@ public class BetterMobGriefingCommandTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleStringValue("mobGriefing");
+        gameRules.getString("mobGriefing");
         result = "globalValue";
 
         entityMobGriefingData.toString();
@@ -329,7 +332,7 @@ public class BetterMobGriefingCommandTest {
    */
   @Test
   public void testProcessCommand_mobGriefingTrue_handledByParent(
-      @Mocked CommandGameRule parentCommand) {
+      @Mocked CommandGameRule parentCommand) throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
@@ -362,7 +365,7 @@ public class BetterMobGriefingCommandTest {
    */
   @Test
   public void testProcessCommand_mobGriefingFalse_handledByParent(
-      @Mocked CommandGameRule parentCommand) {
+      @Mocked CommandGameRule parentCommand) throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
@@ -395,7 +398,8 @@ public class BetterMobGriefingCommandTest {
    * entity name.
    */
   @Test
-  public void testProcessCommand_mobGriefingValidEntityName_entityValueOutput() {
+  public void testProcessCommand_mobGriefingValidEntityName_entityValueOutput()
+      throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
@@ -434,7 +438,8 @@ public class BetterMobGriefingCommandTest {
    * invalid entity name.
    */
   @Test
-  public void testProcessCommand_mobGriefingInvalidEntityName_noRuleMessage() {
+  public void testProcessCommand_mobGriefingInvalidEntityName_noRuleMessage()
+      throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
@@ -460,7 +465,7 @@ public class BetterMobGriefingCommandTest {
     // Verify expectations.
     new Verifications() {
       {
-        BetterMobGriefingCommand.func_152373_a(commandSender, command, "commands.gamerule.norule",
+        BetterMobGriefingCommand.notifyOperators(commandSender, command, "commands.gamerule.norule",
             new Object[] {"mobGriefing entityName1"});
       }
     };
@@ -471,7 +476,8 @@ public class BetterMobGriefingCommandTest {
    * and a valid entity value.
    */
   @Test
-  public void testProcessCommand_mobGriefingValidEntityNameValidValue_entityValueSet() {
+  public void testProcessCommand_mobGriefingValidEntityNameValidValue_entityValueSet()
+      throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
@@ -497,18 +503,19 @@ public class BetterMobGriefingCommandTest {
       {
         entityMobGriefingData.setMobGriefingValue(entityName, MobGriefingValue.INHERIT);
 
-        BetterMobGriefingCommand.func_152373_a(commandSender, command, "commands.gamerule.success",
-            new Object[0]);
+        BetterMobGriefingCommand.notifyOperators(commandSender, command,
+            "commands.gamerule.success", new Object[0]);
       }
     };
   }
 
   /**
-   * Test that a {@link WrongUsageException} is thrown when the command words are "mobGriefing", a
+   * Test that a {@link CommandException} is thrown when the command words are "mobGriefing", a
    * valid entity name and an invalid entity value.
    */
-  @Test(expected = WrongUsageException.class)
-  public void testProcessCommand_mobGriefingValidEntityNameInvalidValue_exception() {
+  @Test(expected = CommandException.class)
+  public void testProcessCommand_mobGriefingValidEntityNameInvalidValue_exception()
+      throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
@@ -539,11 +546,12 @@ public class BetterMobGriefingCommandTest {
   }
 
   /**
-   * Test that a {@link WrongUsageException} is thrown when the command words are "mobGriefing", the
+   * Test that a {@link CommandException} is thrown when the command words are "mobGriefing", the
    * entity name of an invalid type and a third word.
    */
-  @Test(expected = WrongUsageException.class)
-  public void testProcessCommand_mobGriefingInvalidEntityNameThirdWord_exception() {
+  @Test(expected = CommandException.class)
+  public void testProcessCommand_mobGriefingInvalidEntityNameThirdWord_exception()
+      throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
@@ -574,11 +582,12 @@ public class BetterMobGriefingCommandTest {
   }
 
   /**
-   * Test that a {@link WrongUsageException} is thrown when the command words are "mobGriefing", a
-   * name which is not an entity and a third word.
+   * Test that a {@link CommandException} is thrown when the command words are "mobGriefing", a name
+   * which is not an entity and a third word.
    */
-  @Test(expected = WrongUsageException.class)
-  public void testProcessCommand_mobGriefingNotEntityNameThirdWord_exception() {
+  @Test(expected = CommandException.class)
+  public void testProcessCommand_mobGriefingNotEntityNameThirdWord_exception()
+      throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
@@ -608,11 +617,11 @@ public class BetterMobGriefingCommandTest {
   }
 
   /**
-   * Test that a {@link WrongUsageException} is thrown when there are four command words and the
-   * first is "mobGriefing".
+   * Test that a {@link CommandException} is thrown when there are four command words and the first
+   * is "mobGriefing".
    */
-  @Test(expected = WrongUsageException.class)
-  public void testProcessCommand_mobGriefingFourWords_exception() {
+  @Test(expected = CommandException.class)
+  public void testProcessCommand_mobGriefingFourWords_exception() throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
@@ -646,7 +655,7 @@ public class BetterMobGriefingCommandTest {
    */
   @Test
   public void testProcessCommand_notMobGriefing_handledByParent(
-      @Mocked CommandGameRule parentCommand) {
+      @Mocked CommandGameRule parentCommand) throws CommandException {
     // Set up test data.
     String[] commandWords = new String[] {"notMobGriefing"};
 

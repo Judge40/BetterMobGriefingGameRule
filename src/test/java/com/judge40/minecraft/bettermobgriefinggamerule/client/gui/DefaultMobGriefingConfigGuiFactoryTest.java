@@ -19,9 +19,9 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
-import cpw.mods.fml.client.IModGuiFactory.RuntimeOptionCategoryElement;
-import cpw.mods.fml.client.IModGuiFactory.RuntimeOptionGuiHandler;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionCategoryElement;
+import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionGuiHandler;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;

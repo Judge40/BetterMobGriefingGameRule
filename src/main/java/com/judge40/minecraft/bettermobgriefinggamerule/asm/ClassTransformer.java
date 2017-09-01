@@ -65,9 +65,9 @@ public class ClassTransformer implements IClassTransformer {
         "isMobGriefingEnabled", "(Lnet/minecraft/entity/Entity;)Z", false);
 
     // Add BlockFarmland targets.
-    Map<String, List<AbstractInsnNode>> blockFarmLandTargets = new HashMap<>();
-    blockFarmLandTargets.put(ObfuscationHelper.convertName("func_149746_a"),
-        Arrays.asList(new VarInsnNode(Opcodes.ALOAD, 5), invocation));
+    Map<String, List<AbstractInsnNode>> blockFarmLandTargets =
+        Collections.singletonMap(ObfuscationHelper.convertName("func_180658_a"),
+            Arrays.asList(new VarInsnNode(Opcodes.ALOAD, 3), invocation));
     TRANSFORM_TARGETS.put("net.minecraft.block.BlockFarmland", blockFarmLandTargets);
 
     // The target variable for classes whose own class instance is the target entity.
@@ -76,41 +76,64 @@ public class ClassTransformer implements IClassTransformer {
     // Add EntityAIEatGrass targets, the target entity is held in a field within the class.
     FieldInsnNode entityAiEatGrassFieldNode =
         new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
-            "field_151500_b", "Lnet/minecraft/entity/EntityLiving;");
+            ObfuscationHelper.convertName("field_151500_b"), "Lnet/minecraft/entity/EntityLiving;");
     List<AbstractInsnNode> entityAiEatGrassTargetInstructions =
         Arrays.asList(instanceVariable, entityAiEatGrassFieldNode, invocation);
-    Map<String, List<AbstractInsnNode>> entityAiEatGrassTargets = new HashMap<>();
-    entityAiEatGrassTargets.put(ObfuscationHelper.convertName("func_75246_d"),
-        entityAiEatGrassTargetInstructions);
+    Map<String, List<AbstractInsnNode>> entityAiEatGrassTargets = Collections.singletonMap(
+        ObfuscationHelper.convertName("func_75246_d"), entityAiEatGrassTargetInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.ai.EntityAIEatGrass", entityAiEatGrassTargets);
 
     // Create the instructions for classes whose own class instance is the target entity.
     List<AbstractInsnNode> instanceInstructions = Arrays.asList(instanceVariable, invocation);
 
     // Add EnderDragon targets.
-    Map<String, List<AbstractInsnNode>> entityDragonTargets = new HashMap<>();
-    entityDragonTargets.put(ObfuscationHelper.convertName("func_70972_a"), instanceInstructions);
+    Map<String, List<AbstractInsnNode>> entityDragonTargets = Collections
+        .singletonMap(ObfuscationHelper.convertName("func_70972_a"), instanceInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.boss.EntityDragon", entityDragonTargets);
 
     // Add Enderman targets.
-    Map<String, List<AbstractInsnNode>> entityEndermanTargets = new HashMap<>();
-    entityEndermanTargets.put(ObfuscationHelper.convertName("func_70636_d"), instanceInstructions);
-    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntityEnderman", entityEndermanTargets);
+    FieldInsnNode entityEndermanTakeBlockNode = new FieldInsnNode(Opcodes.GETFIELD,
+        "net/minecraft/entity/monster/EntityEnderman$AITakeBlock",
+        ObfuscationHelper.convertName("field_179473_a"),
+        "Lnet/minecraft/entity/monster/EntityEnderman;");
+    List<AbstractInsnNode> entityEndermanTakeBlockInstructions =
+        Arrays.asList(instanceVariable, entityEndermanTakeBlockNode, invocation);
+    Map<String, List<AbstractInsnNode>> entityEndermanTakeBlockTargets = Collections.singletonMap(
+        ObfuscationHelper.convertName("func_75250_a"), entityEndermanTakeBlockInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntityEnderman$AITakeBlock",
+        entityEndermanTakeBlockTargets);
+
+    FieldInsnNode entityEndermanPlaceBlockNode = new FieldInsnNode(Opcodes.GETFIELD,
+        "net/minecraft/entity/monster/EntityEnderman$AIPlaceBlock",
+        ObfuscationHelper.convertName("field_179475_a"),
+        "Lnet/minecraft/entity/monster/EntityEnderman;");
+    List<AbstractInsnNode> entityEndermanPlaceBlockInstructions =
+        Arrays.asList(instanceVariable, entityEndermanPlaceBlockNode, invocation);
+    Map<String, List<AbstractInsnNode>> entityEndermanPlaceBlockTargets = Collections.singletonMap(
+        ObfuscationHelper.convertName("func_75250_a"), entityEndermanPlaceBlockInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntityEnderman$AIPlaceBlock",
+        entityEndermanPlaceBlockTargets);
 
     // Add EntityLiving targets.
-    Map<String, List<AbstractInsnNode>> entityLivingTargets = new HashMap<>();
-    entityLivingTargets.put(ObfuscationHelper.convertName("func_70636_d"), instanceInstructions);
+    Map<String, List<AbstractInsnNode>> entityLivingTargets = Collections
+        .singletonMap(ObfuscationHelper.convertName("func_70636_d"), instanceInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.EntityLiving", entityLivingTargets);
 
     // Add Silverfish targets.
-    Map<String, List<AbstractInsnNode>> entitySilverfishTargets = new HashMap<>();
-    entitySilverfishTargets.put(ObfuscationHelper.convertName("func_70626_be"),
-        instanceInstructions);
-    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntitySilverfish", entitySilverfishTargets);
+    FieldInsnNode entitySilverfishNode = new FieldInsnNode(Opcodes.GETFIELD,
+        "net/minecraft/entity/monster/EntitySilverfish$AISummonSilverfish",
+        ObfuscationHelper.convertName("field_179464_a"),
+        "Lnet/minecraft/entity/monster/EntitySilverfish;");
+    List<AbstractInsnNode> entitySilverfishInstructions =
+        Arrays.asList(instanceVariable, entitySilverfishNode, invocation);
+    Map<String, List<AbstractInsnNode>> entitySilverfishTargets = Collections
+        .singletonMap(ObfuscationHelper.convertName("func_75246_d"), entitySilverfishInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntitySilverfish$AISummonSilverfish",
+        entitySilverfishTargets);
 
     // Add Wither targets.
-    Map<String, List<AbstractInsnNode>> entityWitherTargets = new HashMap<>();
-    entityWitherTargets.put(ObfuscationHelper.convertName("func_70619_bc"), instanceInstructions);
+    Map<String, List<AbstractInsnNode>> entityWitherTargets = Collections
+        .singletonMap(ObfuscationHelper.convertName("func_70619_bc"), instanceInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.boss.EntityWither", entityWitherTargets);
   }
 
@@ -131,6 +154,7 @@ public class ClassTransformer implements IClassTransformer {
       LOGGER.info("The \"{}\" class has been identified for transformation.", transformedName);
       basicClass = transformClass(basicClass, methodNamesToReplacementNodes);
     }
+
     return basicClass;
   }
 

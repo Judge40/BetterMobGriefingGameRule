@@ -20,13 +20,9 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.common;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingEventHandler;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.ObfuscationHelper;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.entity.ai.BetterBreakDoorAiTask;
 
-import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import mockit.Deencapsulation;
 import mockit.Expectations;
 import mockit.Mocked;
@@ -39,11 +35,14 @@ import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.ExplosionEvent.Detonate;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -147,9 +146,9 @@ public class MobGriefingEventHandlerTest {
   public void testOnDetonate_livingEntityGlobalAndEntityMatch_useEntityDefault(
       @Mocked EntityLiving entity) {
     // Set up test data.
-    Explosion explosion = new Explosion(null, entity, 0, 0, 0, 0);
-    explosion.affectedBlockPositions = Collections.singletonList("dummyPosition");
-    explosion.isSmoking = false;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, entity, 0, 0, 0, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -163,7 +162,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -172,11 +171,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(false));
+        isSmoking, CoreMatchers.is(false));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions,
-        CoreMatchers.is(Collections.singletonList("dummyPosition")));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(affectedBlockPositions));
   }
 
   /**
@@ -187,9 +187,9 @@ public class MobGriefingEventHandlerTest {
   public void testOnDetonate_livingEntityGlobalTrueEntityFalse_useEntityOverride(
       @Mocked EntityLiving entity) {
     // Set up test data.
-    Explosion explosion = new Explosion(null, entity, 0, 0, 0, 0);
-    explosion.affectedBlockPositions = new ArrayList<>(Collections.singleton("dummyData"));
-    explosion.isSmoking = true;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, entity, 0, 0, 0, 0, false, true, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -203,7 +203,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -212,10 +212,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(false));
+        isSmoking, CoreMatchers.is(false));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions, CoreMatchers.is(Collections.emptyList()));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(Collections.emptyList()));
   }
 
   /**
@@ -226,9 +228,9 @@ public class MobGriefingEventHandlerTest {
   public void testOnDetonate_livingEntityGlobalFalseEntityTrue_useEntityOverride(
       @Mocked EntityLiving entity) {
     // Set up test data.
-    Explosion explosion = new Explosion(null, entity, 0, 0, 0, 0);
-    explosion.affectedBlockPositions = new ArrayList<>(Collections.singleton("dummyData"));
-    explosion.isSmoking = false;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, entity, 0, 0, 0, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -242,7 +244,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
       }
     };
@@ -251,10 +253,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(true));
+        isSmoking, CoreMatchers.is(true));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions, CoreMatchers.is(Collections.singletonList("dummyData")));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(affectedBlockPositions));
   }
 
   /**
@@ -268,9 +272,9 @@ public class MobGriefingEventHandlerTest {
     // Set up test data.
     fireball.shootingEntity = entity;
 
-    Explosion explosion = new Explosion(null, fireball, 0, 0, 0, 0);
-    explosion.affectedBlockPositions = Collections.singletonList("dummyPosition");
-    explosion.isSmoking = false;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, entity, 0, 0, 0, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -284,7 +288,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -293,11 +297,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(false));
+        isSmoking, CoreMatchers.is(false));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions,
-        CoreMatchers.is(Collections.singletonList("dummyPosition")));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(affectedBlockPositions));
   }
 
   /**
@@ -311,9 +316,9 @@ public class MobGriefingEventHandlerTest {
     // Set up test data.
     fireball.shootingEntity = entity;
 
-    Explosion explosion = new Explosion(null, fireball, 0, 0, 0, 0);
-    explosion.affectedBlockPositions = new ArrayList<>(Collections.singletonList("dummyData"));
-    explosion.isSmoking = true;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, entity, 0, 0, 0, 0, false, true, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -327,7 +332,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -336,10 +341,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(false));
+        isSmoking, CoreMatchers.is(false));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions, CoreMatchers.is(Collections.emptyList()));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(Collections.emptyList()));
   }
 
   /**
@@ -353,9 +360,9 @@ public class MobGriefingEventHandlerTest {
     // Set up test data.
     fireball.shootingEntity = entity;
 
-    Explosion explosion = new Explosion(null, fireball, 0, 0, 0, 0);
-    explosion.affectedBlockPositions = Collections.singletonList("dummyData");
-    explosion.isSmoking = false;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, entity, 0, 0, 0, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -369,7 +376,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
       }
     };
@@ -378,10 +385,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(true));
+        isSmoking, CoreMatchers.is(true));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions, CoreMatchers.is(Collections.singletonList("dummyData")));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(affectedBlockPositions));
   }
 
   /**
@@ -396,9 +405,9 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball3, @Mocked EntityFireball affectedFireball4,
       @Mocked EntityFireball affectedFireball5) {
     // Set up test data.
-    Explosion explosion = new Explosion(null, sourceFireball, 1, 1, 1, 0);
-    explosion.affectedBlockPositions = Collections.singletonList("dummyPosition");
-    explosion.isSmoking = false;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, entity, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
 
@@ -424,7 +433,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -433,11 +442,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(false));
+        isSmoking, CoreMatchers.is(false));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions,
-        CoreMatchers.is(Collections.singletonList("dummyPosition")));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(affectedBlockPositions));
   }
 
   /**
@@ -452,9 +462,9 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball3, @Mocked EntityFireball affectedFireball4,
       @Mocked EntityFireball affectedFireball5) {
     // Set up test data.
-    Explosion explosion = new Explosion(null, sourceFireball, 1, 1, 1, 0);
-    explosion.affectedBlockPositions = new ArrayList<>(Collections.singletonList("dummyData"));
-    explosion.isSmoking = true;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, entity, 1, 1, 1, 0, false, true, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
 
@@ -480,7 +490,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -489,10 +499,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(false));
+        isSmoking, CoreMatchers.is(false));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions, CoreMatchers.is(Collections.emptyList()));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(Collections.emptyList()));
   }
 
   /**
@@ -507,9 +519,9 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball3, @Mocked EntityFireball affectedFireball4,
       @Mocked EntityFireball affectedFireball5) {
     // Set up test data.
-    Explosion explosion = new Explosion(null, sourceFireball, 1, 1, 1, 0);
-    explosion.affectedBlockPositions = Collections.singletonList("dummyData");
-    explosion.isSmoking = false;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, entity, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
 
@@ -535,7 +547,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
       }
     };
@@ -544,10 +556,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(true));
+        isSmoking, CoreMatchers.is(true));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions, CoreMatchers.is(Collections.singletonList("dummyData")));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(affectedBlockPositions));
   }
 
   /**
@@ -560,9 +574,9 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball2, @Mocked EntityFireball affectedFireball3,
       @Mocked EntityFireball affectedFireball4) {
     // Set up test data.
-    Explosion explosion = new Explosion(null, sourceFireball, 1, 1, 1, 0);
-    explosion.affectedBlockPositions = Collections.singletonList("dummyData");
-    explosion.isSmoking = false;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     affectedFireball2.posX = 1;
     affectedFireball3.posX = 1;
@@ -577,10 +591,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(false));
+        isSmoking, CoreMatchers.is(false));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions, CoreMatchers.is(Collections.singletonList("dummyData")));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(affectedBlockPositions));
   }
 
   /**
@@ -594,9 +610,9 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball2, @Mocked EntityFireball affectedFireball3,
       @Mocked EntityFireball affectedFireball4, @Mocked EntityFireball affectedFireball5) {
     // Set up test data.
-    Explosion explosion = new Explosion(null, null, 1, 1, 1, 0);
-    explosion.affectedBlockPositions = Collections.singletonList("dummyPosition");
-    explosion.isSmoking = false;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
 
@@ -622,7 +638,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -631,11 +647,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(false));
+        isSmoking, CoreMatchers.is(false));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions,
-        CoreMatchers.is(Collections.singletonList("dummyPosition")));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(affectedBlockPositions));
   }
 
   /**
@@ -649,9 +666,9 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball2, @Mocked EntityFireball affectedFireball3,
       @Mocked EntityFireball affectedFireball4, @Mocked EntityFireball affectedFireball5) {
     // Set up test data.
-    Explosion explosion = new Explosion(null, null, 1, 1, 1, 0);
-    explosion.affectedBlockPositions = new ArrayList<>(Collections.singletonList("dummyData"));
-    explosion.isSmoking = true;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, null, 1, 1, 1, 0, false, true, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
 
@@ -677,7 +694,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = true;
       }
     };
@@ -686,10 +703,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(false));
+        isSmoking, CoreMatchers.is(false));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions, CoreMatchers.is(Collections.emptyList()));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(Collections.emptyList()));
   }
 
   /**
@@ -703,9 +722,9 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball2, @Mocked EntityFireball affectedFireball3,
       @Mocked EntityFireball affectedFireball4, @Mocked EntityFireball affectedFireball5) {
     // Set up test data.
-    Explosion explosion = new Explosion(null, null, 1, 1, 1, 0);
-    explosion.affectedBlockPositions = Collections.singletonList("dummyData");
-    explosion.isSmoking = false;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
 
@@ -731,7 +750,7 @@ public class MobGriefingEventHandlerTest {
         world.getGameRules();
         result = gameRules;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
       }
     };
@@ -740,10 +759,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(true));
+        isSmoking, CoreMatchers.is(true));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions, CoreMatchers.is(Collections.singletonList("dummyData")));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(affectedBlockPositions));
   }
 
   /**
@@ -755,9 +776,9 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball1, @Mocked EntityFireball affectedFireball2,
       @Mocked EntityFireball affectedFireball3, @Mocked EntityFireball affectedFireball4) {
     // Set up test data.
-    Explosion explosion = new Explosion(null, null, 1, 1, 1, 0);
-    explosion.affectedBlockPositions = Collections.singletonList("dummyData");
-    explosion.isSmoking = false;
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     affectedFireball2.posX = 1;
     affectedFireball3.posX = 1;
@@ -772,10 +793,12 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
-        explosion.isSmoking, CoreMatchers.is(false));
+        isSmoking, CoreMatchers.is(false));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
-        explosion.affectedBlockPositions, CoreMatchers.is(Collections.singletonList("dummyData")));
+        explosion.getAffectedBlockPositions(), CoreMatchers.is(affectedBlockPositions));
   }
 
   /**

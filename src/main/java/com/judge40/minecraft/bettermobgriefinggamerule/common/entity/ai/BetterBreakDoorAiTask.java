@@ -21,6 +21,7 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.entity.ai;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 
+import net.minecraft.block.BlockDoor;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 
@@ -44,11 +45,10 @@ public class BetterBreakDoorAiTask extends EntityAIBreakDoor {
     // Get whether mobGriefing is enabled for this entity.
     boolean mobGriefingEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(theEntity);
 
-    // If shouldExecute from parent class is false then func_150015_f will not have been evaluated
-    // and must be checked if the entity mob griefing overrides the global value.
+    // If shouldExecute from parent class is false then isOpen will not have been evaluated and must
+    // be checked if the entity mob griefing overrides the global value.
     if (!shouldExecute && mobGriefingEnabled) {
-      shouldExecute = field_151504_e != null
-          && !field_151504_e.func_150015_f(theEntity.worldObj, entityPosX, entityPosY, entityPosZ);
+      shouldExecute = doorBlock != null && !BlockDoor.isOpen(theEntity.worldObj, doorPosition);
     } else {
       shouldExecute = mobGriefingEnabled;
     }

@@ -20,7 +20,6 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.common.entity.ai;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.entity.ai.BetterBreakDoorAiTask;
 
 import mockit.Deencapsulation;
 import mockit.Expectations;
@@ -28,6 +27,8 @@ import mockit.Mocked;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
+import net.minecraft.pathfinding.PathNavigateGround;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -43,6 +44,9 @@ public class BetterBreakDoorAiTaskTest {
 
   @Mocked
   private EntityLiving entity;
+
+  @Mocked
+  private PathNavigateGround navigator;
 
   @Before
   public void setUp() {
@@ -146,7 +150,7 @@ public class BetterBreakDoorAiTaskTest {
         BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
         result = true;
 
-        door.func_150015_f((IBlockAccess) any, 0, 0, 0);
+        BlockDoor.isOpen((IBlockAccess) any, new BlockPos(0, 0, 0));
         result = false;
       }
     };
@@ -178,7 +182,7 @@ public class BetterBreakDoorAiTaskTest {
         BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
         result = true;
 
-        door.func_150015_f((IBlockAccess) any, 0, 0, 0);
+        BlockDoor.isOpen((IBlockAccess) any, new BlockPos(0, 0, 0));
         result = true;
       }
     };

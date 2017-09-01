@@ -27,13 +27,6 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobG
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 
-import cpw.mods.fml.common.FMLModContainer;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.eventhandler.EventBus;
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import mockit.Deencapsulation;
 import mockit.Expectations;
 import mockit.Mocked;
@@ -48,6 +41,13 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLModContainer;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -153,7 +153,7 @@ public class BetterMobGriefingGameRuleTest {
     new Expectations(MinecraftForge.class) {
       {
         eventBus.register(withInstanceOf(MobGriefingEventHandler.class));
-        times = 2;
+        times = 1;
       }
     };
 
@@ -300,7 +300,7 @@ public class BetterMobGriefingGameRuleTest {
         EntityList.getEntityString(entity);
         result = null;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
         times = 1;
       }
@@ -333,7 +333,7 @@ public class BetterMobGriefingGameRuleTest {
         entityData.getMobGriefingValue("entityName");
         result = null;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
         times = 1;
       }
@@ -365,7 +365,7 @@ public class BetterMobGriefingGameRuleTest {
         entityData.getMobGriefingValue("entityName");
         result = MobGriefingValue.INHERIT;
 
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         result = false;
         times = 1;
       }
@@ -409,7 +409,7 @@ public class BetterMobGriefingGameRuleTest {
     // Verify expectations.
     new Verifications() {
       {
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         times = 0;
       }
     };
@@ -445,7 +445,7 @@ public class BetterMobGriefingGameRuleTest {
     // Verify expectations.
     new Verifications() {
       {
-        gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
         times = 0;
       }
     };

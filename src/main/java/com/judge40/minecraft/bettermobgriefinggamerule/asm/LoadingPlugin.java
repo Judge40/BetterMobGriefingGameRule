@@ -21,7 +21,7 @@ package com.judge40.minecraft.bettermobgriefinggamerule.asm;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 import java.util.Map;
 

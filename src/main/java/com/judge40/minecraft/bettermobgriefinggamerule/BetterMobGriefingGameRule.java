@@ -27,22 +27,21 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobG
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLModContainer;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.command.CommandGameRule;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLModContainer;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.util.Map;
 import java.util.Objects;
@@ -92,7 +91,6 @@ public class BetterMobGriefingGameRule {
   @EventHandler
   public void onFmlInitializationEvent(FMLInitializationEvent event) {
     MobGriefingEventHandler eventHandler = new MobGriefingEventHandler();
-    FMLCommonHandler.instance().bus().register(eventHandler);
     MinecraftForge.EVENT_BUS.register(eventHandler);
   }
 
@@ -122,7 +120,7 @@ public class BetterMobGriefingGameRule {
 
     // Set the global mob griefing game rule value if this is a new world.
     if (world.getTotalWorldTime() == 0) {
-      world.getGameRules().setOrCreateGameRule(BetterMobGriefingGameRule.GLOBAL_RULE,
+      world.getGameRules().setOrCreateGameRule(GLOBAL_RULE,
           configuration.getGlobalMobGriefingValue().toExternalForm());
     }
 
@@ -154,8 +152,7 @@ public class BetterMobGriefingGameRule {
 
     // If no entity rule was found then default to the global value.
     if (mobGriefingEnabled == null) {
-      mobGriefingEnabled = entity.worldObj.getGameRules()
-          .getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+      mobGriefingEnabled = entity.worldObj.getGameRules().getBoolean(GLOBAL_RULE);
     }
 
     return mobGriefingEnabled;

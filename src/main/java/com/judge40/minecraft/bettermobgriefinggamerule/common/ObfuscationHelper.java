@@ -35,15 +35,25 @@ public class ObfuscationHelper {
   private static final Map<String, String> mcpToSrg = new HashMap<>();
 
   static {
-    srgToMcp.put("field_146075_bs", "field_146075_bs");
+    srgToMcp.put("field_146075_bs", "breakDoor");
     srgToMcp.put("field_71561_b", "commandSet");
-    srgToMcp.put("func_149746_a", "onFallenUpon");
+    srgToMcp.put("field_72988_C", "mapStorage");
+    srgToMcp.put("field_77282_d", "explosionZ");
+    srgToMcp.put("field_77283_e", "exploder");
+    srgToMcp.put("field_77284_b", "explosionX");
+    srgToMcp.put("field_77285_c", "explosionY");
+    srgToMcp.put("field_82755_b", "isSmoking");
+    srgToMcp.put("field_151500_b", "grassEaterEntity");
+    srgToMcp.put("field_179464_a", "silverfish");
+    srgToMcp.put("field_179473_a", "enderman");
+    srgToMcp.put("field_179475_a", "enderman");
     srgToMcp.put("func_70619_bc", "updateAITasks");
-    srgToMcp.put("func_70626_be", "updateEntityActionState");
     srgToMcp.put("func_70636_d", "onLivingUpdate");
     srgToMcp.put("func_70972_a", "destroyBlocksInAABB");
     srgToMcp.put("func_75246_d", "updateTask");
-    srgToMcp.put("func_82766_b", "getGameRuleBooleanValue");
+    srgToMcp.put("func_75250_a", "shouldExecute");
+    srgToMcp.put("func_82766_b", "getBoolean");
+    srgToMcp.put("func_180658_a", "onFallenUpon");
 
     for (Entry<String, String> entry : srgToMcp.entrySet()) {
       mcpToSrg.put(entry.getValue(), entry.getKey());

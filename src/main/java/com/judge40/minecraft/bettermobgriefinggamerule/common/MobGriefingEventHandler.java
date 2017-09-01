@@ -22,18 +22,19 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common;
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.entity.ai.BetterBreakDoorAiTask;
 
-import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.ExplosionEvent.Detonate;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.util.Iterator;
 
@@ -62,13 +63,15 @@ public class MobGriefingEventHandler {
    */
   @SubscribeEvent
   public void onDetonate(Detonate detonateEvent) {
-    Entity explosionSource = null;
-
     // Try and get the explosion source from the explosion.
-    if (detonateEvent.explosion.exploder instanceof EntityLiving) {
-      explosionSource = detonateEvent.explosion.exploder;
-    } else if (detonateEvent.explosion.exploder instanceof EntityFireball) {
-      explosionSource = ((EntityFireball) detonateEvent.explosion.exploder).shootingEntity;
+    Entity explosionSource = null;
+    Entity exploder = ReflectionHelper.getPrivateValue(Explosion.class, detonateEvent.explosion,
+        ObfuscationHelper.convertName("field_77283_e"));
+
+    if (exploder instanceof EntityLiving) {
+      explosionSource = exploder;
+    } else if (exploder instanceof EntityFireball) {
+      explosionSource = ((EntityFireball) exploder).shootingEntity;
     }
 
     // If the explosion source could not be determined from the explosion then check the affected
@@ -80,9 +83,16 @@ public class MobGriefingEventHandler {
 
           // Compare the fireball and explosion positions to determine if the fireball is the source
           // of the explosion.
-          if (Math.abs(entityFireball.posX - detonateEvent.explosion.explosionX) == 0
-              && Math.abs(entityFireball.posY - detonateEvent.explosion.explosionY) == 0
-              && Math.abs(entityFireball.posZ - detonateEvent.explosion.explosionZ) == 0
+          double explosionX = ReflectionHelper.getPrivateValue(Explosion.class,
+              detonateEvent.explosion, ObfuscationHelper.convertName("field_77284_b"));
+          double explosionY = ReflectionHelper.getPrivateValue(Explosion.class,
+              detonateEvent.explosion, ObfuscationHelper.convertName("field_77285_c"));
+          double explosionZ = ReflectionHelper.getPrivateValue(Explosion.class,
+              detonateEvent.explosion, ObfuscationHelper.convertName("field_77282_d"));
+
+          if (Math.abs(entityFireball.posX - explosionX) == 0
+              && Math.abs(entityFireball.posY - explosionY) == 0
+              && Math.abs(entityFireball.posZ - explosionZ) == 0
               && entityFireball.shootingEntity instanceof EntityLiving) {
             explosionSource = entityFireball.shootingEntity;
             break;
@@ -96,12 +106,12 @@ public class MobGriefingEventHandler {
       boolean entityMobGriefing = BetterMobGriefingGameRule.isMobGriefingEnabled(explosionSource);
 
       GameRules gameRules = detonateEvent.world.getGameRules();
-      boolean globalMobGriefing =
-          gameRules.getGameRuleBooleanValue(BetterMobGriefingGameRule.GLOBAL_RULE);
+      boolean globalMobGriefing = gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
 
       // If entity mobGriefing has overridden the global value then update the explosion's flag.
       if (entityMobGriefing != globalMobGriefing) {
-        detonateEvent.explosion.isSmoking = entityMobGriefing;
+        ReflectionHelper.setPrivateValue(Explosion.class, detonateEvent.explosion,
+            entityMobGriefing, ObfuscationHelper.convertName("field_82755_b"));
 
         // If mobGriefing is not enabled then clear down the affected blocks
         if (!entityMobGriefing) {

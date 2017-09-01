@@ -24,11 +24,13 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.ConfigurationConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 
-import cpw.mods.fml.client.config.GuiConfig;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.config.ConfigElement;
+import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraftforge.fml.client.config.IConfigElement;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * The configuration GUI for setting the default value of mob griefing rules.
@@ -41,13 +43,8 @@ public class DefaultMobGriefingConfigGui extends GuiConfig {
    * @param parent The configuration GUI's parent screen.
    */
   public DefaultMobGriefingConfigGui(GuiScreen parent) {
-    super(parent,
-        Arrays.asList(
-            new ConfigElement<>(
-                getConfiguration().getCategory(ConfigurationConstants.GLOBAL_RULE_CATEGORY)),
-            new ConfigElement<>(
-                getConfiguration().getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY))),
-        ModInfoConstants.ID, false, false, getAbridgedConfigPath(getConfiguration().toString()));
+    super(parent, getConfigurationCategories(), ModInfoConstants.ID, false, false,
+        getAbridgedConfigPath(getConfiguration().toString()));
   }
 
   /**
@@ -59,5 +56,22 @@ public class DefaultMobGriefingConfigGui extends GuiConfig {
   private static DefaultMobGriefingConfiguration getConfiguration() {
     BetterMobGriefingGameRule entryPoint = BetterMobGriefingGameRule.getInstance();
     return entryPoint.getDefaultMobGriefingConfiguration();
+  }
+
+  /**
+   * Get the list of configuration categories for the mod's configuration
+   * 
+   * @return The configuration categories.
+   */
+  private static List<IConfigElement> getConfigurationCategories() {
+    DefaultMobGriefingConfiguration configuration = getConfiguration();
+    ConfigElement globalCategory =
+        new ConfigElement(configuration.getCategory(ConfigurationConstants.GLOBAL_RULE_CATEGORY));
+    ConfigElement entityCategory =
+        new ConfigElement(configuration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY));
+    List<IConfigElement> configurationCategories = Arrays.asList(globalCategory, entityCategory);
+
+    return configurationCategories;
+
   }
 }

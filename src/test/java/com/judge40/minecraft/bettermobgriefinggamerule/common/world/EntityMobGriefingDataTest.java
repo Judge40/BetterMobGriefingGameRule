@@ -21,18 +21,21 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.world;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ObfuscationHelper;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -45,6 +48,17 @@ import java.util.Map;
 public class EntityMobGriefingDataTest {
 
   private EntityMobGriefingData entityMobGriefingData;
+
+  /**
+   * Populate the {@code fml.deobfuscatedEnvironment} flag.
+   */
+  @BeforeClass
+  public static void setUpBeforeClass() {
+    // Set the deobfuscation flag.
+    Map<String, Object> blackboard = new HashMap<>();
+    blackboard.put("fml.deobfuscatedEnvironment", true);
+    Launch.blackboard = blackboard;
+  }
 
   @Before
   public void setUp() {
@@ -59,7 +73,8 @@ public class EntityMobGriefingDataTest {
   public void testForWorld_dataExists_existingDataInstance(@Mocked World world,
       @Mocked MapStorage mapStorage) {
     // Set up test data.
-    world.mapStorage = mapStorage;
+    ReflectionHelper.setPrivateValue(World.class, world, mapStorage,
+        ObfuscationHelper.convertName("field_72988_C"));
 
     // Record expectations.
     new Expectations() {
@@ -93,7 +108,8 @@ public class EntityMobGriefingDataTest {
   public void testForWorld_dataNotExists_newDataInstance(@Mocked World world,
       @Mocked MapStorage mapStorage) {
     // Set up test data.
-    world.mapStorage = mapStorage;
+    ReflectionHelper.setPrivateValue(World.class, world, mapStorage,
+        ObfuscationHelper.convertName("field_72988_C"));
 
     // Record expectations.
     new Expectations() {
@@ -331,7 +347,7 @@ public class EntityMobGriefingDataTest {
 
     // Perform assertions.
     Assert.assertThat("The NBT tag compound did not contain the expected value.",
-        nbtTagCompound.func_150296_c(), CoreMatchers.is(Collections.emptySet()));
+        nbtTagCompound.getKeySet(), CoreMatchers.is(Collections.emptySet()));
   }
 
   /**

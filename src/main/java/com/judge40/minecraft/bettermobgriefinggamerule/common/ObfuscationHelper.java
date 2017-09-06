@@ -36,6 +36,7 @@ public class ObfuscationHelper {
 
   static {
     srgToMcp.put("field_146075_bs", "breakDoor");
+    srgToMcp.put("field_70235_a", "shootingEntity");
     srgToMcp.put("field_71561_b", "commandSet");
     srgToMcp.put("field_72988_C", "mapStorage");
     srgToMcp.put("field_75356_a", "theEntity");

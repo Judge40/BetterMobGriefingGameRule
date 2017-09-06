@@ -73,7 +73,7 @@ public class ClassTransformer implements IClassTransformer {
     // The target variable for classes whose own class instance is the target entity.
     VarInsnNode instanceVariable = new VarInsnNode(Opcodes.ALOAD, 0);
 
-    // Add EntityAIBreakDoor targets, the target entity is held in a field within the class.
+    // Add EntityAIBreakDoor targets.
     FieldInsnNode entityAiBreakDoorFieldNode =
         new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIBreakDoor",
             ObfuscationHelper.convertName("field_75356_a"), "Lnet/minecraft/entity/EntityLiving;");
@@ -83,7 +83,7 @@ public class ClassTransformer implements IClassTransformer {
         ObfuscationHelper.convertName("func_75250_a"), entityAiBreakDoorTargetInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.ai.EntityAIBreakDoor", entityAiBreakDoorTargets);
 
-    // Add EntityAIEatGrass targets, the target entity is held in a field within the class.
+    // Add EntityAIEatGrass targets.
     FieldInsnNode entityAiEatGrassFieldNode =
         new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
             ObfuscationHelper.convertName("field_151500_b"), "Lnet/minecraft/entity/EntityLiving;");
@@ -93,7 +93,7 @@ public class ClassTransformer implements IClassTransformer {
         ObfuscationHelper.convertName("func_75246_d"), entityAiEatGrassTargetInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.ai.EntityAIEatGrass", entityAiEatGrassTargets);
 
-    // Add EntityAIHarvestFarmland targets, the target entity is held in a field within the class.
+    // Add EntityAIHarvestFarmland targets.
     FieldInsnNode entityAiHarvestFarmlandFieldNode =
         new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIHarvestFarmland",
             ObfuscationHelper.convertName("field_179504_c"),
@@ -105,6 +105,64 @@ public class ClassTransformer implements IClassTransformer {
     TRANSFORM_TARGETS.put("net.minecraft.entity.ai.EntityAIHarvestFarmland",
         entityAiHarvestFarmlandTargets);
 
+    // Add Enderman targets.
+    FieldInsnNode entityEndermanTakeBlockFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
+        "net/minecraft/entity/monster/EntityEnderman$AITakeBlock",
+        ObfuscationHelper.convertName("field_179473_a"),
+        "Lnet/minecraft/entity/monster/EntityEnderman;");
+    List<AbstractInsnNode> entityEndermanTakeBlockInstructions =
+        Arrays.asList(instanceVariable, entityEndermanTakeBlockFieldNode, invocation);
+    Map<String, List<AbstractInsnNode>> entityEndermanTakeBlockTargets = Collections.singletonMap(
+        ObfuscationHelper.convertName("func_75250_a"), entityEndermanTakeBlockInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntityEnderman$AITakeBlock",
+        entityEndermanTakeBlockTargets);
+
+    FieldInsnNode entityEndermanPlaceBlockFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
+        "net/minecraft/entity/monster/EntityEnderman$AIPlaceBlock",
+        ObfuscationHelper.convertName("field_179475_a"),
+        "Lnet/minecraft/entity/monster/EntityEnderman;");
+    List<AbstractInsnNode> entityEndermanPlaceBlockInstructions =
+        Arrays.asList(instanceVariable, entityEndermanPlaceBlockFieldNode, invocation);
+    Map<String, List<AbstractInsnNode>> entityEndermanPlaceBlockTargets = Collections.singletonMap(
+        ObfuscationHelper.convertName("func_75250_a"), entityEndermanPlaceBlockInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntityEnderman$AIPlaceBlock",
+        entityEndermanPlaceBlockTargets);
+
+    // Add Rabbit targets.
+    FieldInsnNode entityRabbitRaidFarmFieldNode =
+        new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/passive/EntityRabbit$AIRaidFarm",
+            ObfuscationHelper.convertName("field_179500_c"),
+            "Lnet/minecraft/entity/passive/EntityRabbit;");
+    List<AbstractInsnNode> entityRabbitRaidFarmInstructions =
+        Arrays.asList(instanceVariable, entityRabbitRaidFarmFieldNode, invocation);
+    Map<String, List<AbstractInsnNode>> entityRabbitRaidFarmTargets = Collections.singletonMap(
+        ObfuscationHelper.convertName("func_75250_a"), entityRabbitRaidFarmInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.passive.EntityRabbit$AIRaidFarm",
+        entityRabbitRaidFarmTargets);
+
+    // Add Silverfish targets.
+    FieldInsnNode entitySilverfishFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
+        "net/minecraft/entity/monster/EntitySilverfish$AISummonSilverfish",
+        ObfuscationHelper.convertName("field_179464_a"),
+        "Lnet/minecraft/entity/monster/EntitySilverfish;");
+    List<AbstractInsnNode> entitySilverfishInstructions =
+        Arrays.asList(instanceVariable, entitySilverfishFieldNode, invocation);
+    Map<String, List<AbstractInsnNode>> entitySilverfishTargets = Collections
+        .singletonMap(ObfuscationHelper.convertName("func_75246_d"), entitySilverfishInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntitySilverfish$AISummonSilverfish",
+        entitySilverfishTargets);
+
+    // Add SmallFireball targets.
+    FieldInsnNode entitySmallFireballFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
+        "net/minecraft/entity/projectile/EntitySmallFireball",
+        ObfuscationHelper.convertName("field_70235_a"), "Lnet/minecraft/entity/EntityLivingBase;");
+    List<AbstractInsnNode> entitySmallFireballTargetInstructions =
+        Arrays.asList(instanceVariable, entitySmallFireballFieldNode, invocation);
+    Map<String, List<AbstractInsnNode>> entitySmallFireballTargets = Collections.singletonMap(
+        ObfuscationHelper.convertName("func_70227_a"), entitySmallFireballTargetInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.projectile.EntitySmallFireball",
+        entitySmallFireballTargets);
+
     // Create the instructions for classes whose own class instance is the target entity.
     List<AbstractInsnNode> instanceInstructions = Arrays.asList(instanceVariable, invocation);
 
@@ -113,57 +171,10 @@ public class ClassTransformer implements IClassTransformer {
         .singletonMap(ObfuscationHelper.convertName("func_70972_a"), instanceInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.boss.EntityDragon", entityDragonTargets);
 
-    // Add Enderman targets.
-    FieldInsnNode entityEndermanTakeBlockNode = new FieldInsnNode(Opcodes.GETFIELD,
-        "net/minecraft/entity/monster/EntityEnderman$AITakeBlock",
-        ObfuscationHelper.convertName("field_179473_a"),
-        "Lnet/minecraft/entity/monster/EntityEnderman;");
-    List<AbstractInsnNode> entityEndermanTakeBlockInstructions =
-        Arrays.asList(instanceVariable, entityEndermanTakeBlockNode, invocation);
-    Map<String, List<AbstractInsnNode>> entityEndermanTakeBlockTargets = Collections.singletonMap(
-        ObfuscationHelper.convertName("func_75250_a"), entityEndermanTakeBlockInstructions);
-    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntityEnderman$AITakeBlock",
-        entityEndermanTakeBlockTargets);
-
-    FieldInsnNode entityEndermanPlaceBlockNode = new FieldInsnNode(Opcodes.GETFIELD,
-        "net/minecraft/entity/monster/EntityEnderman$AIPlaceBlock",
-        ObfuscationHelper.convertName("field_179475_a"),
-        "Lnet/minecraft/entity/monster/EntityEnderman;");
-    List<AbstractInsnNode> entityEndermanPlaceBlockInstructions =
-        Arrays.asList(instanceVariable, entityEndermanPlaceBlockNode, invocation);
-    Map<String, List<AbstractInsnNode>> entityEndermanPlaceBlockTargets = Collections.singletonMap(
-        ObfuscationHelper.convertName("func_75250_a"), entityEndermanPlaceBlockInstructions);
-    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntityEnderman$AIPlaceBlock",
-        entityEndermanPlaceBlockTargets);
-
     // Add EntityLiving targets.
     Map<String, List<AbstractInsnNode>> entityLivingTargets = Collections
         .singletonMap(ObfuscationHelper.convertName("func_70636_d"), instanceInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.EntityLiving", entityLivingTargets);
-
-    // Add Rabbit targets.
-    FieldInsnNode entityRabbitRaidFarmNode =
-        new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/passive/EntityRabbit$AIRaidFarm",
-            ObfuscationHelper.convertName("field_179500_c"),
-            "Lnet/minecraft/entity/passive/EntityRabbit;");
-    List<AbstractInsnNode> entityRabbitRaidFarmInstructions =
-        Arrays.asList(instanceVariable, entityRabbitRaidFarmNode, invocation);
-    Map<String, List<AbstractInsnNode>> entityRabbitRaidFarmTargets = Collections.singletonMap(
-        ObfuscationHelper.convertName("func_75250_a"), entityRabbitRaidFarmInstructions);
-    TRANSFORM_TARGETS.put("net.minecraft.entity.passive.EntityRabbit$AIRaidFarm",
-        entityRabbitRaidFarmTargets);
-
-    // Add Silverfish targets.
-    FieldInsnNode entitySilverfishNode = new FieldInsnNode(Opcodes.GETFIELD,
-        "net/minecraft/entity/monster/EntitySilverfish$AISummonSilverfish",
-        ObfuscationHelper.convertName("field_179464_a"),
-        "Lnet/minecraft/entity/monster/EntitySilverfish;");
-    List<AbstractInsnNode> entitySilverfishInstructions =
-        Arrays.asList(instanceVariable, entitySilverfishNode, invocation);
-    Map<String, List<AbstractInsnNode>> entitySilverfishTargets = Collections
-        .singletonMap(ObfuscationHelper.convertName("func_75246_d"), entitySilverfishInstructions);
-    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntitySilverfish$AISummonSilverfish",
-        entitySilverfishTargets);
 
     // Add Wither targets.
     Map<String, List<AbstractInsnNode>> entityWitherTargets = Collections

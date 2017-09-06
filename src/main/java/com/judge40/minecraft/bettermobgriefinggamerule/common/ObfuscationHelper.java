@@ -48,7 +48,9 @@ public class ObfuscationHelper {
     srgToMcp.put("field_179464_a", "silverfish");
     srgToMcp.put("field_179473_a", "enderman");
     srgToMcp.put("field_179475_a", "enderman");
+    srgToMcp.put("field_179500_c", "rabbit");
     srgToMcp.put("field_179504_c", "theVillager");
+    srgToMcp.put("func_70227_a", "onImpact");
     srgToMcp.put("func_70619_bc", "updateAITasks");
     srgToMcp.put("func_70636_d", "onLivingUpdate");
     srgToMcp.put("func_70972_a", "destroyBlocksInAABB");

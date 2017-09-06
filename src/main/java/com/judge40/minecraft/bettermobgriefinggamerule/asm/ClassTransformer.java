@@ -141,6 +141,18 @@ public class ClassTransformer implements IClassTransformer {
         .singletonMap(ObfuscationHelper.convertName("func_70636_d"), instanceInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.EntityLiving", entityLivingTargets);
 
+    // Add Rabbit targets.
+    FieldInsnNode entityRabbitRaidFarmNode =
+        new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/passive/EntityRabbit$AIRaidFarm",
+            ObfuscationHelper.convertName("field_179500_c"),
+            "Lnet/minecraft/entity/passive/EntityRabbit;");
+    List<AbstractInsnNode> entityRabbitRaidFarmInstructions =
+        Arrays.asList(instanceVariable, entityRabbitRaidFarmNode, invocation);
+    Map<String, List<AbstractInsnNode>> entityRabbitRaidFarmTargets = Collections.singletonMap(
+        ObfuscationHelper.convertName("func_75250_a"), entityRabbitRaidFarmInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.passive.EntityRabbit$AIRaidFarm",
+        entityRabbitRaidFarmTargets);
+
     // Add Silverfish targets.
     FieldInsnNode entitySilverfishNode = new FieldInsnNode(Opcodes.GETFIELD,
         "net/minecraft/entity/monster/EntitySilverfish$AISummonSilverfish",

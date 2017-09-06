@@ -32,6 +32,7 @@ import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntitySilverfish;
+import net.minecraft.entity.passive.EntityRabbit;
 import net.minecraft.launchwrapper.Launch;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -316,6 +317,37 @@ public class ClassTransformerTest {
   public void testTransform_entityLiving_mobGriefingTransformed() throws IOException {
     // Set up test data.
     String targetClassName = EntityLiving.class.getName();
+
+    ClassReader classReader = new ClassReader(targetClassName);
+    ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+    classReader.accept(classWriter, ClassReader.SKIP_DEBUG);
+    byte[] inputBytes = classWriter.toByteArray();
+
+    // Call the method under test.
+    byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
+
+    // Perform assertions.
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.GLOBAL_RULE)
+        .getBytes(Charset.defaultCharset());
+    Assert.assertThat(
+        "A reference to the mobGriefing game rule was still found in the transformed class.",
+        Bytes.indexOf(transformedBytes, originalSearchBytes), CoreMatchers.is(-1));
+
+    byte[] replacementSearchBytes =
+        BetterMobGriefingGameRule.class.getSimpleName().getBytes(Charset.defaultCharset());
+    Assert.assertThat(
+        "A reference to the better mobGriefing game rule was not found in the transformed class.",
+        Bytes.indexOf(transformedBytes, replacementSearchBytes), CoreMatchers.not(-1));
+  }
+
+  /**
+   * Test that the mob griefing instructions are replaced when the transformation target class is
+   * {@link EntityRabbit}.
+   */
+  @Test
+  public void testTransform_entityRabbit_mobGriefingTransformed() throws IOException {
+    // Set up test data.
+    String targetClassName = EntityRabbit.class.getName() + "$AIRaidFarm";
 
     ClassReader classReader = new ClassReader(targetClassName);
     ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);

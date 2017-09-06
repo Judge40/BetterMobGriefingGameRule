@@ -73,7 +73,7 @@ public class ClassTransformer implements IClassTransformer {
     // The target variable for classes whose own class instance is the target entity.
     VarInsnNode instanceVariable = new VarInsnNode(Opcodes.ALOAD, 0);
 
-    // Add EntityAIBreakDoor targets, the target entity is held in a field.
+    // Add EntityAIBreakDoor targets, the target entity is held in a field within the class.
     FieldInsnNode entityAiBreakDoorFieldNode =
         new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIBreakDoor",
             ObfuscationHelper.convertName("field_75356_a"), "Lnet/minecraft/entity/EntityLiving;");
@@ -83,7 +83,7 @@ public class ClassTransformer implements IClassTransformer {
         ObfuscationHelper.convertName("func_75250_a"), entityAiBreakDoorTargetInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.ai.EntityAIBreakDoor", entityAiBreakDoorTargets);
 
-    // Add EntityAIEatGrass targets, the target entity is held in a field in the class.
+    // Add EntityAIEatGrass targets, the target entity is held in a field within the class.
     FieldInsnNode entityAiEatGrassFieldNode =
         new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
             ObfuscationHelper.convertName("field_151500_b"), "Lnet/minecraft/entity/EntityLiving;");
@@ -92,6 +92,18 @@ public class ClassTransformer implements IClassTransformer {
     Map<String, List<AbstractInsnNode>> entityAiEatGrassTargets = Collections.singletonMap(
         ObfuscationHelper.convertName("func_75246_d"), entityAiEatGrassTargetInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.ai.EntityAIEatGrass", entityAiEatGrassTargets);
+
+    // Add EntityAIHarvestFarmland targets, the target entity is held in a field within the class.
+    FieldInsnNode entityAiHarvestFarmlandFieldNode =
+        new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIHarvestFarmland",
+            ObfuscationHelper.convertName("field_179504_c"),
+            "Lnet/minecraft/entity/passive/EntityVillager;");
+    List<AbstractInsnNode> entityAiHarvestFarmlandTargetInstructions =
+        Arrays.asList(instanceVariable, entityAiHarvestFarmlandFieldNode, invocation);
+    Map<String, List<AbstractInsnNode>> entityAiHarvestFarmlandTargets = Collections.singletonMap(
+        ObfuscationHelper.convertName("func_75250_a"), entityAiHarvestFarmlandTargetInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.ai.EntityAIHarvestFarmland",
+        entityAiHarvestFarmlandTargets);
 
     // Create the instructions for classes whose own class instance is the target entity.
     List<AbstractInsnNode> instanceInstructions = Arrays.asList(instanceVariable, invocation);

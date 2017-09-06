@@ -28,6 +28,7 @@ import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.entity.passive.EntityVillager;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,5 +51,5 @@ public class ConfigurationConstants {
   public static final List<Class<? extends EntityLiving>> ENTITY_CLASSES =
       Collections.unmodifiableList(Arrays.asList(EntityCreeper.class, EntityDragon.class,
           EntityEnderman.class, EntityGhast.class, EntitySheep.class, EntitySilverfish.class,
-          EntityWither.class, EntityZombie.class));
+          EntityVillager.class, EntityWither.class, EntityZombie.class));
 }

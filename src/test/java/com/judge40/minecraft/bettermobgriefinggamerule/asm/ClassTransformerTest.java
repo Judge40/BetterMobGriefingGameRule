@@ -27,6 +27,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAIEatGrass;
+import net.minecraft.entity.ai.EntityAIHarvestFarmland;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -160,6 +161,37 @@ public class ClassTransformerTest {
   public void testTransform_entityAiEatGrass_mobGriefingTransformed() throws IOException {
     // Set up test data.
     String targetClassName = EntityAIEatGrass.class.getName();
+
+    ClassReader classReader = new ClassReader(targetClassName);
+    ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+    classReader.accept(classWriter, ClassReader.SKIP_DEBUG);
+    byte[] inputBytes = classWriter.toByteArray();
+
+    // Call the method under test.
+    byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
+
+    // Perform assertions.
+    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.GLOBAL_RULE)
+        .getBytes(Charset.defaultCharset());
+    Assert.assertThat(
+        "A reference to the mobGriefing game rule was still found in the transformed class.",
+        Bytes.indexOf(transformedBytes, originalSearchBytes), CoreMatchers.is(-1));
+
+    byte[] replacementSearchBytes =
+        BetterMobGriefingGameRule.class.getSimpleName().getBytes(Charset.defaultCharset());
+    Assert.assertThat(
+        "A reference to the better mobGriefing game rule was not found in the transformed class.",
+        Bytes.indexOf(transformedBytes, replacementSearchBytes), CoreMatchers.not(-1));
+  }
+
+  /**
+   * Test that the mob griefing instructions are replaced when the transformation target class is
+   * {@link EntityAIHarvestFarmland}.
+   */
+  @Test
+  public void testTransform_entityAiHarvestFarmland_mobGriefingTransformed() throws IOException {
+    // Set up test data.
+    String targetClassName = EntityAIHarvestFarmland.class.getName();
 
     ClassReader classReader = new ClassReader(targetClassName);
     ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);

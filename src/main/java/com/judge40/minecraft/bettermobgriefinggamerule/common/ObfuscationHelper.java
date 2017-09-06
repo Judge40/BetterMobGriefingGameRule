@@ -44,6 +44,7 @@ public class ObfuscationHelper {
     srgToMcp.put("field_77283_e", "exploder");
     srgToMcp.put("field_77284_b", "explosionX");
     srgToMcp.put("field_77285_c", "explosionY");
+    srgToMcp.put("field_77286_a", "isFlaming");
     srgToMcp.put("field_82755_b", "isSmoking");
     srgToMcp.put("field_151500_b", "grassEaterEntity");
     srgToMcp.put("field_179464_a", "silverfish");

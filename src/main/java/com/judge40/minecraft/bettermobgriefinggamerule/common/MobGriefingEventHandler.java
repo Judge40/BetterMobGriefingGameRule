@@ -24,6 +24,7 @@ import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.event.world.ExplosionEvent.Detonate;
@@ -101,10 +102,16 @@ public class MobGriefingEventHandler {
       GameRules gameRules = detonateEvent.world.getGameRules();
       boolean globalMobGriefing = gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
 
-      // If entity mobGriefing has overridden the global value then update the explosion's flag.
+      // If entity mobGriefing has overridden the global value then update the explosion's flags.
       if (entityMobGriefing != globalMobGriefing) {
         ReflectionHelper.setPrivateValue(Explosion.class, detonateEvent.explosion,
             entityMobGriefing, ObfuscationHelper.convertName("field_82755_b"));
+
+        // Large fireball's ability to create fire is controlled by mob griefing.
+        if (exploder instanceof EntityLargeFireball) {
+          ReflectionHelper.setPrivateValue(Explosion.class, detonateEvent.explosion,
+              entityMobGriefing, ObfuscationHelper.convertName("field_77286_a"));
+        }
 
         // If mobGriefing is not enabled then clear down the affected blocks
         if (!entityMobGriefing) {

@@ -27,6 +27,7 @@ import mockit.Mocked;
 import mockit.Verifications;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.Explosion;
@@ -138,7 +139,7 @@ public class MobGriefingEventHandlerTest {
     // Set up test data.
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, entity, 0, 0, 0, 0, false, false, affectedBlockPositions);
+        new Explosion(null, entity, 0, 0, 0, 0, true, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -161,6 +162,10 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isFlaming = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_77286_a"));
+    Assert.assertThat("The explosion's isFlaming field did not match the expected value.",
+        isFlaming, CoreMatchers.is(true));
     boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
         ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -202,6 +207,10 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isFlaming = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_77286_a"));
+    Assert.assertThat("The explosion's isFlaming field did not match the expected value.",
+        isFlaming, CoreMatchers.is(false));
     boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
         ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -243,6 +252,10 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isFlaming = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_77286_a"));
+    Assert.assertThat("The explosion's isFlaming field did not match the expected value.",
+        isFlaming, CoreMatchers.is(false));
     boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
         ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -264,7 +277,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, entity, 0, 0, 0, 0, false, false, affectedBlockPositions);
+        new Explosion(null, fireball, 0, 0, 0, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -287,6 +300,10 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isFlaming = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_77286_a"));
+    Assert.assertThat("The explosion's isFlaming field did not match the expected value.",
+        isFlaming, CoreMatchers.is(false));
     boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
         ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -308,7 +325,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, entity, 0, 0, 0, 0, false, true, affectedBlockPositions);
+        new Explosion(null, fireball, 0, 0, 0, 0, false, true, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -331,6 +348,10 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isFlaming = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_77286_a"));
+    Assert.assertThat("The explosion's isFlaming field did not match the expected value.",
+        isFlaming, CoreMatchers.is(false));
     boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
         ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -352,7 +373,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, entity, 0, 0, 0, 0, false, false, affectedBlockPositions);
+        new Explosion(null, fireball, 0, 0, 0, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -375,6 +396,10 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isFlaming = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_77286_a"));
+    Assert.assertThat("The explosion's isFlaming field did not match the expected value.",
+        isFlaming, CoreMatchers.is(false));
     boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
         ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -397,7 +422,7 @@ public class MobGriefingEventHandlerTest {
     // Set up test data.
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, entity, 1, 1, 1, 0, false, false, affectedBlockPositions);
+        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
 
@@ -432,6 +457,10 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isFlaming = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_77286_a"));
+    Assert.assertThat("The explosion's isFlaming field did not match the expected value.",
+        isFlaming, CoreMatchers.is(false));
     boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
         ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -454,7 +483,7 @@ public class MobGriefingEventHandlerTest {
     // Set up test data.
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, entity, 1, 1, 1, 0, false, true, affectedBlockPositions);
+        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, true, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
 
@@ -489,6 +518,10 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isFlaming = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_77286_a"));
+    Assert.assertThat("The explosion's isFlaming field did not match the expected value.",
+        isFlaming, CoreMatchers.is(false));
     boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
         ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -511,7 +544,7 @@ public class MobGriefingEventHandlerTest {
     // Set up test data.
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, entity, 1, 1, 1, 0, false, false, affectedBlockPositions);
+        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
 
@@ -546,6 +579,10 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isFlaming = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_77286_a"));
+    Assert.assertThat("The explosion's isFlaming field did not match the expected value.",
+        isFlaming, CoreMatchers.is(false));
     boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
         ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
@@ -581,12 +618,57 @@ public class MobGriefingEventHandlerTest {
     eventHandler.onDetonate(detonateEvent);
 
     // Perform assertions.
+    boolean isFlaming = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_77286_a"));
+    Assert.assertThat("The explosion's isFlaming field did not match the expected value.",
+        isFlaming, CoreMatchers.is(false));
     boolean isSmoking = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
         ObfuscationHelper.convertName("field_82755_b"));
     Assert.assertThat("The explosion's isSmoking field did not match the expected value.",
         isSmoking, CoreMatchers.is(false));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
         explosion.getAffectedBlockPositions(), CoreMatchers.is(affectedBlockPositions));
+  }
+
+  /**
+   * Test that the isFlaming flag is set when the explosion is created by a large fireball with a
+   * shooter and the global and entity rules do not match.
+   */
+  @Test
+  public void testOnDetonate_largeFireballHasShooterGlobalAndEntityNoMatch_isFlamingSet(
+      @Mocked EntityLiving entity, @Mocked EntityLargeFireball largeFireball) {
+    // Set up test data.
+    largeFireball.shootingEntity = entity;
+
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, largeFireball, 0, 0, 0, 0, true, true, affectedBlockPositions);
+
+    GameRules gameRules = new GameRules();
+    Detonate detonateEvent = new Detonate(world, explosion, null);
+
+    // Record expectations.
+    new Expectations(gameRules, BetterMobGriefingGameRule.class) {
+      {
+        BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
+        result = false;
+
+        world.getGameRules();
+        result = gameRules;
+
+        gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
+        result = true;
+      }
+    };
+
+    // Call the method under test.
+    eventHandler.onDetonate(detonateEvent);
+
+    // Perform assertions.
+    boolean isFlaming = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+        ObfuscationHelper.convertName("field_77286_a"));
+    Assert.assertThat("The explosion's isFlaming field did not match the expected value.",
+        isFlaming, CoreMatchers.is(false));
   }
 
   /**

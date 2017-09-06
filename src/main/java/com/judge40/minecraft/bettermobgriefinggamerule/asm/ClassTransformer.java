@@ -73,7 +73,17 @@ public class ClassTransformer implements IClassTransformer {
     // The target variable for classes whose own class instance is the target entity.
     VarInsnNode instanceVariable = new VarInsnNode(Opcodes.ALOAD, 0);
 
-    // Add EntityAIEatGrass targets, the target entity is held in a field within the class.
+    // Add EntityAIBreakDoor targets, the target entity is held in a field.
+    FieldInsnNode entityAiBreakDoorFieldNode =
+        new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIBreakDoor",
+            ObfuscationHelper.convertName("field_75356_a"), "Lnet/minecraft/entity/EntityLiving;");
+    List<AbstractInsnNode> entityAiBreakDoorTargetInstructions =
+        Arrays.asList(instanceVariable, entityAiBreakDoorFieldNode, invocation);
+    Map<String, List<AbstractInsnNode>> entityAiBreakDoorTargets = Collections.singletonMap(
+        ObfuscationHelper.convertName("func_75250_a"), entityAiBreakDoorTargetInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.ai.EntityAIBreakDoor", entityAiBreakDoorTargets);
+
+    // Add EntityAIEatGrass targets, the target entity is held in a field in the class.
     FieldInsnNode entityAiEatGrassFieldNode =
         new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAIEatGrass",
             ObfuscationHelper.convertName("field_151500_b"), "Lnet/minecraft/entity/EntityLiving;");

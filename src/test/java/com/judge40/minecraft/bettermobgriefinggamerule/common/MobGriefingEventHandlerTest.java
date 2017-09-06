@@ -21,25 +21,17 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.entity.ai.BetterBreakDoorAiTask;
 
-import mockit.Deencapsulation;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Verifications;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIBreakDoor;
-import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
-import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.ExplosionEvent.Detonate;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -49,11 +41,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -799,80 +789,5 @@ public class MobGriefingEventHandlerTest {
         isSmoking, CoreMatchers.is(false));
     Assert.assertThat("The explosion's affected blocks did not contain the expected blocks.",
         explosion.getAffectedBlockPositions(), CoreMatchers.is(affectedBlockPositions));
-  }
-
-  /**
-   * Test that the AI task field is updated and the task is not populated in the task list when the
-   * AI task list is not already populated.
-   */
-  @Test
-  public void testOnEntityJoinWorld_zombieTaskNotPopulated_fieldUpdatedTaskNotPopulated() {
-    // Set up test data.
-    EntityZombie zombie = new EntityZombie(null);
-    EntityJoinWorldEvent event = new EntityJoinWorldEvent(zombie, null);
-
-    // Call the method under test.
-    eventHandler.onEntityJoinWorld(event);
-
-    // Perform assertions.
-    EntityAIBreakDoor breakDoorAiTask =
-        Deencapsulation.getField(zombie, ObfuscationHelper.convertName("field_146075_bs"));
-    Assert.assertThat("The Zombie's break door task was not replaced as expected.", breakDoorAiTask,
-        CoreMatchers.instanceOf(BetterBreakDoorAiTask.class));
-
-    List<EntityAIBase> taskActions = new ArrayList<>();
-
-    for (Iterator<?> iterator = zombie.tasks.taskEntries.iterator(); iterator.hasNext();) {
-      EntityAITaskEntry aiTaskEntry = (EntityAITaskEntry) iterator.next();
-      taskActions.add(aiTaskEntry.action);
-    }
-
-    Assert.assertThat("A break door AI task was found in the Zombie's task list.", taskActions,
-        CoreMatchers.not(CoreMatchers.hasItem(CoreMatchers.instanceOf(EntityAIBreakDoor.class))));
-  }
-
-  /**
-   * Test that the AI task field is updated and the task is replaced in the task list when the AI
-   * task list is already populated.
-   */
-  @Test
-  public void testOnEntityJoinWorld_zombieTaskPopulated_fieldUpdatedTaskReplaced() {
-    // Set up test data.
-    EntityZombie zombie = new EntityZombie(null);
-
-    String breakDoorAiField = ObfuscationHelper.convertName("field_146075_bs");
-    EntityAIBreakDoor originalBreakDoorAiTask = Deencapsulation.getField(zombie, breakDoorAiField);
-    zombie.tasks.addTask(0, originalBreakDoorAiTask);
-
-    EntityJoinWorldEvent event = new EntityJoinWorldEvent(zombie, null);
-
-    // Call the method under test.
-    eventHandler.onEntityJoinWorld(event);
-
-    // Perform assertions.
-    EntityAIBreakDoor breakDoorAiTask = Deencapsulation.getField(zombie, breakDoorAiField);
-    Assert.assertThat("The Zombie's break door task was not replaced as expected.", breakDoorAiTask,
-        CoreMatchers.instanceOf(BetterBreakDoorAiTask.class));
-
-    List<EntityAIBase> taskActions = new ArrayList<>();
-
-    for (Iterator<?> iterator = zombie.tasks.taskEntries.iterator(); iterator.hasNext();) {
-      EntityAITaskEntry aiTaskEntry = (EntityAITaskEntry) iterator.next();
-      taskActions.add(aiTaskEntry.action);
-    }
-
-    Assert.assertThat("An original break door AI task was found in the Zombie's task list.",
-        taskActions, CoreMatchers.not(CoreMatchers.hasItem(originalBreakDoorAiTask)));
-    Assert.assertThat("A better break door AI task was not found in the Zombie's task list.",
-        taskActions, CoreMatchers.hasItem(CoreMatchers.instanceOf(BetterBreakDoorAiTask.class)));
-  }
-
-  /**
-   * Test that no exception is thrown when an unhandled Entity is passed to the event handler.
-   */
-  @Test
-  public void testOnEntityJoinWorld_notZombie_noException(@Mocked Entity entity) {
-    EntityJoinWorldEvent entityJoinWorldEvent = new EntityJoinWorldEvent(entity, null);
-    eventHandler.onEntityJoinWorld(entityJoinWorldEvent);
   }
 }

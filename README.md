@@ -17,12 +17,16 @@ instead of the original "mobGriefing" game rule.
 
 | Entity      | GameRule                |
 | ----------- | ----------------------- |
+| Blaze       | mobGriefing Blaze       |
 | Creeper     | mobGriefing Creeper     |
 | EnderDragon | mobGriefing EnderDragon |
 | Enderman    | mobGriefing Enderman    |
 | Ghast       | mobGriefing Ghast       |
+| PigZombie   | mobGriefing PigZombie   |
+| Rabbit      | mobGriefing Rabbit      |
 | Sheep       | mobGriefing Sheep       |
 | Silverfish  | mobGriefing Silverfish  |
+| Villager    | mobGriefing Villager    |
 | Wither      | mobGriefing WitherBoss  |
 | Zombie      | mobGriefing Zombie      |
 
@@ -34,6 +38,8 @@ original "mobGriefing" game rule.
 The following list describe the effect of each of the default entity
 rules.
 
+ - Blaze
+    - Whether the Blaze's fireball can set blocks on fire.
  - Creeper
     - Whether the Creeper's explosion can destroy blocks.
  - EnderDragon
@@ -42,10 +48,18 @@ rules.
     - Whether the Enderman can pick up and/or place blocks.
  - Ghast
     - Whether the Ghast's fireball can destroy blocks.
+    - Whether the Ghast's fireball can set blocks on fire.
+ - PigZombie
+    - Whether the PigZombie can destroy wooden doors.
+ - Rabbit
+    - Whether the rabbit can eat carrot crops.
  - Sheep
     - Whether the Sheep eating grass damages the grass.
  - Silverfish
-    - Whether the Silverfish egg hatching can destroy the block.
+    - Whether the Silverfish egg can hatch and destroy the block.
+ - Villager
+    - Whether the Villager can harvest crops.
+    - Whether the Villager can pick up loot from the ground.
  - Wither
     - Whether the Wither's spawn explosion can destroy blocks.
     - Whether the Wither's attacks can destroy blocks.
@@ -61,13 +75,17 @@ standard.
    (Used by all entities.)
  - Whether an entity eating grass damages the grass.
    (Used by Sheep only.)
- - Whether an entity can destroy wooden doors. (Used by Zombies only.)
+ - Whether an entity can destroy wooden doors.
+   (Used by PigZombies and Zombies.)
  - Whether an entity can pick up loot from the ground.
-   (Used by PigZombies, Skeletons and Zombies.)
+   (Used by PigZombies, Skeletons, Villagers and Zombies.)
  - Whether large fireballs can destroy blocks.
+   (Used by Ghasts only.)
+ - Whether large fireballs can set blocks on fire.
    (Used by Ghasts only.)
  - Whether wither skull projectiles can destroy blocks.
    (Used by Wither only.)
+ - Whether an entity can harvest crops. (Used by Villager only.)
 
 Any entities which include these behaviours can be added to be handled
 with a separate entity rule at any time by using the command

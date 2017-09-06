@@ -22,9 +22,11 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.configuration;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityRabbit;
@@ -50,7 +52,8 @@ public class ConfigurationConstants {
 
   // The entity classes with configuration support available by default.
   public static final List<Class<? extends EntityLiving>> ENTITY_CLASSES =
-      Collections.unmodifiableList(Arrays.asList(EntityCreeper.class, EntityDragon.class,
-          EntityEnderman.class, EntityGhast.class, EntityRabbit.class, EntitySheep.class,
-          EntitySilverfish.class, EntityVillager.class, EntityWither.class, EntityZombie.class));
+      Collections.unmodifiableList(Arrays.asList(EntityBlaze.class, EntityCreeper.class,
+          EntityDragon.class, EntityEnderman.class, EntityGhast.class, EntityPigZombie.class,
+          EntityRabbit.class, EntitySheep.class, EntitySilverfish.class, EntityVillager.class,
+          EntityWither.class, EntityZombie.class));
 }

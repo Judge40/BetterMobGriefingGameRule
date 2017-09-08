@@ -420,12 +420,6 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball3, @Mocked EntityFireball affectedFireball4,
       @Mocked EntityFireball affectedFireball5) {
     // Set up test data.
-    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
-    Explosion explosion =
-        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
-
-    GameRules gameRules = new GameRules();
-
     affectedFireball2.posX = 1;
     affectedFireball3.posX = 1;
     affectedFireball3.posY = 1;
@@ -436,8 +430,15 @@ public class MobGriefingEventHandlerTest {
     affectedFireball5.posY = 1;
     affectedFireball5.posZ = 1;
     affectedFireball5.shootingEntity = entity;
+
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
+
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4, affectedFireball5));
+
+    GameRules gameRules = new GameRules();
 
     // Record expectations.
     new Expectations(gameRules, BetterMobGriefingGameRule.class) {
@@ -481,12 +482,6 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball3, @Mocked EntityFireball affectedFireball4,
       @Mocked EntityFireball affectedFireball5) {
     // Set up test data.
-    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
-    Explosion explosion =
-        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, true, affectedBlockPositions);
-
-    GameRules gameRules = new GameRules();
-
     affectedFireball2.posX = 1;
     affectedFireball3.posX = 1;
     affectedFireball3.posY = 1;
@@ -497,8 +492,15 @@ public class MobGriefingEventHandlerTest {
     affectedFireball5.posY = 1;
     affectedFireball5.posZ = 1;
     affectedFireball5.shootingEntity = entity;
+
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, true, affectedBlockPositions);
+
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4, affectedFireball5));
+
+    GameRules gameRules = new GameRules();
 
     // Record expectations.
     new Expectations(gameRules, BetterMobGriefingGameRule.class) {
@@ -542,12 +544,6 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball3, @Mocked EntityFireball affectedFireball4,
       @Mocked EntityFireball affectedFireball5) {
     // Set up test data.
-    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
-    Explosion explosion =
-        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
-
-    GameRules gameRules = new GameRules();
-
     affectedFireball2.posX = 1;
     affectedFireball3.posX = 1;
     affectedFireball3.posY = 1;
@@ -558,8 +554,15 @@ public class MobGriefingEventHandlerTest {
     affectedFireball5.posY = 1;
     affectedFireball5.posZ = 1;
     affectedFireball5.shootingEntity = entity;
+
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
+
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4, affectedFireball5));
+
+    GameRules gameRules = new GameRules();
 
     // Record expectations.
     new Expectations(gameRules, BetterMobGriefingGameRule.class) {
@@ -601,16 +604,17 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball2, @Mocked EntityFireball affectedFireball3,
       @Mocked EntityFireball affectedFireball4) {
     // Set up test data.
-    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
-    Explosion explosion =
-        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
-
     affectedFireball2.posX = 1;
     affectedFireball3.posX = 1;
     affectedFireball3.posY = 1;
     affectedFireball4.posX = 1;
     affectedFireball4.posY = 1;
     affectedFireball4.posZ = 1;
+
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
+
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4));
 
@@ -682,12 +686,6 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball2, @Mocked EntityFireball affectedFireball3,
       @Mocked EntityFireball affectedFireball4, @Mocked EntityFireball affectedFireball5) {
     // Set up test data.
-    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
-    Explosion explosion =
-        new Explosion(null, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
-
-    GameRules gameRules = new GameRules();
-
     affectedFireball2.posX = 1;
     affectedFireball3.posX = 1;
     affectedFireball3.posY = 1;
@@ -698,8 +696,15 @@ public class MobGriefingEventHandlerTest {
     affectedFireball5.posY = 1;
     affectedFireball5.posZ = 1;
     affectedFireball5.shootingEntity = entity;
+
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4, affectedFireball5));
+
+    GameRules gameRules = new GameRules();
+
 
     // Record expectations.
     new Expectations(gameRules, BetterMobGriefingGameRule.class) {
@@ -738,12 +743,6 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball2, @Mocked EntityFireball affectedFireball3,
       @Mocked EntityFireball affectedFireball4, @Mocked EntityFireball affectedFireball5) {
     // Set up test data.
-    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
-    Explosion explosion =
-        new Explosion(null, null, 1, 1, 1, 0, false, true, affectedBlockPositions);
-
-    GameRules gameRules = new GameRules();
-
     affectedFireball2.posX = 1;
     affectedFireball3.posX = 1;
     affectedFireball3.posY = 1;
@@ -754,8 +753,15 @@ public class MobGriefingEventHandlerTest {
     affectedFireball5.posY = 1;
     affectedFireball5.posZ = 1;
     affectedFireball5.shootingEntity = entity;
+
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, null, 1, 1, 1, 0, false, true, affectedBlockPositions);
+
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4, affectedFireball5));
+
+    GameRules gameRules = new GameRules();
 
     // Record expectations.
     new Expectations(gameRules, BetterMobGriefingGameRule.class) {
@@ -794,12 +800,6 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball2, @Mocked EntityFireball affectedFireball3,
       @Mocked EntityFireball affectedFireball4, @Mocked EntityFireball affectedFireball5) {
     // Set up test data.
-    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
-    Explosion explosion =
-        new Explosion(null, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
-
-    GameRules gameRules = new GameRules();
-
     affectedFireball2.posX = 1;
     affectedFireball3.posX = 1;
     affectedFireball3.posY = 1;
@@ -810,8 +810,15 @@ public class MobGriefingEventHandlerTest {
     affectedFireball5.posY = 1;
     affectedFireball5.posZ = 1;
     affectedFireball5.shootingEntity = entity;
+
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
+
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4, affectedFireball5));
+
+    GameRules gameRules = new GameRules();
 
     // Record expectations.
     new Expectations(gameRules, BetterMobGriefingGameRule.class) {
@@ -848,16 +855,17 @@ public class MobGriefingEventHandlerTest {
       @Mocked EntityFireball affectedFireball1, @Mocked EntityFireball affectedFireball2,
       @Mocked EntityFireball affectedFireball3, @Mocked EntityFireball affectedFireball4) {
     // Set up test data.
-    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
-    Explosion explosion =
-        new Explosion(null, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
-
     affectedFireball2.posX = 1;
     affectedFireball3.posX = 1;
     affectedFireball3.posY = 1;
     affectedFireball4.posX = 1;
     affectedFireball4.posY = 1;
     affectedFireball4.posZ = 1;
+
+    List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
+    Explosion explosion =
+        new Explosion(null, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
+
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4));
 

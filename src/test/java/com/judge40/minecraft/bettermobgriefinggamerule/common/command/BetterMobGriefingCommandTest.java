@@ -27,6 +27,7 @@ import mockit.Mocked;
 import mockit.Verifications;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandGameRule;
+import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -402,6 +403,7 @@ public class BetterMobGriefingCommandTest {
       throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+    GameRules gameRules = new GameRules();
 
     List<ChatComponentText> capturedChatText = new ArrayList<>();
     String[] commandWords = new String[] {"mobGriefing", "entityName1"};
@@ -412,6 +414,9 @@ public class BetterMobGriefingCommandTest {
         commandSender.getEntityWorld();
         result = world;
 
+        world.getGameRules();
+        result = gameRules;
+
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
 
@@ -419,6 +424,9 @@ public class BetterMobGriefingCommandTest {
         result = MobGriefingValue.TRUE;
 
         commandSender.addChatMessage(withCapture(capturedChatText));
+
+        commandSender.setCommandStat(CommandResultStats.Type.QUERY_RESULT,
+            gameRules.getInt(commandWords[0]));
       }
     };
 

@@ -25,8 +25,8 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGri
 
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandGameRule;
+import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.BlockPos;
@@ -96,11 +96,11 @@ public class BetterMobGriefingCommand extends CommandGameRule {
     if (commandWords.length >= 1 && commandWords[0].equals(BetterMobGriefingGameRule.GLOBAL_RULE)) {
       EntityMobGriefingData entityMobGriefingData =
           EntityMobGriefingData.forWorld(commandSender.getEntityWorld());
+      GameRules gameRules = commandSender.getEntityWorld().getGameRules();
 
       if (commandWords.length == 1) {
         // If the length is one then output the mob griefing values for both the global and entity
         // rules.
-        GameRules gameRules = commandSender.getEntityWorld().getGameRules();
         String globalMobGriefingValue = gameRules.getString(BetterMobGriefingGameRule.GLOBAL_RULE);
 
         String globalOutput =
@@ -134,6 +134,8 @@ public class BetterMobGriefingCommand extends CommandGameRule {
             String message = String.format("%s %s = %s", BetterMobGriefingGameRule.GLOBAL_RULE,
                 entityName, entityMobGriefingValue.toExternalForm());
             commandSender.addChatMessage(new ChatComponentText(message));
+            commandSender.setCommandStat(CommandResultStats.Type.QUERY_RESULT,
+                gameRules.getInt(commandWords[0]));
           } else {
             String message =
                 String.format("%s %s", BetterMobGriefingGameRule.GLOBAL_RULE, commandWords[1]);
@@ -156,17 +158,17 @@ public class BetterMobGriefingCommand extends CommandGameRule {
             String exceptionMessage = String.format("/gamerule %s <entity name> %s|%s|%s",
                 BetterMobGriefingGameRule.GLOBAL_RULE, MobGriefingValue.TRUE.toExternalForm(),
                 MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
-            throw new WrongUsageException(exceptionMessage);
+            throw new CommandException(exceptionMessage);
           }
         } else {
-          throw new WrongUsageException(String.format("%s is not a valid entity name", entityName));
+          throw new CommandException(String.format("%s is not a valid entity name", entityName));
         }
       } else {
         // Throw a wrong usage exception where there are too many words.
         String exceptionMessage = String.format("/gamerule %s <entity name> %s|%s|%s",
             BetterMobGriefingGameRule.GLOBAL_RULE, MobGriefingValue.TRUE.toExternalForm(),
             MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
-        throw new WrongUsageException(exceptionMessage);
+        throw new CommandException(exceptionMessage);
       }
     } else {
       super.processCommand(commandSender, commandWords);

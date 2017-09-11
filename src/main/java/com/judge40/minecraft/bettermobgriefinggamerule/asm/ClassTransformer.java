@@ -141,16 +141,27 @@ public class ClassTransformer implements IClassTransformer {
         entityRabbitRaidFarmTargets);
 
     // Add Silverfish targets.
-    FieldInsnNode entitySilverfishFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
+    FieldInsnNode entitySilverfishHideFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
+        "net/minecraft/entity/monster/EntitySilverfish$AIHideInStone",
+        ObfuscationHelper.convertName("field_179485_a"),
+        "Lnet/minecraft/entity/monster/EntitySilverfish;");
+    List<AbstractInsnNode> entitySilverfishHideInstructions =
+        Arrays.asList(instanceVariable, entitySilverfishHideFieldNode, invocation);
+    Map<String, List<AbstractInsnNode>> entitySilverfishHideTargets = Collections.singletonMap(
+        ObfuscationHelper.convertName("func_75250_a"), entitySilverfishHideInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntitySilverfish$AIHideInStone",
+        entitySilverfishHideTargets);
+
+    FieldInsnNode entitySilverfishSummonFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
         "net/minecraft/entity/monster/EntitySilverfish$AISummonSilverfish",
         ObfuscationHelper.convertName("field_179464_a"),
         "Lnet/minecraft/entity/monster/EntitySilverfish;");
-    List<AbstractInsnNode> entitySilverfishInstructions =
-        Arrays.asList(instanceVariable, entitySilverfishFieldNode, invocation);
-    Map<String, List<AbstractInsnNode>> entitySilverfishTargets = Collections
-        .singletonMap(ObfuscationHelper.convertName("func_75246_d"), entitySilverfishInstructions);
+    List<AbstractInsnNode> entitySilverfishSummonInstructions =
+        Arrays.asList(instanceVariable, entitySilverfishSummonFieldNode, invocation);
+    Map<String, List<AbstractInsnNode>> entitySilverfishSummonTargets = Collections.singletonMap(
+        ObfuscationHelper.convertName("func_75246_d"), entitySilverfishSummonInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntitySilverfish$AISummonSilverfish",
-        entitySilverfishTargets);
+        entitySilverfishSummonTargets);
 
     // Add SmallFireball targets.
     FieldInsnNode entitySmallFireballFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
@@ -175,6 +186,11 @@ public class ClassTransformer implements IClassTransformer {
     Map<String, List<AbstractInsnNode>> entityLivingTargets = Collections
         .singletonMap(ObfuscationHelper.convertName("func_70636_d"), instanceInstructions);
     TRANSFORM_TARGETS.put("net.minecraft.entity.EntityLiving", entityLivingTargets);
+
+    // Add Snowman targets.
+    Map<String, List<AbstractInsnNode>> entitySnowmanTargets = Collections
+        .singletonMap(ObfuscationHelper.convertName("func_70636_d"), instanceInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntitySnowman", entitySnowmanTargets);
 
     // Add Wither targets.
     Map<String, List<AbstractInsnNode>> entityWitherTargets = Collections

@@ -50,6 +50,7 @@ public class ObfuscationHelper {
     srgToMcp.put("field_179464_a", "silverfish");
     srgToMcp.put("field_179473_a", "enderman");
     srgToMcp.put("field_179475_a", "enderman");
+    srgToMcp.put("field_179485_a", "silverfish");
     srgToMcp.put("field_179500_c", "rabbit");
     srgToMcp.put("field_179504_c", "theVillager");
     srgToMcp.put("func_70227_a", "onImpact");

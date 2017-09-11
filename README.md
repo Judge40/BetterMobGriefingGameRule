@@ -26,6 +26,7 @@ instead of the original "mobGriefing" game rule.
 | Rabbit      | mobGriefing Rabbit      |
 | Sheep       | mobGriefing Sheep       |
 | Silverfish  | mobGriefing Silverfish  |
+| Snowman     | mobGriefing Snowman     |
 | Villager    | mobGriefing Villager    |
 | Wither      | mobGriefing WitherBoss  |
 | Zombie      | mobGriefing Zombie      |
@@ -57,6 +58,9 @@ rules.
     - Whether the Sheep eating grass damages the grass.
  - Silverfish
     - Whether the Silverfish egg can hatch and destroy the block.
+    - Whether the Silverfish can hide and convert stone to monster eggs.
+ - Snowman
+    - Whether the Snowman can place a snow layer as it moves.
  - Villager
     - Whether the Villager can harvest crops.
     - Whether the Villager can pick up loot from the ground.

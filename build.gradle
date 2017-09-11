@@ -7,7 +7,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT"
+    classpath "net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT"
   }
 }
 
@@ -17,7 +17,7 @@ apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: "pmd"
 
 // Mod information.
-version = "1.8.9-2.0.0"
+version = "1.9.4-3.0.0-0.1.0"
 group= "com.judge40.minecraft.bettermobgriefinggamerule"
 archivesBaseName = "bettermobgriefinggamerule"
 
@@ -26,10 +26,10 @@ targetCompatibility = 1.8
 
 minecraft {
   // MinecraftForge version.
-  version = "1.8.9-11.15.1.1722"
+  version = "1.9.4-12.17.0.1976"
 
   // MCP mappings version.
-  mappings = "stable_22"
+  mappings = "stable_26"
 
   // Use shared run directory if available.
   if (file("../run").exists()) {
@@ -49,6 +49,10 @@ dependencies {
 findbugs {
   effort = "max"
   reportLevel = "low"
+}
+
+findbugsMain {
+  excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilterMain.xml")
 }
 
 findbugsTest {

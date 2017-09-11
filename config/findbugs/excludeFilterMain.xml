@@ -1,0 +1,8 @@
+<FindBugsFilter>
+  <Match>
+    <Class name="~.+BetterMobGriefingGameRule"/>
+    <Method name="isMobGriefingEnabled"/>
+    <Local name="entityName"/>
+    <Bug code="RCN"/>
+  </Match>
+</FindBugsFilter>

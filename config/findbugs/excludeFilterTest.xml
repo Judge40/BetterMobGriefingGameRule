@@ -1,5 +1,11 @@
 <FindBugsFilter>
   <Match>
+    <Class name="~.+Test\$[0-9]+"/>
     <Bug code="RV, SIC"/>
+  </Match>
+  <Match>
+    <Class name="~.+MobGriefingEventHandlerTest"/>
+    <Method name="~testOnDetonate_.+"/>
+    <Bug code="NP"/>
   </Match>
 </FindBugsFilter>

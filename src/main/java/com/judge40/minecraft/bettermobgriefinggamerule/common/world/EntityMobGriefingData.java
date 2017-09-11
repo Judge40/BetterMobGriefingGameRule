@@ -67,7 +67,7 @@ public class EntityMobGriefingData extends WorldSavedData {
     // Get the world data instance from the World's MapStorage.
     MapStorage mapStorage = world.getMapStorage();
     EntityMobGriefingData entityMobGriefingData = (EntityMobGriefingData) mapStorage
-        .loadData(EntityMobGriefingData.class, ModInfoConstants.ID);
+        .getOrLoadData(EntityMobGriefingData.class, ModInfoConstants.ID);
 
     // If the MapStorage did not contain a world data instance then create a new one and store it in
     // the MapStorage.
@@ -113,13 +113,15 @@ public class EntityMobGriefingData extends WorldSavedData {
   }
 
   @Override
-  public void writeToNBT(NBTTagCompound nbtTagCompound) {
+  public NBTTagCompound writeToNBT(NBTTagCompound nbtTagCompound) {
     // Add the entity name and MobGriefingValue from each world data entry to the NBTTagCompound.
     for (Entry<String, MobGriefingValue> entry : entityNamesToMobGriefingValue.entrySet()) {
       MobGriefingValue mobGriefingValue = entry.getValue();
       String externalForm = mobGriefingValue.toExternalForm();
       nbtTagCompound.setString(entry.getKey(), externalForm);
     }
+
+    return nbtTagCompound;
   }
 
   /**

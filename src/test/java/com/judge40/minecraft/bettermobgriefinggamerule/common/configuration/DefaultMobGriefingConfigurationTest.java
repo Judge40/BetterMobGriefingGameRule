@@ -331,7 +331,7 @@ public class DefaultMobGriefingConfigurationTest {
 
     ConfigCategory configCategory =
         new ConfigCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
-    String entityName = (String) EntityList.classToStringMapping.get(EntityItem.class);
+    String entityName = EntityList.getEntityStringFromClass(EntityItem.class);
     configCategory.put(entityName,
         new Property(entityName, MobGriefingValue.INHERIT.toExternalForm(), Type.STRING));
 
@@ -407,7 +407,7 @@ public class DefaultMobGriefingConfigurationTest {
 
     ConfigCategory configCategory =
         new ConfigCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
-    String entityName = (String) EntityList.classToStringMapping.get(EntityLiving.class);
+    String entityName = EntityList.getEntityStringFromClass(EntityLiving.class);
     configCategory.put(entityName,
         new Property(entityName, MobGriefingValue.INHERIT.toExternalForm(), Type.STRING));
 

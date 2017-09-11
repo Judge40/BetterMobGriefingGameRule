@@ -22,6 +22,7 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.configuration;
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraftforge.common.config.ConfigCategory;
@@ -107,7 +108,7 @@ public class DefaultMobGriefingConfiguration extends Configuration {
     // Add all entities supported by default, this will cover newly supported entities and any
     // entities which have been removed from the configuration.
     for (Class<? extends EntityLiving> entityClass : ConfigurationConstants.ENTITY_CLASSES) {
-      String entityName = (String) EntityList.classToStringMapping.get(entityClass);
+      String entityName = EntityList.getEntityStringFromClass(entityClass);
       entityNames.add(entityName);
     }
 
@@ -117,7 +118,7 @@ public class DefaultMobGriefingConfiguration extends Configuration {
         MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
     for (String entityName : entityNames) {
-      Class<?> entityClass = (Class<?>) EntityList.stringToClassMapping.get(entityName);
+      Class<? extends Entity> entityClass = EntityList.NAME_TO_CLASS.get(entityName);
 
       // Verify that the entity is a valid entity.
       if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {

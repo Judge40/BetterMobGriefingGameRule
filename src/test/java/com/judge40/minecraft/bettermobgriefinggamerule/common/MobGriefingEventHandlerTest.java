@@ -29,7 +29,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -139,7 +139,7 @@ public class MobGriefingEventHandlerTest {
     // Set up test data.
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, entity, 0, 0, 0, 0, true, false, affectedBlockPositions);
+        new Explosion(world, entity, 0, 0, 0, 0, true, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -184,7 +184,7 @@ public class MobGriefingEventHandlerTest {
     // Set up test data.
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, entity, 0, 0, 0, 0, false, true, affectedBlockPositions);
+        new Explosion(world, entity, 0, 0, 0, 0, false, true, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -229,7 +229,7 @@ public class MobGriefingEventHandlerTest {
     // Set up test data.
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, entity, 0, 0, 0, 0, false, false, affectedBlockPositions);
+        new Explosion(world, entity, 0, 0, 0, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -277,7 +277,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, fireball, 0, 0, 0, 0, false, false, affectedBlockPositions);
+        new Explosion(world, fireball, 0, 0, 0, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -325,7 +325,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, fireball, 0, 0, 0, 0, false, true, affectedBlockPositions);
+        new Explosion(world, fireball, 0, 0, 0, 0, false, true, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -373,7 +373,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, fireball, 0, 0, 0, 0, false, false, affectedBlockPositions);
+        new Explosion(world, fireball, 0, 0, 0, 0, false, false, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -433,7 +433,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
+        new Explosion(world, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4, affectedFireball5));
@@ -495,7 +495,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, true, affectedBlockPositions);
+        new Explosion(world, sourceFireball, 1, 1, 1, 0, false, true, affectedBlockPositions);
 
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4, affectedFireball5));
@@ -557,7 +557,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
+        new Explosion(world, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4, affectedFireball5));
@@ -613,7 +613,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
+        new Explosion(world, sourceFireball, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4));
@@ -646,7 +646,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, largeFireball, 0, 0, 0, 0, true, true, affectedBlockPositions);
+        new Explosion(world, largeFireball, 0, 0, 0, 0, true, true, affectedBlockPositions);
 
     GameRules gameRules = new GameRules();
     Detonate detonateEvent = new Detonate(world, explosion, null);
@@ -699,7 +699,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
+        new Explosion(world, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4, affectedFireball5));
 
@@ -756,7 +756,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, null, 1, 1, 1, 0, false, true, affectedBlockPositions);
+        new Explosion(world, null, 1, 1, 1, 0, false, true, affectedBlockPositions);
 
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4, affectedFireball5));
@@ -813,7 +813,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
+        new Explosion(world, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4, affectedFireball5));
@@ -864,7 +864,7 @@ public class MobGriefingEventHandlerTest {
 
     List<BlockPos> affectedBlockPositions = Collections.singletonList(new BlockPos(0, 0, 0));
     Explosion explosion =
-        new Explosion(null, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
+        new Explosion(world, null, 1, 1, 1, 0, false, false, affectedBlockPositions);
 
     Detonate detonateEvent = new Detonate(world, explosion, Arrays.asList(null, affectedFireball1,
         affectedFireball2, affectedFireball3, affectedFireball4));

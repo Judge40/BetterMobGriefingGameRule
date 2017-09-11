@@ -44,7 +44,7 @@ public class MobGriefingEventHandler {
    */
   @SubscribeEvent
   public void onConfigChanged(OnConfigChangedEvent configChangedEvent) {
-    if (configChangedEvent.modID.equals(ModInfoConstants.ID)) {
+    if (configChangedEvent.getModID().equals(ModInfoConstants.ID)) {
       BetterMobGriefingGameRule.getInstance().getDefaultMobGriefingConfiguration().synchronize();
     }
   }
@@ -58,8 +58,9 @@ public class MobGriefingEventHandler {
   @SubscribeEvent
   public void onDetonate(Detonate detonateEvent) {
     // Try and get the explosion source from the explosion.
+    Explosion explosion = detonateEvent.getExplosion();
     Entity explosionSource = null;
-    Entity exploder = ReflectionHelper.getPrivateValue(Explosion.class, detonateEvent.explosion,
+    Entity exploder = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
         ObfuscationHelper.convertName("field_77283_e"));
 
     if (exploder instanceof EntityLiving) {
@@ -77,12 +78,12 @@ public class MobGriefingEventHandler {
 
           // Compare the fireball and explosion positions to determine if the fireball is the source
           // of the explosion.
-          double explosionX = ReflectionHelper.getPrivateValue(Explosion.class,
-              detonateEvent.explosion, ObfuscationHelper.convertName("field_77284_b"));
-          double explosionY = ReflectionHelper.getPrivateValue(Explosion.class,
-              detonateEvent.explosion, ObfuscationHelper.convertName("field_77285_c"));
-          double explosionZ = ReflectionHelper.getPrivateValue(Explosion.class,
-              detonateEvent.explosion, ObfuscationHelper.convertName("field_77282_d"));
+          double explosionX = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+              ObfuscationHelper.convertName("field_77284_b"));
+          double explosionY = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+              ObfuscationHelper.convertName("field_77285_c"));
+          double explosionZ = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
+              ObfuscationHelper.convertName("field_77282_d"));
 
           if (Math.abs(entityFireball.posX - explosionX) == 0
               && Math.abs(entityFireball.posY - explosionY) == 0
@@ -99,18 +100,18 @@ public class MobGriefingEventHandler {
       // Get whether mobGriefing is enabled for this entity
       boolean entityMobGriefing = BetterMobGriefingGameRule.isMobGriefingEnabled(explosionSource);
 
-      GameRules gameRules = detonateEvent.world.getGameRules();
+      GameRules gameRules = detonateEvent.getWorld().getGameRules();
       boolean globalMobGriefing = gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
 
       // If entity mobGriefing has overridden the global value then update the explosion's flags.
       if (entityMobGriefing != globalMobGriefing) {
-        ReflectionHelper.setPrivateValue(Explosion.class, detonateEvent.explosion,
-            entityMobGriefing, ObfuscationHelper.convertName("field_82755_b"));
+        ReflectionHelper.setPrivateValue(Explosion.class, explosion, entityMobGriefing,
+            ObfuscationHelper.convertName("field_82755_b"));
 
         // Large fireball's ability to create fire is controlled by mob griefing.
         if (exploder instanceof EntityLargeFireball) {
-          ReflectionHelper.setPrivateValue(Explosion.class, detonateEvent.explosion,
-              entityMobGriefing, ObfuscationHelper.convertName("field_77286_a"));
+          ReflectionHelper.setPrivateValue(Explosion.class, explosion, entityMobGriefing,
+              ObfuscationHelper.convertName("field_77286_a"));
         }
 
         // If mobGriefing is not enabled then clear down the affected blocks

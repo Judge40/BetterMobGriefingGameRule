@@ -79,7 +79,7 @@ public class EntityMobGriefingDataTest {
     // Record expectations.
     new Expectations() {
       {
-        mapStorage.loadData(EntityMobGriefingData.class, ModInfoConstants.ID);
+        mapStorage.getOrLoadData(EntityMobGriefingData.class, ModInfoConstants.ID);
         result = entityMobGriefingData;
       }
     };
@@ -114,7 +114,7 @@ public class EntityMobGriefingDataTest {
     // Record expectations.
     new Expectations() {
       {
-        mapStorage.loadData(EntityMobGriefingData.class, ModInfoConstants.ID);
+        mapStorage.getOrLoadData(EntityMobGriefingData.class, ModInfoConstants.ID);
         result = null;
 
         new EntityMobGriefingData(ModInfoConstants.ID);

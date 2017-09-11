@@ -69,7 +69,7 @@ public class BetterMobGriefingCommand extends CommandGameRule {
 
         String globalOutput =
             String.format("%s = %s", BetterMobGriefingGameRule.GLOBAL_RULE, globalMobGriefingValue);
-        commandSender.addChatMessage(new TextComponentString(globalOutput));
+        commandSender.sendMessage(new TextComponentString(globalOutput));
 
         if (!entityMobGriefingData.toString().isEmpty()) {
           String[] entityValues = entityMobGriefingData.toString().split(", ");
@@ -77,7 +77,7 @@ public class BetterMobGriefingCommand extends CommandGameRule {
           for (String entityValue : entityValues) {
             String entityOutput =
                 String.format("%s %s", BetterMobGriefingGameRule.GLOBAL_RULE, entityValue);
-            commandSender.addChatMessage(new TextComponentString(entityOutput));
+            commandSender.sendMessage(new TextComponentString(entityOutput));
           }
         }
       } else if (commandWords.length == 2) {
@@ -97,7 +97,7 @@ public class BetterMobGriefingCommand extends CommandGameRule {
           if (entityMobGriefingValue != null) {
             String message = String.format("%s %s = %s", BetterMobGriefingGameRule.GLOBAL_RULE,
                 entityName, entityMobGriefingValue.toExternalForm());
-            commandSender.addChatMessage(new TextComponentString(message));
+            commandSender.sendMessage(new TextComponentString(message));
             commandSender.setCommandStat(CommandResultStats.Type.QUERY_RESULT,
                 gameRules.getInt(commandWords[0]));
           } else {
@@ -140,7 +140,7 @@ public class BetterMobGriefingCommand extends CommandGameRule {
   }
 
   @Override
-  public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender commandSender,
+  public List<String> getTabCompletions(MinecraftServer server, ICommandSender commandSender,
       String[] commandWords, BlockPos pos) {
     List<String> tabCompletionOptions = Collections.emptyList();
 
@@ -148,8 +148,7 @@ public class BetterMobGriefingCommand extends CommandGameRule {
         || !commandWords[0].equals(BetterMobGriefingGameRule.GLOBAL_RULE)) {
       // When the first word is being completed or the first word is not the mobGriefing game rule
       // the parent's behavior will handle tab completion.
-      tabCompletionOptions =
-          super.getTabCompletionOptions(server, commandSender, commandWords, pos);
+      tabCompletionOptions = super.getTabCompletions(server, commandSender, commandWords, pos);
     } else if (commandWords.length <= 3) {
       // When the first word is the mobGriefing game rule true and false are always possible words.
       List<String> possibleWords = new ArrayList<>();

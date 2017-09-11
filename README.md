@@ -1,7 +1,7 @@
 ![Better mobGriefing GameRule](src/main/resources/assets/bettermobgriefinggamerule/logo.png)
 
-![Minecraft 1.9.4](https://img.shields.io/badge/Minecraft-1.9.4-lightgrey.svg)
-![Forge 1.9.4-12.17.0.1976](https://img.shields.io/badge/Forge-1.9.4--12.17.0.1976-lightgrey.svg)  
+![Minecraft 1.10.2](https://img.shields.io/badge/Minecraft-1.10.2-lightgrey.svg)
+![Forge 1.10.2-12.18.3.2185](https://img.shields.io/badge/Forge-1.10.2--12.18.3.2185-lightgrey.svg)  
 [![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## About
@@ -26,7 +26,7 @@ instead of the original "mobGriefing" game rule.
 | Rabbit      | mobGriefing Rabbit      |
 | Sheep       | mobGriefing Sheep       |
 | Silverfish  | mobGriefing Silverfish  |
-| Snowman     | mobGriefing Snowman     |
+| SnowMan     | mobGriefing SnowMan     |
 | Villager    | mobGriefing Villager    |
 | Wither      | mobGriefing WitherBoss  |
 | Zombie      | mobGriefing Zombie      |
@@ -59,8 +59,8 @@ rules.
  - Silverfish
     - Whether the Silverfish egg can hatch and destroy the block.
     - Whether the Silverfish can hide and convert stone to monster eggs.
- - Snowman
-    - Whether the Snowman can place a snow layer as it moves.
+ - SnowMan
+    - Whether the SnowMan can place a snow layer as it moves.
  - Villager
     - Whether the Villager can harvest crops.
     - Whether the Villager can pick up loot from the ground.

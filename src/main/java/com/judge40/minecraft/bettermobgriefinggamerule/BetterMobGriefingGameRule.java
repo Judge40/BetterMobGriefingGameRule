@@ -27,8 +27,8 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobG
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 
-import net.minecraft.command.CommandGameRule;
 import net.minecraft.command.CommandHandler;
+import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.world.World;
@@ -105,8 +105,8 @@ public class BetterMobGriefingGameRule {
 
     // Create a new game rule command handler and retrieve the original handler.
     BetterMobGriefingCommand newGameRuleHandler = new BetterMobGriefingCommand();
-    CommandGameRule originalGameRuleHandler =
-        (CommandGameRule) commandHandler.getCommands().get(newGameRuleHandler.getCommandName());
+    ICommand originalGameRuleHandler =
+        commandHandler.getCommands().get(newGameRuleHandler.getName());
 
     // Remove the original game rule command handler from the command set and register the new
     // handler.
@@ -141,7 +141,7 @@ public class BetterMobGriefingGameRule {
 
     // If the entity name was found then try and get the entity's value from the world data.
     if (entityName != null) {
-      EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forWorld(entity.worldObj);
+      EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forWorld(entity.world);
       MobGriefingValue mobGriefingValue = entityMobGriefingData.getMobGriefingValue(entityName);
 
       if (Objects.equals(mobGriefingValue, MobGriefingValue.TRUE)
@@ -152,7 +152,7 @@ public class BetterMobGriefingGameRule {
 
     // If no entity rule was found then default to the global value.
     if (mobGriefingEnabled == null) {
-      mobGriefingEnabled = entity.worldObj.getGameRules().getBoolean(GLOBAL_RULE);
+      mobGriefingEnabled = entity.world.getGameRules().getBoolean(GLOBAL_RULE);
     }
 
     return mobGriefingEnabled;

@@ -189,7 +189,7 @@ public class BetterMobGriefingGameRuleTest {
     // Record expectations.
     new Expectations(gameRules, BetterMobGriefingCommand.class, ReflectionHelper.class) {
       {
-        newGameRuleHandler.getCommandName();
+        newGameRuleHandler.getName();
         result = "commandName";
 
         commandHandler.getCommands();
@@ -253,7 +253,7 @@ public class BetterMobGriefingGameRuleTest {
     // Record expectations.
     new Expectations(BetterMobGriefingCommand.class, ReflectionHelper.class) {
       {
-        newGameRuleHandler.getCommandName();
+        newGameRuleHandler.getName();
         result = "commandName";
 
         commandHandler.getCommands();
@@ -292,7 +292,7 @@ public class BetterMobGriefingGameRuleTest {
   public void testIsMobGriefingEnabled_entityNameNotFound_globalValue(@Mocked Entity entity,
       @Mocked GameRules gameRules, @Mocked World world) {
     // Set up test data.
-    entity.worldObj = world;
+    entity.world = world;
 
     // Record expectations.
     new Expectations(EntityList.class) {
@@ -322,7 +322,7 @@ public class BetterMobGriefingGameRuleTest {
   public void testIsMobGriefingEnabled_entityRuleNotFound_globalValue(@Mocked Entity entity,
       @Mocked EntityMobGriefingData entityData, @Mocked GameRules gameRules, @Mocked World world) {
     // Set up test data.
-    entity.worldObj = world;
+    entity.world = world;
 
     // Record expectations.
     new Expectations(EntityList.class) {
@@ -354,7 +354,7 @@ public class BetterMobGriefingGameRuleTest {
   public void testIsMobGriefingEnabled_entityValueInherit_globalValue(@Mocked Entity entity,
       @Mocked EntityMobGriefingData entityData, @Mocked GameRules gameRules, @Mocked World world) {
     // Set up test data.
-    entity.worldObj = world;
+    entity.world = world;
 
     // Record expectations.
     new Expectations(EntityList.class) {
@@ -386,7 +386,7 @@ public class BetterMobGriefingGameRuleTest {
   public void testIsMobGriefingEnabled_entityValueTrue_true(@Mocked Entity entity,
       @Mocked EntityMobGriefingData entityData, @Mocked GameRules gameRules, @Mocked World world) {
     // Set up test data.
-    entity.worldObj = world;
+    entity.world = world;
 
     // Record expectations.
     new Expectations(EntityList.class) {
@@ -422,7 +422,7 @@ public class BetterMobGriefingGameRuleTest {
   public void testIsMobGriefingEnabled_entityValueFalse_false(@Mocked Entity entity,
       @Mocked EntityMobGriefingData entityData, @Mocked GameRules gameRules, @Mocked World world) {
     // Set up test data.
-    entity.worldObj = world;
+    entity.world = world;
 
     // Record expectations.
     new Expectations(EntityList.class) {

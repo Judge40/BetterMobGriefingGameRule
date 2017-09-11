@@ -80,12 +80,12 @@ public class BetterMobGriefingCommandTest {
     String[] commandWords = new String[] {"mobGriefing"};
 
     // Call the method under test.
-    command.getTabCompletionOptions(server, commandSender, commandWords, null);
+    command.getTabCompletions(server, commandSender, commandWords, null);
 
     // Verify expectations.
     new Verifications() {
       {
-        parentCommand.getTabCompletionOptions(server, commandSender, commandWords, null);
+        parentCommand.getTabCompletions(server, commandSender, commandWords, null);
       }
     };
   }
@@ -128,7 +128,7 @@ public class BetterMobGriefingCommandTest {
 
     // Call the method under test.
     List<?> tabCompletionOptions =
-        command.getTabCompletionOptions(server, commandSender, commandWords, null);
+        command.getTabCompletions(server, commandSender, commandWords, null);
 
     // Perform assertions.
     Assert.assertThat("The tab completion options did not match the expected options.",
@@ -158,7 +158,7 @@ public class BetterMobGriefingCommandTest {
 
     // Call the method under test.
     List<?> tabCompletionOptions =
-        command.getTabCompletionOptions(server, commandSender, commandWords, null);
+        command.getTabCompletions(server, commandSender, commandWords, null);
 
     // Perform assertions.
     Assert.assertThat("The tab completion options did not match the expected options.",
@@ -177,7 +177,7 @@ public class BetterMobGriefingCommandTest {
 
     // Call the method under test.
     List<?> tabCompletionOptions =
-        command.getTabCompletionOptions(server, commandSender, commandWords, null);
+        command.getTabCompletions(server, commandSender, commandWords, null);
 
     // Perform assertions.
     Assert.assertThat("The tab completion options did not match the expected options.",
@@ -202,12 +202,12 @@ public class BetterMobGriefingCommandTest {
     String[] commandWords = new String[] {"notMobGriefing", ""};
 
     // Call the method under test.
-    command.getTabCompletionOptions(server, commandSender, commandWords, null);
+    command.getTabCompletions(server, commandSender, commandWords, null);
 
     // Verify expectations.
     new Verifications() {
       {
-        parentCommand.getTabCompletionOptions(server, commandSender, commandWords, null);
+        parentCommand.getTabCompletions(server, commandSender, commandWords, null);
       }
     };
   }
@@ -264,7 +264,7 @@ public class BetterMobGriefingCommandTest {
         gameRules.getString("mobGriefing");
         result = "globalValue";
 
-        commandSender.addChatMessage(withCapture(capturedChatText));
+        commandSender.sendMessage(withCapture(capturedChatText));
       }
     };
 
@@ -319,7 +319,7 @@ public class BetterMobGriefingCommandTest {
         entityMobGriefingData.toString();
         result = "";
 
-        commandSender.addChatMessage(withCapture(capturedChatText));
+        commandSender.sendMessage(withCapture(capturedChatText));
       }
     };
 
@@ -427,7 +427,7 @@ public class BetterMobGriefingCommandTest {
         entityMobGriefingData.getMobGriefingValue("entityName1");
         result = MobGriefingValue.TRUE;
 
-        commandSender.addChatMessage(withCapture(capturedChatText));
+        commandSender.sendMessage(withCapture(capturedChatText));
 
         commandSender.setCommandStat(CommandResultStats.Type.QUERY_RESULT,
             gameRules.getInt(commandWords[0]));

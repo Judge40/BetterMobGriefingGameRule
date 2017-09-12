@@ -31,8 +31,18 @@ import java.util.Set;
 public class DefaultMobGriefingConfigGuiFactory implements IModGuiFactory {
 
   @Override
+  public GuiScreen createConfigGui(GuiScreen parentScreen) {
+    return new DefaultMobGriefingConfigGui(parentScreen);
+  }
+
+  @Override
   public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
     return null;
+  }
+
+  @Override
+  public boolean hasConfigGui() {
+    return true;
   }
 
   @Override
@@ -42,7 +52,7 @@ public class DefaultMobGriefingConfigGuiFactory implements IModGuiFactory {
 
   @Override
   public Class<? extends GuiScreen> mainConfigGuiClass() {
-    return DefaultMobGriefingConfigGui.class;
+    return null;
   }
 
   @Override

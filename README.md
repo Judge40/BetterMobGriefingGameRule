@@ -1,7 +1,7 @@
 ![Better mobGriefing GameRule](src/main/resources/assets/bettermobgriefinggamerule/logo.png)
 
-![Minecraft 1.10.2](https://img.shields.io/badge/Minecraft-1.10.2-lightgrey.svg)
-![Forge 1.10.2-12.18.3.2185](https://img.shields.io/badge/Forge-1.10.2--12.18.3.2185-lightgrey.svg)  
+![Minecraft 1.11.2](https://img.shields.io/badge/Minecraft-1.11.2-lightgrey.svg)
+![Forge 1.11.2-13.20.1.2386](https://img.shields.io/badge/Forge-1.11.2--13.20.1.2386-lightgrey.svg)  
 [![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## About

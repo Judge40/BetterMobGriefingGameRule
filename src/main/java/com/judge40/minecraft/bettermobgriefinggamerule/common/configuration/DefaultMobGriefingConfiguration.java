@@ -25,6 +25,7 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 
@@ -108,7 +109,8 @@ public class DefaultMobGriefingConfiguration extends Configuration {
     // Add all entities supported by default, this will cover newly supported entities and any
     // entities which have been removed from the configuration.
     for (Class<? extends EntityLiving> entityClass : ConfigurationConstants.ENTITY_CLASSES) {
-      String entityName = EntityList.getEntityStringFromClass(entityClass);
+      ResourceLocation entityType = EntityList.getKey(entityClass);
+      String entityName = EntityList.getTranslationName(entityType);
       entityNames.add(entityName);
     }
 
@@ -117,11 +119,12 @@ public class DefaultMobGriefingConfiguration extends Configuration {
     List<String> validValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
         MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
-    for (String entityName : entityNames) {
-      Class<? extends Entity> entityClass = EntityList.NAME_TO_CLASS.get(entityName);
+    for (ResourceLocation entityType : EntityList.getEntityNameList()) {
+      Class<? extends Entity> entityClass = EntityList.getClass(entityType);
+      String entityName = EntityList.getTranslationName(entityType);
 
-      // Verify that the entity is a valid entity.
-      if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
+      if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)
+          && entityNames.contains(entityName)) {
         String entityPropertyValue = getString(ConfigurationConstants.ENTITY_RULES_CATEGORY,
             entityName, MobGriefingValue.INHERIT.toExternalForm(), validValues);
         entityNamesToMobGriefingValue.put(entityName,

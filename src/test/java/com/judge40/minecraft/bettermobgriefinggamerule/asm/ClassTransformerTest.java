@@ -22,7 +22,6 @@ package com.judge40.minecraft.bettermobgriefinggamerule.asm;
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 
 import com.google.common.primitives.Bytes;
-import net.minecraft.block.BlockFarmland;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
@@ -79,7 +78,7 @@ public class ClassTransformerTest {
   @Test
   public void testTransform_unhandledClass_transformGameRuleCalled() throws IOException {
     // Set up test data.
-    String targetClassName = Entity.class.getName();
+    String targetClassName = String.class.getName();
 
     ClassReader classReader = new ClassReader(targetClassName);
     ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -96,12 +95,12 @@ public class ClassTransformerTest {
 
   /**
    * Test that the mob griefing instructions are replaced when the transformation target class is
-   * {@link BlockFarmland}.
+   * {@link Entity}.
    */
   @Test
-  public void testTransform_blockFarmland_mobGriefingTransformed() throws IOException {
+  public void testTransform_entity_mobGriefingTransformed() throws IOException {
     // Set up test data.
-    String targetClassName = BlockFarmland.class.getName();
+    String targetClassName = Entity.class.getName();
 
     ClassReader classReader = new ClassReader(targetClassName);
     ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);

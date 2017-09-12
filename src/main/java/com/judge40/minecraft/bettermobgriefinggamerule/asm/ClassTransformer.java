@@ -64,11 +64,7 @@ public class ClassTransformer implements IClassTransformer {
         "com/judge40/minecraft/bettermobgriefinggamerule/BetterMobGriefingGameRule",
         "isMobGriefingEnabled", "(Lnet/minecraft/entity/Entity;)Z", false);
 
-    // Add BlockFarmland targets.
-    Map<String, List<AbstractInsnNode>> blockFarmLandTargets =
-        Collections.singletonMap(ObfuscationHelper.convertName("func_180658_a"),
-            Arrays.asList(new VarInsnNode(Opcodes.ALOAD, 3), invocation));
-    TRANSFORM_TARGETS.put("net.minecraft.block.BlockFarmland", blockFarmLandTargets);
+
 
     // The target variable for classes whose own class instance is the target entity.
     VarInsnNode instanceVariable = new VarInsnNode(Opcodes.ALOAD, 0);
@@ -143,8 +139,7 @@ public class ClassTransformer implements IClassTransformer {
     // Add Silverfish targets.
     FieldInsnNode entitySilverfishHideFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
         "net/minecraft/entity/monster/EntitySilverfish$AIHideInStone",
-        ObfuscationHelper.convertName("field_179485_a"),
-        "Lnet/minecraft/entity/monster/EntitySilverfish;");
+        ObfuscationHelper.convertName("field_75457_a"), "Lnet/minecraft/entity/EntityCreature;");
     List<AbstractInsnNode> entitySilverfishHideInstructions =
         Arrays.asList(instanceVariable, entitySilverfishHideFieldNode, invocation);
     Map<String, List<AbstractInsnNode>> entitySilverfishHideTargets = Collections.singletonMap(
@@ -176,6 +171,11 @@ public class ClassTransformer implements IClassTransformer {
 
     // Create the instructions for classes whose own class instance is the target entity.
     List<AbstractInsnNode> instanceInstructions = Arrays.asList(instanceVariable, invocation);
+
+    // Add Entity target.
+    Map<String, List<AbstractInsnNode>> entityTargets =
+        Collections.singletonMap("canTrample", instanceInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.Entity", entityTargets);
 
     // Add EnderDragon targets.
     Map<String, List<AbstractInsnNode>> entityDragonTargets = Collections

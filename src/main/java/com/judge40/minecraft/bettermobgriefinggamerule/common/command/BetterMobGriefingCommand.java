@@ -27,9 +27,11 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandGameRule;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.GameRules;
@@ -107,25 +109,37 @@ public class BetterMobGriefingCommand extends CommandGameRule {
           }
         }
       } else if (commandWords.length == 3) {
-        String entityName = commandWords[1];
-        Class<?> entityClass = (Class<?>) EntityList.NAME_TO_CLASS.get(entityName);
+        String entityNameInput = commandWords[1];
+        boolean entityValid = false;
 
         // If the second word is a valid entity name then try and set the entity rule to the value
         // given in the third word, otherwise throw a wrong usage exception.
-        if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
-          try {
-            MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(commandWords[2]);
-            entityMobGriefingData.setMobGriefingValue(entityName, mobGriefingValue);
-            notifyCommandListener(commandSender, this, "commands.gamerule.success", new Object[] {
-                String.format("%s %s", commandWords[0], commandWords[1]), commandWords[2]});
-          } catch (IllegalArgumentException iae) {
-            String exceptionMessage = String.format("/gamerule %s <entity name> %s|%s|%s",
-                BetterMobGriefingGameRule.GLOBAL_RULE, MobGriefingValue.TRUE.toExternalForm(),
-                MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
-            throw new CommandException(exceptionMessage);
+        for (ResourceLocation entityType : EntityList.getEntityNameList()) {
+          Class<? extends Entity> entityClass = EntityList.getClass(entityType);
+          String entityName = EntityList.getTranslationName(entityType);
+
+          if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)
+              && entityName.equals(entityNameInput)) {
+            try {
+              MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(commandWords[2]);
+              entityMobGriefingData.setMobGriefingValue(entityNameInput, mobGriefingValue);
+              notifyCommandListener(commandSender, this, "commands.gamerule.success", new Object[] {
+                  String.format("%s %s", commandWords[0], commandWords[1]), commandWords[2]});
+              entityValid = true;
+              break;
+            } catch (IllegalArgumentException iae) {
+              String exceptionMessage = String.format("/gamerule %s <entity name> %s|%s|%s",
+                  BetterMobGriefingGameRule.GLOBAL_RULE, MobGriefingValue.TRUE.toExternalForm(),
+                  MobGriefingValue.FALSE.toExternalForm(),
+                  MobGriefingValue.INHERIT.toExternalForm());
+              throw new CommandException(exceptionMessage);
+            }
           }
-        } else {
-          throw new CommandException(String.format("%s is not a valid entity name", entityName));
+        }
+
+        if (!entityValid) {
+          throw new CommandException(
+              String.format("%s is not a valid entity name", entityNameInput));
         }
       } else {
         // Throw a wrong usage exception where there are too many words.

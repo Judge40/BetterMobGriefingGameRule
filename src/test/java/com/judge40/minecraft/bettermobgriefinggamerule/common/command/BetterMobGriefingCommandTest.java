@@ -29,10 +29,10 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandGameRule;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -491,18 +491,28 @@ public class BetterMobGriefingCommandTest {
       throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+    ResourceLocation entityType = new ResourceLocation("");
 
-    String entityName = EntityList.getEntityStringFromClass(EntityLiving.class);
+    String entityName = "entityName1";
     String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
 
     // Record Expectations.
-    new Expectations(entityMobGriefingData) {
+    new Expectations(entityMobGriefingData, EntityList.class) {
       {
         commandSender.getEntityWorld();
         result = world;
 
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
+
+        EntityList.getEntityNameList();
+        result = Collections.singleton(entityType);
+
+        EntityList.getClass(entityType);
+        result = EntityLiving.class;
+
+        EntityList.getTranslationName(entityType);
+        result = entityName;
       }
     };
 
@@ -529,18 +539,28 @@ public class BetterMobGriefingCommandTest {
       throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+    ResourceLocation entityType = new ResourceLocation("");
 
-    String entityName = EntityList.getEntityStringFromClass(EntityLiving.class);
+    String entityName = "entityName1";
     String[] commandWords = new String[] {"mobGriefing", entityName, ""};
 
     // Record Expectations.
-    new Expectations(entityMobGriefingData) {
+    new Expectations(entityMobGriefingData, EntityList.class) {
       {
         commandSender.getEntityWorld();
         result = world;
 
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
+
+        EntityList.getEntityNameList();
+        result = Collections.singleton(entityType);
+
+        EntityList.getClass(entityType);
+        result = EntityLiving.class;
+
+        EntityList.getTranslationName(entityType);
+        result = entityName;
       }
     };
 
@@ -565,18 +585,27 @@ public class BetterMobGriefingCommandTest {
       throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+    ResourceLocation entityType = new ResourceLocation("");
 
-    String entityName = EntityList.getEntityStringFromClass(Entity.class);
-    String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
+    String[] commandWords = new String[] {"mobGriefing", "entityName1", "inherit"};
 
     // Record Expectations.
-    new Expectations(entityMobGriefingData) {
+    new Expectations(entityMobGriefingData, EntityList.class) {
       {
         commandSender.getEntityWorld();
         result = world;
 
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
+
+        EntityList.getEntityNameList();
+        result = Collections.singleton(entityType);
+
+        EntityList.getClass(entityType);
+        result = null;
+
+        EntityList.getTranslationName(entityType);
+        result = "entityName1";
       }
     };
 
@@ -600,17 +629,27 @@ public class BetterMobGriefingCommandTest {
   public void testExecute_mobGriefingNotEntityNameThirdWord_exception() throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+    ResourceLocation entityType = new ResourceLocation("");
 
     String[] commandWords = new String[] {"mobGriefing", "entityName1", "inherit"};
 
     // Record Expectations.
-    new Expectations(entityMobGriefingData) {
+    new Expectations(entityMobGriefingData, EntityList.class) {
       {
         commandSender.getEntityWorld();
         result = world;
 
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
+
+        EntityList.getEntityNameList();
+        result = Collections.singleton(entityType);
+
+        EntityList.getClass(entityType);
+        result = EntityLiving.class;
+
+        EntityList.getTranslationName(entityType);
+        result = "notMatching";
       }
     };
 

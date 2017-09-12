@@ -19,6 +19,7 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
+import mockit.Mocked;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionCategoryElement;
 import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionGuiHandler;
@@ -42,6 +43,19 @@ public class DefaultMobGriefingConfigGuiFactoryTest {
   }
 
   /**
+   * Test that a {@link DefaultMobGriefingConfigGui} is create for the configuration GUI.
+   */
+  @Test
+  public void testCreateConfigGui_configGui(@Mocked DefaultMobGriefingConfigGui mockConfigGui) {
+    // Call the method under test.
+    GuiScreen configGui = factory.createConfigGui(null);
+
+    // Perform assertions.
+    Assert.assertThat("The configuration GUI returned did not match the expected class.", configGui,
+        CoreMatchers.instanceOf(DefaultMobGriefingConfigGui.class));
+  }
+
+  /**
    * Test that null is returned for the handler.
    */
   @Test
@@ -52,6 +66,19 @@ public class DefaultMobGriefingConfigGuiFactoryTest {
     // Perform assertions.
     Assert.assertThat("The runtime option GUI handler should be null.", handler,
         CoreMatchers.nullValue());
+  }
+
+  /**
+   * Test that true is returned for the hasConfigGui flag.
+   */
+  @Test
+  public void testHasConfigGui_true() {
+    // Call the method under test.
+    boolean hasConfigGui = factory.hasConfigGui();
+
+    // Perform assertions.
+    Assert.assertThat("The hasConfigGui flag did not match the expected value.", hasConfigGui,
+        CoreMatchers.is(true));
   }
 
   /**
@@ -73,7 +100,7 @@ public class DefaultMobGriefingConfigGuiFactoryTest {
 
     // Perform assertions.
     Assert.assertThat("The main configuration GUI class returned did not match the expected class.",
-        configGuiClass, CoreMatchers.equalTo(DefaultMobGriefingConfigGui.class));
+        configGuiClass, CoreMatchers.nullValue());
   }
 
   /**

@@ -116,8 +116,8 @@ public class BetterMobGriefingCommand extends CommandGameRule {
           try {
             MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(commandWords[2]);
             entityMobGriefingData.setMobGriefingValue(entityName, mobGriefingValue);
-            notifyCommandListener(commandSender, this, "commands.gamerule.success",
-                new Object[] {commandWords[0], commandWords[1], commandWords[2]});
+            notifyCommandListener(commandSender, this, "commands.gamerule.success", new Object[] {
+                String.format("%s %s", commandWords[0], commandWords[1]), commandWords[2]});
           } catch (IllegalArgumentException iae) {
             String exceptionMessage = String.format("/gamerule %s <entity name> %s|%s|%s",
                 BetterMobGriefingGameRule.GLOBAL_RULE, MobGriefingValue.TRUE.toExternalForm(),

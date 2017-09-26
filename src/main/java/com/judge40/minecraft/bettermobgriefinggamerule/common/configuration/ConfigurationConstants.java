@@ -25,6 +25,7 @@ import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.monster.EntityEvoker;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySilverfish;
@@ -54,7 +55,7 @@ public class ConfigurationConstants {
   // The entity classes with configuration support available by default.
   public static final List<Class<? extends EntityLiving>> ENTITY_CLASSES =
       Collections.unmodifiableList(Arrays.asList(EntityBlaze.class, EntityCreeper.class,
-          EntityDragon.class, EntityEnderman.class, EntityGhast.class, EntityPigZombie.class,
-          EntityRabbit.class, EntitySheep.class, EntitySilverfish.class, EntitySnowman.class,
-          EntityVillager.class, EntityWither.class, EntityZombie.class));
+          EntityDragon.class, EntityEnderman.class, EntityEvoker.class, EntityGhast.class,
+          EntityPigZombie.class, EntityRabbit.class, EntitySheep.class, EntitySilverfish.class,
+          EntitySnowman.class, EntityVillager.class, EntityWither.class, EntityZombie.class));
 }

@@ -15,21 +15,22 @@ The below game rules can be used to override the mobGriefing behaviour
 for the associated entity type, the value of these rules will be used
 instead of the original "mobGriefing" game rule.
 
-| Entity      | GameRule                |
-| ----------- | ----------------------- |
-| Blaze       | mobGriefing Blaze       |
-| Creeper     | mobGriefing Creeper     |
-| EnderDragon | mobGriefing EnderDragon |
-| Enderman    | mobGriefing Enderman    |
-| Ghast       | mobGriefing Ghast       |
-| PigZombie   | mobGriefing PigZombie   |
-| Rabbit      | mobGriefing Rabbit      |
-| Sheep       | mobGriefing Sheep       |
-| Silverfish  | mobGriefing Silverfish  |
-| SnowMan     | mobGriefing SnowMan     |
-| Villager    | mobGriefing Villager    |
-| Wither      | mobGriefing WitherBoss  |
-| Zombie      | mobGriefing Zombie      |
+| Entity      | GameRule                     |
+| ----------- | ---------------------------- |
+| Blaze       | mobGriefing Blaze            |
+| Creeper     | mobGriefing Creeper          |
+| EnderDragon | mobGriefing EnderDragon      |
+| Enderman    | mobGriefing Enderman         |
+| Evoker      | mobGriefing EvocationIllager |
+| Ghast       | mobGriefing Ghast            |
+| PigZombie   | mobGriefing PigZombie        |
+| Rabbit      | mobGriefing Rabbit           |
+| Sheep       | mobGriefing Sheep            |
+| Silverfish  | mobGriefing Silverfish       |
+| SnowMan     | mobGriefing SnowMan          |
+| Villager    | mobGriefing Villager         |
+| Wither      | mobGriefing WitherBoss       |
+| Zombie      | mobGriefing Zombie           |
 
 Each rule can be set to `true`, `false` or `inherit`, when the value is
 `inherit` the entity's mobGriefing behaviour will be inherited from the
@@ -47,6 +48,8 @@ rules.
     - Whether the EnderDragon can destroy blocks upon contact.
  - Enderman
     - Whether the Enderman can pick up and/or place blocks.
+ - Evoker
+    - Whether the Evoker can turn blue sheep in to red sheep.
  - Ghast
     - Whether the Ghast's fireball can destroy blocks.
     - Whether the Ghast's fireball can set blocks on fire.

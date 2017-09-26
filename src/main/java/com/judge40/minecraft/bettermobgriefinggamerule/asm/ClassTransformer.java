@@ -124,6 +124,17 @@ public class ClassTransformer implements IClassTransformer {
     TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntityEnderman$AIPlaceBlock",
         entityEndermanPlaceBlockTargets);
 
+    // Add Evoker targets.
+    FieldInsnNode entityEvokerFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
+        "net/minecraft/entity/monster/EntityEvoker$AIWololoSpell", "this$0",
+        "Lnet/minecraft/entity/monster/EntityEvoker;");
+    List<AbstractInsnNode> entityEvokerInstructions =
+        Arrays.asList(instanceVariable, entityEvokerFieldNode, invocation);
+    Map<String, List<AbstractInsnNode>> entityEvokerTargets = Collections
+        .singletonMap(ObfuscationHelper.convertName("func_75250_a"), entityEvokerInstructions);
+    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntityEvoker$AIWololoSpell",
+        entityEvokerTargets);
+
     // Add Rabbit targets.
     FieldInsnNode entityRabbitRaidFarmFieldNode =
         new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/passive/EntityRabbit$AIRaidFarm",

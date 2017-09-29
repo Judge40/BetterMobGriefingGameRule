@@ -15,22 +15,22 @@ The below game rules can be used to override the mobGriefing behaviour
 for the associated entity type, the value of these rules will be used
 instead of the original "mobGriefing" game rule.
 
-| Entity      | GameRule                     |
-| ----------- | ---------------------------- |
-| Blaze       | mobGriefing Blaze            |
-| Creeper     | mobGriefing Creeper          |
-| EnderDragon | mobGriefing EnderDragon      |
-| Enderman    | mobGriefing Enderman         |
-| Evoker      | mobGriefing EvocationIllager |
-| Ghast       | mobGriefing Ghast            |
-| PigZombie   | mobGriefing PigZombie        |
-| Rabbit      | mobGriefing Rabbit           |
-| Sheep       | mobGriefing Sheep            |
-| Silverfish  | mobGriefing Silverfish       |
-| SnowMan     | mobGriefing SnowMan          |
-| Villager    | mobGriefing Villager         |
-| Wither      | mobGriefing WitherBoss       |
-| Zombie      | mobGriefing Zombie           |
+| Entity      | GameRule                      |
+| ----------- | ----------------------------- |
+| Blaze       | mobGriefing blaze             |
+| Creeper     | mobGriefing creeper           |
+| EnderDragon | mobGriefing ender_dragon      |
+| Enderman    | mobGriefing enderman          |
+| Evoker      | mobGriefing evocation_illager |
+| Ghast       | mobGriefing ghast             |
+| PigZombie   | mobGriefing zombie_pigman     |
+| Rabbit      | mobGriefing rabbit            |
+| Sheep       | mobGriefing sheep             |
+| Silverfish  | mobGriefing silverfish        |
+| SnowMan     | mobGriefing snowman           |
+| Villager    | mobGriefing villager          |
+| Wither      | mobGriefing wither            |
+| Zombie      | mobGriefing zombie            |
 
 Each rule can be set to `true`, `false` or `inherit`, when the value is
 `inherit` the entity's mobGriefing behaviour will be inherited from the
@@ -119,7 +119,7 @@ file automatically, additional entities can be added manually to the
 configuration file. Once added the entity can then be managed using the
 in-game configuration menu.
 The entity name specified must match the name as it appears in the
-EntityList for that entity, for example `S:PigZombie=true`.
+EntityList for that entity, for example `S:zombie_pigman=true`.
 
 The structure of the configuration file follows the Forge structure:
 ```

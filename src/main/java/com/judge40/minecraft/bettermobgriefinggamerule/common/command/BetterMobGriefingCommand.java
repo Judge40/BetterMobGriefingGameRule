@@ -109,37 +109,28 @@ public class BetterMobGriefingCommand extends CommandGameRule {
           }
         }
       } else if (commandWords.length == 3) {
-        String entityNameInput = commandWords[1];
-        boolean entityValid = false;
+        String entityName = commandWords[1];
 
         // If the second word is a valid entity name then try and set the entity rule to the value
         // given in the third word, otherwise throw a wrong usage exception.
-        for (ResourceLocation entityType : EntityList.getEntityNameList()) {
-          Class<? extends Entity> entityClass = EntityList.getClass(entityType);
-          String entityName = EntityList.getTranslationName(entityType);
+        ResourceLocation entityType = new ResourceLocation(entityName);
+        Class<? extends Entity> entityClass = EntityList.getClass(entityType);
 
-          if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)
-              && entityName.equals(entityNameInput)) {
-            try {
-              MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(commandWords[2]);
-              entityMobGriefingData.setMobGriefingValue(entityNameInput, mobGriefingValue);
-              notifyCommandListener(commandSender, this, "commands.gamerule.success", new Object[] {
-                  String.format("%s %s", commandWords[0], commandWords[1]), commandWords[2]});
-              entityValid = true;
-              break;
-            } catch (IllegalArgumentException iae) {
-              String exceptionMessage = String.format("/gamerule %s <entity name> %s|%s|%s",
-                  BetterMobGriefingGameRule.GLOBAL_RULE, MobGriefingValue.TRUE.toExternalForm(),
-                  MobGriefingValue.FALSE.toExternalForm(),
-                  MobGriefingValue.INHERIT.toExternalForm());
-              throw new CommandException(exceptionMessage);
-            }
+        if (entityClass != null
+            && EntityLiving.class.isAssignableFrom(EntityList.getClass(entityType))) {
+          try {
+            MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(commandWords[2]);
+            entityMobGriefingData.setMobGriefingValue(entityName, mobGriefingValue);
+            notifyCommandListener(commandSender, this, "commands.gamerule.success", new Object[] {
+                String.format("%s %s", commandWords[0], commandWords[1]), commandWords[2]});
+          } catch (IllegalArgumentException iae) {
+            String exceptionMessage = String.format("/gamerule %s <entity name> %s|%s|%s",
+                BetterMobGriefingGameRule.GLOBAL_RULE, MobGriefingValue.TRUE.toExternalForm(),
+                MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
+            throw new CommandException(exceptionMessage);
           }
-        }
-
-        if (!entityValid) {
-          throw new CommandException(
-              String.format("%s is not a valid entity name", entityNameInput));
+        } else {
+          throw new CommandException(String.format("%s is not a valid entity name", entityName));
         }
       } else {
         // Throw a wrong usage exception where there are too many words.
@@ -156,7 +147,7 @@ public class BetterMobGriefingCommand extends CommandGameRule {
   @Override
   public List<String> getTabCompletions(MinecraftServer server, ICommandSender commandSender,
       String[] commandWords, BlockPos pos) {
-    List<String> tabCompletionOptions = Collections.emptyList();
+    List<String> tabCompletionOptions;
 
     if (commandWords.length == 1
         || !commandWords[0].equals(BetterMobGriefingGameRule.GLOBAL_RULE)) {
@@ -185,6 +176,9 @@ public class BetterMobGriefingCommand extends CommandGameRule {
 
       tabCompletionOptions = getListOfStringsMatchingLastWord(commandWords,
           possibleWords.toArray(new String[possibleWords.size()]));
+    } else {
+      // Default for no results is an empty list.
+      tabCompletionOptions = Collections.emptyList();
     }
 
     return tabCompletionOptions;

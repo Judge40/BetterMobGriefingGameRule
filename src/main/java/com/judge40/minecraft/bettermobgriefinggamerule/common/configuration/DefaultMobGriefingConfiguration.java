@@ -28,11 +28,13 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -104,14 +106,64 @@ public class DefaultMobGriefingConfiguration extends Configuration {
   private void synchronizeEntityValues() {
     // Get the names of all configured entities.
     ConfigCategory category = getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
-    Set<String> entityNames = new HashSet<>(category.keySet());
+    Set<String> invalidEntityNames = new HashSet<>();
+    Set<ResourceLocation> entityTypes = new HashSet<>();
+
+    // Get the entity type for each entity in the config, if the entity is not registered record it.
+    Map<String, Property> entityNamesToPropertyValue = new HashMap<>();
+
+    for (Iterator<String> entityNames = category.keySet().iterator(); entityNames.hasNext();) {
+      String entityName = entityNames.next();
+      ResourceLocation entityType = new ResourceLocation(entityName);
+
+      if (EntityList.isRegistered(entityType)) {
+        entityTypes.add(entityType);
+
+        // Update the configuration key if it does not match the resource path.
+        String entityPath = entityType.getResourcePath();
+
+        if (!entityName.equals(entityPath)) {
+          Property entityPropertyValue = category.get(entityName);
+          entityPropertyValue.setName(entityPath);
+          entityPropertyValue.setLanguageKey(entityPath);
+
+          entityNamesToPropertyValue.put(entityPath, entityPropertyValue);
+          entityNames.remove();
+        }
+      } else {
+        invalidEntityNames.add(entityName);
+      }
+    }
+
+    // If there are invalid entity names, attempt to match them based on the older translation name.
+    if (!invalidEntityNames.isEmpty()) {
+      for (ResourceLocation entityType : EntityList.getEntityNameList()) {
+        String translationName = EntityList.getTranslationName(entityType);
+        boolean removed = invalidEntityNames.remove(translationName);
+
+        if (removed) {
+          Property entityPropertyValue = category.remove(translationName);
+          String entityName = entityType.getResourcePath();
+          entityPropertyValue.setName(entityName);
+          entityPropertyValue.setLanguageKey(entityName);
+
+          entityNamesToPropertyValue.put(entityType.getResourcePath(), entityPropertyValue);
+          entityTypes.add(entityType);
+        }
+
+        if (invalidEntityNames.isEmpty()) {
+          break;
+        }
+      }
+    }
+
+    category.putAll(entityNamesToPropertyValue);
 
     // Add all entities supported by default, this will cover newly supported entities and any
     // entities which have been removed from the configuration.
     for (Class<? extends EntityLiving> entityClass : ConfigurationConstants.ENTITY_CLASSES) {
       ResourceLocation entityType = EntityList.getKey(entityClass);
-      String entityName = EntityList.getTranslationName(entityType);
-      entityNames.add(entityName);
+      entityTypes.add(entityType);
     }
 
     // Get the property value for each entity.
@@ -119,12 +171,11 @@ public class DefaultMobGriefingConfiguration extends Configuration {
     List<String> validValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
         MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
-    for (ResourceLocation entityType : EntityList.getEntityNameList()) {
+    for (ResourceLocation entityType : entityTypes) {
       Class<? extends Entity> entityClass = EntityList.getClass(entityType);
-      String entityName = EntityList.getTranslationName(entityType);
 
-      if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)
-          && entityNames.contains(entityName)) {
+      if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
+        String entityName = entityType.getResourcePath();
         String entityPropertyValue = getString(ConfigurationConstants.ENTITY_RULES_CATEGORY,
             entityName, MobGriefingValue.INHERIT.toExternalForm(), validValues);
         entityNamesToMobGriefingValue.put(entityName,

@@ -1,5 +1,5 @@
 /*
- * Better mobGriefing GameRule Copyright (c) 2016 Judge40
+ * w * Better mobGriefing GameRule Copyright (c) 2016 Judge40
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -23,7 +23,9 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 
+import net.minecraft.entity.EntityList;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
@@ -104,11 +106,48 @@ public class EntityMobGriefingData extends WorldSavedData {
 
   @Override
   public void readFromNBT(NBTTagCompound nbtTagCompound) {
-    // Add the entity name and MobGriefingValue from each NBTTagCompound entry to the world data.
-    for (String key : nbtTagCompound.getKeySet()) {
-      String externalForm = nbtTagCompound.getString(key);
+    // Add the entity name and MobGriefingValue from each NBTTagCompound entry to the world data, if
+    // the entity name is invalid then record it.
+    Map<String, MobGriefingValue> invalidNameToMobGriefingValue = new HashMap<>();
+
+    for (Iterator<String> keys = nbtTagCompound.getKeySet().iterator(); keys.hasNext();) {
+      String entityName = keys.next();
+      ResourceLocation entityType = new ResourceLocation(entityName);
+      String externalForm = nbtTagCompound.getString(entityName);
       MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(externalForm);
-      entityNamesToMobGriefingValue.put((String) key, mobGriefingValue);
+
+      if (EntityList.isRegistered(entityType)) {
+        String entityPath = entityType.getResourcePath();
+        entityNamesToMobGriefingValue.put(entityType.getResourcePath(), mobGriefingValue);
+
+        if (!entityName.equals(entityPath)) {
+          keys.remove();
+        }
+      } else {
+        invalidNameToMobGriefingValue.put(entityName, mobGriefingValue);
+      }
+    }
+
+    // If there are invalid names, check if the translation name is being used and convert it to the
+    // id based entity name.
+    if (!invalidNameToMobGriefingValue.isEmpty()) {
+      // Remove any invalid names from the nbtTagCompound.
+      for (String invalidName : invalidNameToMobGriefingValue.keySet()) {
+        nbtTagCompound.removeTag(invalidName);
+      }
+
+      for (ResourceLocation entityType : EntityList.getEntityNameList()) {
+        String translationName = EntityList.getTranslationName(entityType);
+        MobGriefingValue mobGriefingValue = invalidNameToMobGriefingValue.remove(translationName);
+
+        if (mobGriefingValue != null) {
+          entityNamesToMobGriefingValue.put(entityType.getResourcePath(), mobGriefingValue);
+        }
+
+        if (invalidNameToMobGriefingValue.isEmpty()) {
+          break;
+        }
+      }
     }
   }
 

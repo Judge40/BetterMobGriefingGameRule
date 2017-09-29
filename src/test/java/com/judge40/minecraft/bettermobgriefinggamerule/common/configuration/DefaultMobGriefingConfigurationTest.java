@@ -39,10 +39,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * The unit tests for {@link DefaultMobGriefingConfiguration}.
@@ -64,12 +63,6 @@ public class DefaultMobGriefingConfigurationTest {
     List<String> validEntityValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
         MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
-    Set<ResourceLocation> entityTypes = new HashSet<>();
-
-    for (int i = 1; i <= ConfigurationConstants.ENTITY_CLASSES.size(); i++) {
-      entityTypes.add(new ResourceLocation("entityname" + i));
-    }
-
     // Record expectations.
     new Expectations(EntityList.class) {
       {
@@ -84,21 +77,11 @@ public class DefaultMobGriefingConfigurationTest {
           @SuppressWarnings("unused")
           ResourceLocation getKey(Class<? extends Entity> entityIn) {
             String resourcePath =
-                "entityname" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
+                "entity_name" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
             return new ResourceLocation(resourcePath);
           }
         };
-
-        EntityList.getTranslationName((ResourceLocation) any);
-        result = new Delegate<EntityList>() {
-          @SuppressWarnings("unused")
-          String getTranslationName(ResourceLocation entityType) {
-            return "entityName" + entityType.getResourcePath().substring(10);
-          }
-        };
-
-        EntityList.getEntityNameList();
-        result = entityTypes;
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
 
         EntityList.getClass((ResourceLocation) any);
         result = EntityLiving.class;
@@ -158,12 +141,6 @@ public class DefaultMobGriefingConfigurationTest {
     List<String> validEntityValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
         MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
-    Set<ResourceLocation> entityTypes = new HashSet<>();
-
-    for (int i = 1; i <= ConfigurationConstants.ENTITY_CLASSES.size(); i++) {
-      entityTypes.add(new ResourceLocation("entityname" + i));
-    }
-
     // Record expectations.
     new Expectations(EntityList.class) {
       {
@@ -173,34 +150,16 @@ public class DefaultMobGriefingConfigurationTest {
             validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = "invalidValue";
 
-        EntityList.getTranslationName((ResourceLocation) any);
-        result = new Delegate<EntityList>() {
-          @SuppressWarnings("unused")
-          String getTranslationName(ResourceLocation entityType) {
-            return "entityName" + entityType.getResourcePath().substring(10);
-          }
-        };
-
         EntityList.getKey(withAny(Entity.class));
         result = new Delegate<EntityList>() {
           @SuppressWarnings("unused")
           ResourceLocation getKey(Class<? extends Entity> entityIn) {
             String resourcePath =
-                "entityname" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
+                "entity_name" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
             return new ResourceLocation(resourcePath);
           }
         };
-
-        EntityList.getTranslationName((ResourceLocation) any);
-        result = new Delegate<EntityList>() {
-          @SuppressWarnings("unused")
-          String getTranslationName(ResourceLocation entityType) {
-            return "entityName" + entityType.getResourcePath().substring(10);
-          }
-        };
-
-        EntityList.getEntityNameList();
-        result = entityTypes;
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
 
         EntityList.getClass((ResourceLocation) any);
         result = EntityLiving.class;
@@ -260,14 +219,6 @@ public class DefaultMobGriefingConfigurationTest {
     List<String> validEntityValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
         MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
-    Set<ResourceLocation> entityTypes = new HashSet<>();
-    ResourceLocation configEntityResource = new ResourceLocation("configentityname");
-    entityTypes.add(configEntityResource);
-
-    for (int i = 1; i <= ConfigurationConstants.ENTITY_CLASSES.size(); i++) {
-      entityTypes.add(new ResourceLocation("entityname" + i));
-    }
-
     // Record expectations.
     new Expectations(EntityList.class) {
       {
@@ -277,34 +228,16 @@ public class DefaultMobGriefingConfigurationTest {
             validGlobalValues.toArray(new String[validGlobalValues.size()]));
         result = MobGriefingValue.FALSE.toExternalForm();
 
-        EntityList.getTranslationName((ResourceLocation) any);
-        result = new Delegate<EntityList>() {
-          @SuppressWarnings("unused")
-          String getTranslationName(ResourceLocation entityType) {
-            return "entityName" + entityType.getResourcePath().substring(10);
-          }
-        };
-
         EntityList.getKey(withAny(Entity.class));
         result = new Delegate<EntityList>() {
           @SuppressWarnings("unused")
           ResourceLocation getKey(Class<? extends Entity> entityIn) {
             String resourcePath =
-                "entityname" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
+                "entity_name" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
             return new ResourceLocation(resourcePath);
           }
         };
-
-        EntityList.getTranslationName((ResourceLocation) any);
-        result = new Delegate<EntityList>() {
-          @SuppressWarnings("unused")
-          String getTranslationName(ResourceLocation entityType) {
-            return "entityName" + entityType.getResourcePath().substring(10);
-          }
-        };
-
-        EntityList.getEntityNameList();
-        result = entityTypes;
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
 
         EntityList.getClass((ResourceLocation) any);
         result = EntityLiving.class;
@@ -365,17 +298,11 @@ public class DefaultMobGriefingConfigurationTest {
     List<String> validEntityValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
         MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
-    Set<ResourceLocation> entityTypes = new HashSet<>();
-    ResourceLocation nonEntityResource = new ResourceLocation("nonEntityResource");
-    entityTypes.add(nonEntityResource);
-
-    for (int i = 1; i <= ConfigurationConstants.ENTITY_CLASSES.size(); i++) {
-      entityTypes.add(new ResourceLocation("entityname" + i));
-    }
+    String entityName = "non_entity_resource";
+    ResourceLocation unmatchedTranslationType = new ResourceLocation("unmatchedTranslationName");
 
     ConfigCategory configCategory =
         new ConfigCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
-    String entityName = "nullEntityName";
     configCategory.put(entityName,
         new Property(entityName, MobGriefingValue.INHERIT.toExternalForm(), Type.STRING));
 
@@ -391,40 +318,29 @@ public class DefaultMobGriefingConfigurationTest {
         parentConfiguration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
         result = configCategory;
 
-        EntityList.getTranslationName((ResourceLocation) any);
-        result = new Delegate<EntityList>() {
-          @SuppressWarnings("unused")
-          String getTranslationName(ResourceLocation entityType) {
-            return "entityName" + entityType.getResourcePath().substring(10);
-          }
-        };
+        EntityList.isRegistered((ResourceLocation) any);
+        result = false;
+
+        EntityList.getEntityNameList();
+        result = Collections.singleton(unmatchedTranslationType);
+
+        EntityList.getTranslationName(unmatchedTranslationType);
+        result = "unmatchedTranslationName";
 
         EntityList.getKey(withAny(Entity.class));
         result = new Delegate<EntityList>() {
           @SuppressWarnings("unused")
           ResourceLocation getKey(Class<? extends Entity> entityIn) {
             String resourcePath =
-                "entityname" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
+                "entity_name" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
             return new ResourceLocation(resourcePath);
           }
         };
-
-        EntityList.getTranslationName((ResourceLocation) any);
-        result = new Delegate<EntityList>() {
-          @SuppressWarnings("unused")
-          String getTranslationName(ResourceLocation entityType) {
-            return "entityName" + entityType.getResourcePath().substring(10);
-          }
-        };
-
-        EntityList.getEntityNameList();
-        result = entityTypes;
-
-        EntityList.getClass(nonEntityResource);
-        result = null;
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
 
         EntityList.getClass((ResourceLocation) any);
         result = EntityLiving.class;
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
 
         parentConfiguration.getString(anyString, ConfigurationConstants.ENTITY_RULES_CATEGORY,
             MobGriefingValue.INHERIT.toExternalForm(), "[valid values: [true, false, inherit]]",
@@ -449,7 +365,7 @@ public class DefaultMobGriefingConfigurationTest {
     Assert.assertThat("The number of entity mob grieving values did not match the expected number.",
         entityNamesToValue.size(), CoreMatchers.is(ConfigurationConstants.ENTITY_CLASSES.size()));
     Assert.assertThat("The entity mob griefing values contained an unexpected entity.",
-        entityNamesToValue.keySet(), CoreMatchers.not(CoreMatchers.hasItems(entityName)));
+        entityNamesToValue.keySet(), CoreMatchers.not(CoreMatchers.hasItem(entityName)));
 
     for (MobGriefingValue entityValue : entityNamesToValue.values()) {
       Assert.assertThat("The entity mob griefing value did not match the expected value.",
@@ -484,17 +400,11 @@ public class DefaultMobGriefingConfigurationTest {
     List<String> validEntityValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
         MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
-    Set<ResourceLocation> entityTypes = new HashSet<>();
-    ResourceLocation invalidEntityType = new ResourceLocation("invalidentityname");
-    entityTypes.add(invalidEntityType);
-
-    for (int i = 1; i <= ConfigurationConstants.ENTITY_CLASSES.size(); i++) {
-      entityTypes.add(new ResourceLocation("entityname" + i));
-    }
+    String entityName = "invalid_entity_name";
+    ResourceLocation invalidEntityType = new ResourceLocation(entityName);
 
     ConfigCategory configCategory =
         new ConfigCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
-    String entityName = "invalidEntityName";
     configCategory.put(entityName,
         new Property(entityName, MobGriefingValue.INHERIT.toExternalForm(), Type.STRING));
 
@@ -510,26 +420,19 @@ public class DefaultMobGriefingConfigurationTest {
         parentConfiguration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
         result = configCategory;
 
+        EntityList.isRegistered((ResourceLocation) any);
+        result = true;
+
         EntityList.getKey(withAny(Entity.class));
         result = new Delegate<EntityList>() {
           @SuppressWarnings("unused")
           ResourceLocation getKey(Class<? extends Entity> entityIn) {
             String resourcePath =
-                "entityname" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
+                "entity_name" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
             return new ResourceLocation(resourcePath);
           }
         };
-
-        EntityList.getTranslationName((ResourceLocation) any);
-        result = new Delegate<EntityList>() {
-          @SuppressWarnings("unused")
-          String getTranslationName(ResourceLocation entityType) {
-            return "entityName" + entityType.getResourcePath().substring(10);
-          }
-        };
-
-        EntityList.getEntityNameList();
-        result = entityTypes;
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
 
         EntityList.getClass(invalidEntityType);
         result = Entity.class;
@@ -560,7 +463,7 @@ public class DefaultMobGriefingConfigurationTest {
     Assert.assertThat("The number of entity mob grieving values did not match the expected number.",
         entityNamesToValue.size(), CoreMatchers.is(ConfigurationConstants.ENTITY_CLASSES.size()));
     Assert.assertThat("The entity mob griefing values contained an unexpected entity.",
-        entityNamesToValue.keySet(), CoreMatchers.not(CoreMatchers.hasItems(entityName)));
+        entityNamesToValue.keySet(), CoreMatchers.not(CoreMatchers.hasItem(entityName)));
 
     for (MobGriefingValue entityValue : entityNamesToValue.values()) {
       Assert.assertThat("The entity mob griefing value did not match the expected value.",
@@ -584,6 +487,204 @@ public class DefaultMobGriefingConfigurationTest {
   }
 
   /**
+   * Test that the default entity mob griefing value is is loaded from the configuration when the
+   * entity name is a translation name which does not match the entity name.
+   */
+  @Test
+  public void testDefaultMobGriefingConfiguration_entityTranslationNameMismatch_valueLoaded() {
+    // Set up test data.
+    List<String> validGlobalValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
+        MobGriefingValue.FALSE.toExternalForm());
+    List<String> validEntityValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
+        MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
+
+    String entityName = "non_entity_resource";
+    String entityTranslationName = "translationName";
+    ResourceLocation entityType = new ResourceLocation(entityName);
+
+    ConfigCategory configCategory =
+        new ConfigCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
+    configCategory.put(entityTranslationName, new Property(entityTranslationName,
+        MobGriefingValue.INHERIT.toExternalForm(), Type.STRING));
+
+    // Record expectations.
+    new Expectations(EntityList.class) {
+      {
+        parentConfiguration.getString(BetterMobGriefingGameRule.GLOBAL_RULE,
+            ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
+            "[valid values: [true, false]]",
+            validGlobalValues.toArray(new String[validGlobalValues.size()]));
+        result = MobGriefingValue.FALSE.toExternalForm();
+
+        parentConfiguration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
+        result = configCategory;
+
+        EntityList.isRegistered((ResourceLocation) any);
+        result = false;
+
+        EntityList.getEntityNameList();
+        result = Collections.singleton(entityType);
+
+        EntityList.getTranslationName(entityType);
+        result = entityTranslationName;
+
+        EntityList.getKey(withAny(Entity.class));
+        result = new Delegate<EntityList>() {
+          @SuppressWarnings("unused")
+          ResourceLocation getKey(Class<? extends Entity> entityIn) {
+            String resourcePath =
+                "entity_name" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
+            return new ResourceLocation(resourcePath);
+          }
+        };
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
+
+        EntityList.getClass((ResourceLocation) any);
+        result = EntityLiving.class;
+
+        parentConfiguration.getString(anyString, ConfigurationConstants.ENTITY_RULES_CATEGORY,
+            MobGriefingValue.INHERIT.toExternalForm(), "[valid values: [true, false, inherit]]",
+            validEntityValues.toArray(new String[validEntityValues.size()]));
+        result = MobGriefingValue.TRUE.toExternalForm();
+        times = ConfigurationConstants.ENTITY_CLASSES.size() + 1;
+
+        parentConfiguration.hasChanged();
+        result = true;
+      }
+    };
+
+    // Call the method under test.
+    DefaultMobGriefingConfiguration configuration = new DefaultMobGriefingConfiguration(null);
+
+    // Perform assertions.
+    MobGriefingValue globalValue = configuration.getGlobalMobGriefingValue();
+    Assert.assertThat("The global mob griefing value did not match the expected value.",
+        globalValue, CoreMatchers.is(MobGriefingValue.FALSE));
+
+    Map<String, MobGriefingValue> entityNamesToValue = configuration.getEntityMobGriefingValues();
+    Assert.assertThat("The number of entity mob grieving values did not match the expected number.",
+        entityNamesToValue.size(),
+        CoreMatchers.is(ConfigurationConstants.ENTITY_CLASSES.size() + 1));
+    Assert.assertThat("The entity mob griefing values did not contain the expected entity.",
+        entityNamesToValue.keySet(), CoreMatchers.hasItem(entityName));
+
+    for (MobGriefingValue entityValue : entityNamesToValue.values()) {
+      Assert.assertThat("The entity mob griefing value did not match the expected value.",
+          entityValue, CoreMatchers.is(MobGriefingValue.TRUE));
+    }
+
+    // Verify expectations.
+    new Verifications() {
+      {
+        parentConfiguration.load();
+
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
+            ConfigurationConstants.GLOBAL_RULE_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.ENTITY_RULES_CATEGORY,
+            ConfigurationConstants.ENTITY_RULES_KEY);
+
+        parentConfiguration.save();
+        times = 1;
+      }
+    };
+  }
+
+  /**
+   * Test that the default entity mob griefing value is is loaded from the configuration when the
+   * entity name is a translation name which does match the entity name.
+   */
+  @Test
+  public void testDefaultMobGriefingConfiguration_entityTranslationNameMatch_valueLoaded() {
+    // Set up test data.
+    List<String> validGlobalValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
+        MobGriefingValue.FALSE.toExternalForm());
+    List<String> validEntityValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
+        MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
+
+    String entityTranslationName = "translationName";
+
+    ConfigCategory configCategory =
+        new ConfigCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
+    configCategory.put(entityTranslationName, new Property(entityTranslationName,
+        MobGriefingValue.INHERIT.toExternalForm(), Type.STRING));
+
+    // Record expectations.
+    new Expectations(EntityList.class) {
+      {
+        parentConfiguration.getString(BetterMobGriefingGameRule.GLOBAL_RULE,
+            ConfigurationConstants.GLOBAL_RULE_CATEGORY, MobGriefingValue.TRUE.toExternalForm(),
+            "[valid values: [true, false]]",
+            validGlobalValues.toArray(new String[validGlobalValues.size()]));
+        result = MobGriefingValue.FALSE.toExternalForm();
+
+        parentConfiguration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
+        result = configCategory;
+
+        EntityList.isRegistered((ResourceLocation) any);
+        result = true;
+
+        EntityList.getKey(withAny(Entity.class));
+        result = new Delegate<EntityList>() {
+          @SuppressWarnings("unused")
+          ResourceLocation getKey(Class<? extends Entity> entityIn) {
+            String resourcePath =
+                "entity_name" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
+            return new ResourceLocation(resourcePath);
+          }
+        };
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
+
+        EntityList.getClass((ResourceLocation) any);
+        result = EntityLiving.class;
+
+        parentConfiguration.getString(anyString, ConfigurationConstants.ENTITY_RULES_CATEGORY,
+            MobGriefingValue.INHERIT.toExternalForm(), "[valid values: [true, false, inherit]]",
+            validEntityValues.toArray(new String[validEntityValues.size()]));
+        result = MobGriefingValue.TRUE.toExternalForm();
+        times = ConfigurationConstants.ENTITY_CLASSES.size() + 1;
+
+        parentConfiguration.hasChanged();
+        result = true;
+      }
+    };
+
+    // Call the method under test.
+    DefaultMobGriefingConfiguration configuration = new DefaultMobGriefingConfiguration(null);
+
+    // Perform assertions.
+    MobGriefingValue globalValue = configuration.getGlobalMobGriefingValue();
+    Assert.assertThat("The global mob griefing value did not match the expected value.",
+        globalValue, CoreMatchers.is(MobGriefingValue.FALSE));
+
+    Map<String, MobGriefingValue> entityNamesToValue = configuration.getEntityMobGriefingValues();
+    Assert.assertThat("The number of entity mob grieving values did not match the expected number.",
+        entityNamesToValue.size(),
+        CoreMatchers.is(ConfigurationConstants.ENTITY_CLASSES.size() + 1));
+    Assert.assertThat("The entity mob griefing values did not contain the expected entity.",
+        entityNamesToValue.keySet(), CoreMatchers.hasItem("translationname"));
+
+    for (MobGriefingValue entityValue : entityNamesToValue.values()) {
+      Assert.assertThat("The entity mob griefing value did not match the expected value.",
+          entityValue, CoreMatchers.is(MobGriefingValue.TRUE));
+    }
+
+    // Verify expectations.
+    new Verifications() {
+      {
+        parentConfiguration.load();
+
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
+            ConfigurationConstants.GLOBAL_RULE_KEY);
+        parentConfiguration.setCategoryLanguageKey(ConfigurationConstants.ENTITY_RULES_CATEGORY,
+            ConfigurationConstants.ENTITY_RULES_KEY);
+
+        parentConfiguration.save();
+        times = 1;
+      }
+    };
+  }
+
+  /**
    * Test that the default entity mob griefing value is loaded from the configuration when the
    * entity name is a valid entity type.
    */
@@ -595,17 +696,10 @@ public class DefaultMobGriefingConfigurationTest {
     List<String> validEntityValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
         MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
 
-    Set<ResourceLocation> entityTypes = new HashSet<>();
-    ResourceLocation configEntityType = new ResourceLocation("entitynamefromconfig");
-    entityTypes.add(configEntityType);
-
-    for (int i = 1; i <= ConfigurationConstants.ENTITY_CLASSES.size(); i++) {
-      entityTypes.add(new ResourceLocation("entityname" + i));
-    }
+    String entityName = "entity_name_from_config";
 
     ConfigCategory configCategory =
         new ConfigCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
-    String entityName = "entityNamefromconfig";
     configCategory.put(entityName,
         new Property(entityName, MobGriefingValue.INHERIT.toExternalForm(), Type.STRING));
 
@@ -621,34 +715,19 @@ public class DefaultMobGriefingConfigurationTest {
         parentConfiguration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
         result = configCategory;
 
-        EntityList.getTranslationName((ResourceLocation) any);
-        result = new Delegate<EntityList>() {
-          @SuppressWarnings("unused")
-          String getTranslationName(ResourceLocation entityType) {
-            return "entityName" + entityType.getResourcePath().substring(10);
-          }
-        };
+        EntityList.isRegistered((ResourceLocation) any);
+        result = true;
 
         EntityList.getKey(withAny(Entity.class));
         result = new Delegate<EntityList>() {
           @SuppressWarnings("unused")
           ResourceLocation getKey(Class<? extends Entity> entityIn) {
             String resourcePath =
-                "entityname" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
+                "entity_name" + (ConfigurationConstants.ENTITY_CLASSES.indexOf(entityIn) + 1);
             return new ResourceLocation(resourcePath);
           }
         };
-
-        EntityList.getTranslationName((ResourceLocation) any);
-        result = new Delegate<EntityList>() {
-          @SuppressWarnings("unused")
-          String getTranslationName(ResourceLocation entityType) {
-            return "entityName" + entityType.getResourcePath().substring(10);
-          }
-        };
-
-        EntityList.getEntityNameList();
-        result = entityTypes;
+        times = ConfigurationConstants.ENTITY_CLASSES.size();
 
         EntityList.getClass((ResourceLocation) any);
         result = EntityLiving.class;
@@ -676,8 +755,8 @@ public class DefaultMobGriefingConfigurationTest {
     Assert.assertThat("The number of entity mob grieving values did not match the expected number.",
         entityNamesToValue.size(),
         CoreMatchers.is(ConfigurationConstants.ENTITY_CLASSES.size() + 1));
-    Assert.assertThat("The entity mob griefing values contained an unexpected entity.",
-        entityNamesToValue.keySet(), CoreMatchers.hasItems(entityName));
+    Assert.assertThat("The entity mob griefing values did not contain the expected entity.",
+        entityNamesToValue.keySet(), CoreMatchers.hasItem(entityName));
 
     for (MobGriefingValue entityValue : entityNamesToValue.values()) {
       Assert.assertThat("The entity mob griefing value did not match the expected value.",

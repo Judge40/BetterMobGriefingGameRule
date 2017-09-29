@@ -100,10 +100,10 @@ public class BetterMobGriefingCommandTest {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
     Set<String> registeredEntityNames =
-        new HashSet<>(Arrays.asList("entityName1", "entityName2", "entityName3"));
+        new HashSet<>(Arrays.asList("entity_name1", "entity_name2", "entity_name3"));
 
     String[] expectedPossibleWords =
-        new String[] {"true", "false", "entityName1", "entityName2", "entityName3"};
+        new String[] {"true", "false", "entity_name1", "entity_name2", "entity_name3"};
     List<String> matchingWords = Arrays.asList(expectedPossibleWords);
 
     String[] commandWords = new String[] {"mobGriefing", ""};
@@ -241,9 +241,9 @@ public class BetterMobGriefingCommandTest {
       @Mocked World world) throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
-    entityMobGriefingData.setMobGriefingValue("entityName1", MobGriefingValue.TRUE);
-    entityMobGriefingData.setMobGriefingValue("entityName2", MobGriefingValue.FALSE);
-    entityMobGriefingData.setMobGriefingValue("entityName3", MobGriefingValue.INHERIT);
+    entityMobGriefingData.setMobGriefingValue("entity_name1", MobGriefingValue.TRUE);
+    entityMobGriefingData.setMobGriefingValue("entity_name2", MobGriefingValue.FALSE);
+    entityMobGriefingData.setMobGriefingValue("entity_name3", MobGriefingValue.INHERIT);
     GameRules gameRules = new GameRules();
 
     List<TextComponentString> capturedChatText = new ArrayList<>();
@@ -278,13 +278,13 @@ public class BetterMobGriefingCommandTest {
         capturedChatText.get(0).getUnformattedText(), CoreMatchers.is("mobGriefing = globalValue"));
     Assert.assertThat("The chat output did not contain the expected value.",
         capturedChatText.get(1).getUnformattedText(),
-        CoreMatchers.is("mobGriefing entityName1 = true"));
+        CoreMatchers.is("mobGriefing entity_name1 = true"));
     Assert.assertThat("The chat output did not contain the expected value.",
         capturedChatText.get(2).getUnformattedText(),
-        CoreMatchers.is("mobGriefing entityName2 = false"));
+        CoreMatchers.is("mobGriefing entity_name2 = false"));
     Assert.assertThat("The chat output did not contain the expected value.",
         capturedChatText.get(3).getUnformattedText(),
-        CoreMatchers.is("mobGriefing entityName3 = inherit"));
+        CoreMatchers.is("mobGriefing entity_name3 = inherit"));
   }
 
   /**
@@ -410,7 +410,7 @@ public class BetterMobGriefingCommandTest {
     GameRules gameRules = new GameRules();
 
     List<TextComponentString> capturedChatText = new ArrayList<>();
-    String[] commandWords = new String[] {"mobGriefing", "entityName1"};
+    String[] commandWords = new String[] {"mobGriefing", "entity_name1"};
 
     // Record Expectations.
     new Expectations(entityMobGriefingData) {
@@ -424,7 +424,7 @@ public class BetterMobGriefingCommandTest {
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
 
-        entityMobGriefingData.getMobGriefingValue("entityName1");
+        entityMobGriefingData.getMobGriefingValue("entity_name1");
         result = MobGriefingValue.TRUE;
 
         commandSender.sendMessage(withCapture(capturedChatText));
@@ -442,7 +442,7 @@ public class BetterMobGriefingCommandTest {
         capturedChatText.size(), CoreMatchers.is(1));
     Assert.assertThat("The chat output did not contain the expected value.",
         capturedChatText.get(0).getUnformattedText(),
-        CoreMatchers.is("mobGriefing entityName1 = true"));
+        CoreMatchers.is("mobGriefing entity_name1 = true"));
   }
 
   /**
@@ -454,7 +454,7 @@ public class BetterMobGriefingCommandTest {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
-    String[] commandWords = new String[] {"mobGriefing", "entityName1"};
+    String[] commandWords = new String[] {"mobGriefing", "entity_name1"};
 
     // Record Expectations.
     new Expectations(entityMobGriefingData) {
@@ -465,7 +465,7 @@ public class BetterMobGriefingCommandTest {
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
 
-        entityMobGriefingData.getMobGriefingValue("entityName1");
+        entityMobGriefingData.getMobGriefingValue("entity_name1");
         result = null;
       }
     };
@@ -491,9 +491,9 @@ public class BetterMobGriefingCommandTest {
       throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
-    ResourceLocation entityType = new ResourceLocation("");
 
-    String entityName = "entityName1";
+    String entityName = "entity_name1";
+    ResourceLocation entityType = new ResourceLocation(entityName);
     String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
 
     // Record Expectations.
@@ -505,14 +505,8 @@ public class BetterMobGriefingCommandTest {
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
 
-        EntityList.getEntityNameList();
-        result = Collections.singleton(entityType);
-
         EntityList.getClass(entityType);
         result = EntityLiving.class;
-
-        EntityList.getTranslationName(entityType);
-        result = entityName;
       }
     };
 
@@ -539,9 +533,9 @@ public class BetterMobGriefingCommandTest {
       throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
-    ResourceLocation entityType = new ResourceLocation("");
 
-    String entityName = "entityName1";
+    String entityName = "entity_name1";
+    ResourceLocation entityType = new ResourceLocation(entityName);
     String[] commandWords = new String[] {"mobGriefing", entityName, ""};
 
     // Record Expectations.
@@ -553,14 +547,8 @@ public class BetterMobGriefingCommandTest {
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
 
-        EntityList.getEntityNameList();
-        result = Collections.singleton(entityType);
-
         EntityList.getClass(entityType);
         result = EntityLiving.class;
-
-        EntityList.getTranslationName(entityType);
-        result = entityName;
       }
     };
 
@@ -577,7 +565,7 @@ public class BetterMobGriefingCommandTest {
   }
 
   /**
-   * Test that a {@link CommandException} is thrown when the command words are "mobGriefing", the
+   * Test that a {@link CommandExceptison} is thrown when the command words are "mobGriefing", the
    * entity name of an invalid type and a third word.
    */
   @Test(expected = CommandException.class)
@@ -585,9 +573,10 @@ public class BetterMobGriefingCommandTest {
       throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
-    ResourceLocation entityType = new ResourceLocation("");
 
-    String[] commandWords = new String[] {"mobGriefing", "entityName1", "inherit"};
+    String entityName = "entity_name1";
+    ResourceLocation entityType = new ResourceLocation(entityName);
+    String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
 
     // Record Expectations.
     new Expectations(entityMobGriefingData, EntityList.class) {
@@ -598,14 +587,8 @@ public class BetterMobGriefingCommandTest {
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
 
-        EntityList.getEntityNameList();
-        result = Collections.singleton(entityType);
-
         EntityList.getClass(entityType);
-        result = null;
-
-        EntityList.getTranslationName(entityType);
-        result = "entityName1";
+        result = Object.class;
       }
     };
 
@@ -629,9 +612,10 @@ public class BetterMobGriefingCommandTest {
   public void testExecute_mobGriefingNotEntityNameThirdWord_exception() throws CommandException {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
-    ResourceLocation entityType = new ResourceLocation("");
 
-    String[] commandWords = new String[] {"mobGriefing", "entityName1", "inherit"};
+    String entityName = "entity_name1";
+    ResourceLocation entityType = new ResourceLocation(entityName);
+    String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
 
     // Record Expectations.
     new Expectations(entityMobGriefingData, EntityList.class) {
@@ -642,14 +626,8 @@ public class BetterMobGriefingCommandTest {
         EntityMobGriefingData.forWorld(world);
         result = entityMobGriefingData;
 
-        EntityList.getEntityNameList();
-        result = Collections.singleton(entityType);
-
         EntityList.getClass(entityType);
-        result = EntityLiving.class;
-
-        EntityList.getTranslationName(entityType);
-        result = "notMatching";
+        result = null;
       }
     };
 
@@ -674,7 +652,7 @@ public class BetterMobGriefingCommandTest {
     // Set up test data.
     EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
 
-    String[] commandWords = new String[] {"mobGriefing", "entityName1", "inherit", ""};
+    String[] commandWords = new String[] {"mobGriefing", "entity_name1", "inherit", ""};
 
     // Record Expectations.
     new Expectations(entityMobGriefingData) {

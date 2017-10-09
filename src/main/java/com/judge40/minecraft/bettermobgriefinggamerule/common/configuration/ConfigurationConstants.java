@@ -27,10 +27,12 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityEvoker;
 import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntityHusk;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.monster.EntityZombieVillager;
 import net.minecraft.entity.passive.EntityRabbit;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityVillager;
@@ -56,6 +58,7 @@ public class ConfigurationConstants {
   public static final List<Class<? extends EntityLiving>> ENTITY_CLASSES =
       Collections.unmodifiableList(Arrays.asList(EntityBlaze.class, EntityCreeper.class,
           EntityDragon.class, EntityEnderman.class, EntityEvoker.class, EntityGhast.class,
-          EntityPigZombie.class, EntityRabbit.class, EntitySheep.class, EntitySilverfish.class,
-          EntitySnowman.class, EntityVillager.class, EntityWither.class, EntityZombie.class));
+          EntityHusk.class, EntityPigZombie.class, EntityRabbit.class, EntitySheep.class,
+          EntitySilverfish.class, EntitySnowman.class, EntityVillager.class, EntityWither.class,
+          EntityZombie.class, EntityZombieVillager.class));
 }

@@ -15,22 +15,24 @@ The below game rules can be used to override the mobGriefing behaviour
 for the associated entity type, the value of these rules will be used
 instead of the original "mobGriefing" game rule.
 
-| Entity      | GameRule                      |
-| ----------- | ----------------------------- |
-| Blaze       | mobGriefing blaze             |
-| Creeper     | mobGriefing creeper           |
-| EnderDragon | mobGriefing ender_dragon      |
-| Enderman    | mobGriefing enderman          |
-| Evoker      | mobGriefing evocation_illager |
-| Ghast       | mobGriefing ghast             |
-| PigZombie   | mobGriefing zombie_pigman     |
-| Rabbit      | mobGriefing rabbit            |
-| Sheep       | mobGriefing sheep             |
-| Silverfish  | mobGriefing silverfish        |
-| SnowMan     | mobGriefing snowman           |
-| Villager    | mobGriefing villager          |
-| Wither      | mobGriefing wither            |
-| Zombie      | mobGriefing zombie            |
+| Entity         | GameRule                      |
+| -------------- | ----------------------------- |
+| Blaze          | mobGriefing blaze             |
+| Creeper        | mobGriefing creeper           |
+| EnderDragon    | mobGriefing ender_dragon      |
+| Enderman       | mobGriefing enderman          |
+| Evoker         | mobGriefing evocation_illager |
+| Ghast          | mobGriefing ghast             |
+| Husk           | mobGriefing husk              |
+| PigZombie      | mobGriefing zombie_pigman     |
+| Rabbit         | mobGriefing rabbit            |
+| Sheep          | mobGriefing sheep             |
+| Silverfish     | mobGriefing silverfish        |
+| SnowMan        | mobGriefing snowman           |
+| Villager       | mobGriefing villager          |
+| Wither         | mobGriefing wither            |
+| Zombie         | mobGriefing zombie            |
+| ZombieVillager | mobGriefing zombie_villager   |
 
 Each rule can be set to `true`, `false` or `inherit`, when the value is
 `inherit` the entity's mobGriefing behaviour will be inherited from the
@@ -53,6 +55,9 @@ rules.
  - Ghast
     - Whether the Ghast's fireball can destroy blocks.
     - Whether the Ghast's fireball can set blocks on fire.
+ - Husk
+    - Whether the Husk can destroy wooden doors.
+    - Whether the Husk can pick up loot from the ground.
  - PigZombie
     - Whether the PigZombie can destroy wooden doors.
  - Rabbit
@@ -74,6 +79,9 @@ rules.
  - Zombie
     - Whether the Zombie can destroy wooden doors.
     - Whether the Zombie can pick up loot from the ground.
+ - ZombieVillager
+    - Whether the ZombieVillager can destroy wooden doors.
+    - Whether the ZombieVillager can pick up loot from the ground.
 
 Several behaviours are handled in common code and so can affect multiple
 entities, these are detailed below with the entities which use them as
@@ -83,9 +91,10 @@ standard.
  - Whether an entity eating grass damages the grass.
    (Used by Sheep only.)
  - Whether an entity can destroy wooden doors.
-   (Used by PigZombies and Zombies.)
+   (Used by Husks, PigZombies, Zombies and ZombieVillager.)
  - Whether an entity can pick up loot from the ground.
-   (Used by PigZombies, Skeletons, Villagers and Zombies.)
+   (Used by PigZombies, Skeletons, Strays, Villagers, WitherSkeletons
+   and Zombies.)
  - Whether large fireballs can destroy blocks.
    (Used by Ghasts only.)
  - Whether large fireballs can set blocks on fire.

@@ -705,7 +705,6 @@ public class MobGriefingEventHandlerTest {
 
     GameRules gameRules = new GameRules();
 
-
     // Record expectations.
     new Expectations(gameRules, BetterMobGriefingGameRule.class) {
       {

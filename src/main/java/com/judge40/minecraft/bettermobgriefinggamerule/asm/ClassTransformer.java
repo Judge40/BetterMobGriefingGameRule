@@ -64,8 +64,6 @@ public class ClassTransformer implements IClassTransformer {
         "com/judge40/minecraft/bettermobgriefinggamerule/BetterMobGriefingGameRule",
         "isMobGriefingEnabled", "(Lnet/minecraft/entity/Entity;)Z", false);
 
-
-
     // The target variable for classes whose own class instance is the target entity.
     VarInsnNode instanceVariable = new VarInsnNode(Opcodes.ALOAD, 0);
 

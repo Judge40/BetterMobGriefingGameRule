@@ -4,8 +4,13 @@
     <Bug code="RV, SIC"/>
   </Match>
   <Match>
+    <Class name="~.+DefaultMobGriefingConfigurationTest\$[0-9]+\$1"/>
+    <Method name="getKey"/>
+    <Bug code="UMAC"/>
+  </Match>
+  <Match>
     <Class name="~.+MobGriefingEventHandlerTest"/>
-    <Method name="~testOnDetonate_.+"/>
+    <Method name="~testOnDetonate_noSource.+"/>
     <Bug code="NP"/>
   </Match>
 </FindBugsFilter>

@@ -1,8 +1,14 @@
 <FindBugsFilter>
   <Match>
-    <Class name="~.+BetterMobGriefingGameRule"/>
-    <Method name="isMobGriefingEnabled"/>
-    <Local name="entityName"/>
+    <Class name="~.+BetterMobGriefingCommand"/>
+    <Method name="execute"/>
+    <Local name="entityClass"/>
+    <Bug code="RCN"/>
+  </Match>
+  <Match>
+    <Class name="~.+DefaultMobGriefingConfiguration"/>
+    <Method name="synchronizeEntityValues"/>
+    <Local name="entityClass"/>
     <Bug code="RCN"/>
   </Match>
 </FindBugsFilter>

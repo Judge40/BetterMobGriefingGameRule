@@ -223,7 +223,7 @@ public class ClassTransformerTest {
    * {@link AIWololoSpell}.
    */
   @Test
-  public void testTransform_entityAIWololoSpell_mobGriefingTransformed() throws IOException {
+  public void testTransform_entityAiWololoSpell_mobGriefingTransformed() throws IOException {
     // Set up test data.
     String targetClassName = AIWololoSpell.class.getName();
 

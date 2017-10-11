@@ -111,7 +111,6 @@ public class BetterMobGriefingGameRuleTest {
         CoreMatchers.sameInstance(instance));
   }
 
-
   /**
    * Test that configuration is loaded when the FML pre-initialization event is fired.
    */

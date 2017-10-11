@@ -35,7 +35,6 @@ public class ObfuscationHelper {
   private static final Map<String, String> mcpToSrg = new HashMap<>();
 
   static {
-    srgToMcp.put("field_146075_bs", "breakDoor");
     srgToMcp.put("field_70235_a", "shootingEntity");
     srgToMcp.put("field_71561_b", "commandSet");
     srgToMcp.put("field_72988_C", "mapStorage");
@@ -47,12 +46,14 @@ public class ObfuscationHelper {
     srgToMcp.put("field_77286_a", "causesFire");
     srgToMcp.put("field_75457_a", "entity");
     srgToMcp.put("field_82755_b", "damagesTerrain");
+    srgToMcp.put("field_146075_bs", "breakDoor");
     srgToMcp.put("field_151500_b", "grassEaterEntity");
     srgToMcp.put("field_179464_a", "silverfish");
     srgToMcp.put("field_179473_a", "enderman");
     srgToMcp.put("field_179475_a", "enderman");
     srgToMcp.put("field_179500_c", "rabbit");
     srgToMcp.put("field_179504_c", "villager");
+    srgToMcp.put("field_190880_e", "this$0");
     srgToMcp.put("func_70227_a", "onImpact");
     srgToMcp.put("func_70619_bc", "updateAITasks");
     srgToMcp.put("func_70636_d", "onLivingUpdate");

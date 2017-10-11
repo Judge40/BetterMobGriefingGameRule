@@ -124,7 +124,8 @@ public class ClassTransformer implements IClassTransformer {
 
     // Add Evoker targets.
     FieldInsnNode entityEvokerFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
-        "net/minecraft/entity/monster/EntityEvoker$AIWololoSpell", "this$0",
+        "net/minecraft/entity/monster/EntityEvoker$AIWololoSpell",
+        ObfuscationHelper.convertName("field_190880_e"),
         "Lnet/minecraft/entity/monster/EntityEvoker;");
     List<AbstractInsnNode> entityEvokerInstructions =
         Arrays.asList(instanceVariable, entityEvokerFieldNode, invocation);

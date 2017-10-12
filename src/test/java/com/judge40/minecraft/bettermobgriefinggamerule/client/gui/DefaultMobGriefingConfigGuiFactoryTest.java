@@ -22,7 +22,6 @@ package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 import mockit.Mocked;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionCategoryElement;
-import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionGuiHandler;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,19 +55,6 @@ public class DefaultMobGriefingConfigGuiFactoryTest {
   }
 
   /**
-   * Test that null is returned for the handler.
-   */
-  @Test
-  public void testGetHandlerFor_null() {
-    // Call the method under test.
-    RuntimeOptionGuiHandler handler = factory.getHandlerFor(null);
-
-    // Perform assertions.
-    Assert.assertThat("The runtime option GUI handler should be null.", handler,
-        CoreMatchers.nullValue());
-  }
-
-  /**
    * Test that true is returned for the hasConfigGui flag.
    */
   @Test
@@ -88,19 +74,6 @@ public class DefaultMobGriefingConfigGuiFactoryTest {
   public void testInitialize_doNothing() {
     // Call the method under test.
     factory.initialize(null);
-  }
-
-  /**
-   * Test that {@link DefaultMobGriefingConfigGui} is returned as the main configuration GUI class.
-   */
-  @Test
-  public void testMainConfigGuiClass_configGuiClass() {
-    // Call the method under test.
-    Class<? extends GuiScreen> configGuiClass = factory.mainConfigGuiClass();
-
-    // Perform assertions.
-    Assert.assertThat("The main configuration GUI class returned did not match the expected class.",
-        configGuiClass, CoreMatchers.nullValue());
   }
 
   /**

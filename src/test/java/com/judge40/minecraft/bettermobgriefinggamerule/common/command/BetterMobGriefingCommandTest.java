@@ -70,149 +70,6 @@ public class BetterMobGriefingCommandTest {
   }
 
   /**
-   * Test that the parent handles the tab completion when tab completing the first word and it is
-   * "mobGriefing".
-   */
-  @Test
-  public void testGetTabCompletionOptions_mobGriefingCompleteWordOne_handledByParent(
-      @Mocked CommandGameRule parentCommand) {
-    // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing"};
-
-    // Call the method under test.
-    command.getTabCompletions(server, commandSender, commandWords, null);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        parentCommand.getTabCompletions(server, commandSender, commandWords, null);
-      }
-    };
-  }
-
-  /**
-   * Test that true, false and registered entity names options are returned when tab completing the
-   * second word and the first word is "mobGriefing".
-   */
-  @Test
-  public void testGetTabCompletionOptions_mobGriefingCompleteWordTwo_trueFalseEntityNames(
-      @Mocked World world) {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
-    Set<String> registeredEntityNames =
-        new HashSet<>(Arrays.asList("entity_name1", "entity_name2", "entity_name3"));
-
-    String[] expectedPossibleWords =
-        new String[] {"true", "false", "entity_name1", "entity_name2", "entity_name3"};
-    List<String> matchingWords = Arrays.asList(expectedPossibleWords);
-
-    String[] commandWords = new String[] {"mobGriefing", ""};
-
-    // Record expectations.
-    new Expectations(BetterMobGriefingCommand.class, EntityMobGriefingData.class) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
-
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
-
-        entityMobGriefingData.getRegisteredEntityNames();
-        result = registeredEntityNames;
-
-        BetterMobGriefingCommand.getListOfStringsMatchingLastWord(commandWords,
-            expectedPossibleWords);
-        result = matchingWords;
-      }
-    };
-
-    // Call the method under test.
-    List<?> tabCompletionOptions =
-        command.getTabCompletions(server, commandSender, commandWords, null);
-
-    // Perform assertions.
-    Assert.assertThat("The tab completion options did not match the expected options.",
-        tabCompletionOptions, CoreMatchers.sameInstance(matchingWords));
-  }
-
-  /**
-   * Test that true, false and inherit options are returned when tab completing the third word and
-   * the first word is "mobGriefing".
-   */
-  @Test
-  public void testGetTabCompletionOptions_mobGriefingCompleteWordThree_trueFalseInherit() {
-    // Set up test data.
-    String[] expectedPossibleWords = new String[] {"true", "false", "inherit"};
-    List<String> matchingWords = Arrays.asList(expectedPossibleWords);
-
-    String[] commandWords = new String[] {"mobGriefing", "", ""};
-
-    // Record expectations.
-    new Expectations(BetterMobGriefingCommand.class) {
-      {
-        BetterMobGriefingCommand.getListOfStringsMatchingLastWord(commandWords,
-            expectedPossibleWords);
-        result = matchingWords;
-      }
-    };
-
-    // Call the method under test.
-    List<?> tabCompletionOptions =
-        command.getTabCompletions(server, commandSender, commandWords, null);
-
-    // Perform assertions.
-    Assert.assertThat("The tab completion options did not match the expected options.",
-        tabCompletionOptions, CoreMatchers.sameInstance(matchingWords));
-  }
-
-  /**
-   * Test that a empty list is returned when tab completing the fourth word and the first word is
-   * "mobGriefing".
-   */
-  @Test
-  public void testGetTabCompletionOptions_mobGriefingCompleteWordFour_emptyList(
-      @Mocked CommandGameRule parentCommand) {
-    // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing", "", "", ""};
-
-    // Call the method under test.
-    List<?> tabCompletionOptions =
-        command.getTabCompletions(server, commandSender, commandWords, null);
-
-    // Perform assertions.
-    Assert.assertThat("The tab completion options did not match the expected options.",
-        tabCompletionOptions, CoreMatchers.is(Collections.emptyList()));
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        BetterMobGriefingCommand.getListOfStringsMatchingLastWord(commandWords, (String[]) any);
-        times = 0;
-      }
-    };
-  }
-
-  /**
-   * Test that the parent handles the tab completion when the first word is not "mobGriefing".
-   */
-  @Test
-  public void testGetTabCompletionOptions_notMobGriefing_handledByParent(
-      @Mocked CommandGameRule parentCommand) {
-    // Set up test data.
-    String[] commandWords = new String[] {"notMobGriefing", ""};
-
-    // Call the method under test.
-    command.getTabCompletions(server, commandSender, commandWords, null);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        parentCommand.getTabCompletions(server, commandSender, commandWords, null);
-      }
-    };
-  }
-
-  /**
    * Test that the parent handles the command when there are no command words.
    */
   @Test
@@ -693,6 +550,149 @@ public class BetterMobGriefingCommandTest {
     new Verifications() {
       {
         parentCommand.execute(server, commandSender, commandWords);
+      }
+    };
+  }
+
+  /**
+   * Test that the parent handles the tab completion when tab completing the first word and it is
+   * "mobGriefing".
+   */
+  @Test
+  public void testGetTabCompletionOptions_mobGriefingCompleteWordOne_handledByParent(
+      @Mocked CommandGameRule parentCommand) {
+    // Set up test data.
+    String[] commandWords = new String[] {"mobGriefing"};
+
+    // Call the method under test.
+    command.getTabCompletions(server, commandSender, commandWords, null);
+
+    // Verify expectations.
+    new Verifications() {
+      {
+        parentCommand.getTabCompletions(server, commandSender, commandWords, null);
+      }
+    };
+  }
+
+  /**
+   * Test that true, false and registered entity names options are returned when tab completing the
+   * second word and the first word is "mobGriefing".
+   */
+  @Test
+  public void testGetTabCompletionOptions_mobGriefingCompleteWordTwo_trueFalseEntityNames(
+      @Mocked World world) {
+    // Set up test data.
+    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+    Set<String> registeredEntityNames =
+        new HashSet<>(Arrays.asList("entity_name1", "entity_name2", "entity_name3"));
+
+    String[] expectedPossibleWords =
+        new String[] {"true", "false", "entity_name1", "entity_name2", "entity_name3"};
+    List<String> matchingWords = Arrays.asList(expectedPossibleWords);
+
+    String[] commandWords = new String[] {"mobGriefing", ""};
+
+    // Record expectations.
+    new Expectations(BetterMobGriefingCommand.class, EntityMobGriefingData.class) {
+      {
+        commandSender.getEntityWorld();
+        result = world;
+
+        EntityMobGriefingData.forWorld(world);
+        result = entityMobGriefingData;
+
+        entityMobGriefingData.getRegisteredEntityNames();
+        result = registeredEntityNames;
+
+        BetterMobGriefingCommand.getListOfStringsMatchingLastWord(commandWords,
+            expectedPossibleWords);
+        result = matchingWords;
+      }
+    };
+
+    // Call the method under test.
+    List<?> tabCompletionOptions =
+        command.getTabCompletions(server, commandSender, commandWords, null);
+
+    // Perform assertions.
+    Assert.assertThat("The tab completion options did not match the expected options.",
+        tabCompletionOptions, CoreMatchers.sameInstance(matchingWords));
+  }
+
+  /**
+   * Test that true, false and inherit options are returned when tab completing the third word and
+   * the first word is "mobGriefing".
+   */
+  @Test
+  public void testGetTabCompletionOptions_mobGriefingCompleteWordThree_trueFalseInherit() {
+    // Set up test data.
+    String[] expectedPossibleWords = new String[] {"true", "false", "inherit"};
+    List<String> matchingWords = Arrays.asList(expectedPossibleWords);
+
+    String[] commandWords = new String[] {"mobGriefing", "", ""};
+
+    // Record expectations.
+    new Expectations(BetterMobGriefingCommand.class) {
+      {
+        BetterMobGriefingCommand.getListOfStringsMatchingLastWord(commandWords,
+            expectedPossibleWords);
+        result = matchingWords;
+      }
+    };
+
+    // Call the method under test.
+    List<?> tabCompletionOptions =
+        command.getTabCompletions(server, commandSender, commandWords, null);
+
+    // Perform assertions.
+    Assert.assertThat("The tab completion options did not match the expected options.",
+        tabCompletionOptions, CoreMatchers.sameInstance(matchingWords));
+  }
+
+  /**
+   * Test that a empty list is returned when tab completing the fourth word and the first word is
+   * "mobGriefing".
+   */
+  @Test
+  public void testGetTabCompletionOptions_mobGriefingCompleteWordFour_emptyList(
+      @Mocked CommandGameRule parentCommand) {
+    // Set up test data.
+    String[] commandWords = new String[] {"mobGriefing", "", "", ""};
+
+    // Call the method under test.
+    List<?> tabCompletionOptions =
+        command.getTabCompletions(server, commandSender, commandWords, null);
+
+    // Perform assertions.
+    Assert.assertThat("The tab completion options did not match the expected options.",
+        tabCompletionOptions, CoreMatchers.is(Collections.emptyList()));
+
+    // Verify expectations.
+    new Verifications() {
+      {
+        BetterMobGriefingCommand.getListOfStringsMatchingLastWord(commandWords, (String[]) any);
+        times = 0;
+      }
+    };
+  }
+
+  /**
+   * Test that the parent handles the tab completion when the first word is not "mobGriefing".
+   */
+  @Test
+  public void testGetTabCompletionOptions_notMobGriefing_handledByParent(
+      @Mocked CommandGameRule parentCommand) {
+    // Set up test data.
+    String[] commandWords = new String[] {"notMobGriefing", ""};
+
+    // Call the method under test.
+    command.getTabCompletions(server, commandSender, commandWords, null);
+
+    // Verify expectations.
+    new Verifications() {
+      {
+        parentCommand.getTabCompletions(server, commandSender, commandWords, null);
       }
     };
   }

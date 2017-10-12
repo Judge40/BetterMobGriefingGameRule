@@ -89,7 +89,8 @@ public class BetterMobGriefingCommand extends CommandGameRule {
           // the default handler to set the global mob griefing rule.
           super.execute(server, commandSender, commandWords);
         } else {
-          String entityName = commandWords[1];
+          ResourceLocation entityType = new ResourceLocation(commandWords[1]);
+          String entityName = entityType.getResourcePath();
           MobGriefingValue entityMobGriefingValue =
               entityMobGriefingData.getMobGriefingValue(entityName);
 
@@ -109,20 +110,19 @@ public class BetterMobGriefingCommand extends CommandGameRule {
           }
         }
       } else if (commandWords.length == 3) {
-        String entityName = commandWords[1];
-
         // If the second word is a valid entity name then try and set the entity rule to the value
         // given in the third word, otherwise throw a wrong usage exception.
-        ResourceLocation entityType = new ResourceLocation(entityName);
+        ResourceLocation entityType = new ResourceLocation(commandWords[1]);
+        String entityName = entityType.getResourcePath();
         Class<? extends Entity> entityClass = EntityList.getClass(entityType);
 
-        if (entityClass != null
-            && EntityLiving.class.isAssignableFrom(EntityList.getClass(entityType))) {
+        if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
           try {
             MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(commandWords[2]);
-            entityMobGriefingData.setMobGriefingValue(entityName, mobGriefingValue);
+            entityMobGriefingData.setMobGriefingValue(entityType.getResourcePath(),
+                mobGriefingValue);
             notifyCommandListener(commandSender, this, "commands.gamerule.success", new Object[] {
-                String.format("%s %s", commandWords[0], commandWords[1]), commandWords[2]});
+                String.format("%s %s", commandWords[0], entityName), commandWords[2]});
           } catch (IllegalArgumentException iae) {
             String exceptionMessage = String.format("/gamerule %s <entity name> %s|%s|%s",
                 BetterMobGriefingGameRule.GLOBAL_RULE, MobGriefingValue.TRUE.toExternalForm(),
@@ -130,7 +130,8 @@ public class BetterMobGriefingCommand extends CommandGameRule {
             throw new CommandException(exceptionMessage);
           }
         } else {
-          throw new CommandException(String.format("%s is not a valid entity name", entityName));
+          throw new CommandException(
+              String.format("%s is not a valid entity name", commandWords[1]));
         }
       } else {
         // Throw a wrong usage exception where there are too many words.

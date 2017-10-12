@@ -38,6 +38,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -296,7 +297,7 @@ public class BetterMobGriefingGameRuleTest {
     // Record expectations.
     new Expectations(EntityList.class) {
       {
-        EntityList.getEntityString(entity);
+        EntityList.getKey(entity);
         result = null;
 
         gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
@@ -326,10 +327,10 @@ public class BetterMobGriefingGameRuleTest {
     // Record expectations.
     new Expectations(EntityList.class) {
       {
-        EntityList.getEntityString(entity);
-        result = "entityName";
+        EntityList.getKey(entity);
+        result = new ResourceLocation("entityName");
 
-        entityData.getMobGriefingValue("entityName");
+        entityData.getMobGriefingValue("entityname");
         result = null;
 
         gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
@@ -358,10 +359,10 @@ public class BetterMobGriefingGameRuleTest {
     // Record expectations.
     new Expectations(EntityList.class) {
       {
-        EntityList.getEntityString(entity);
-        result = "entityName";
+        EntityList.getKey(entity);
+        result = new ResourceLocation("entityName");
 
-        entityData.getMobGriefingValue("entityName");
+        entityData.getMobGriefingValue("entityname");
         result = MobGriefingValue.INHERIT;
 
         gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
@@ -390,10 +391,10 @@ public class BetterMobGriefingGameRuleTest {
     // Record expectations.
     new Expectations(EntityList.class) {
       {
-        EntityList.getEntityString(entity);
-        result = "entityName";
+        EntityList.getKey(entity);
+        result = new ResourceLocation("entityName");
 
-        entityData.getMobGriefingValue("entityName");
+        entityData.getMobGriefingValue("entityname");
         result = MobGriefingValue.TRUE;
       }
     };
@@ -426,10 +427,10 @@ public class BetterMobGriefingGameRuleTest {
     // Record expectations.
     new Expectations(EntityList.class) {
       {
-        EntityList.getEntityString(entity);
-        result = "entityName";
+        EntityList.getKey(entity);
+        result = new ResourceLocation("entityName");
 
-        entityData.getMobGriefingValue("entityName");
+        entityData.getMobGriefingValue("entityname");
         result = MobGriefingValue.FALSE;
       }
     };

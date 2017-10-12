@@ -31,6 +31,7 @@ import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLModContainer;
@@ -137,10 +138,12 @@ public class BetterMobGriefingGameRule {
    */
   public static boolean isMobGriefingEnabled(Entity entity) {
     Boolean mobGriefingEnabled = null;
-    String entityName = EntityList.getEntityString(entity);
+    ResourceLocation entityType = EntityList.getKey(entity);
 
-    // If the entity name was found then try and get the entity's value from the world data.
-    if (entityName != null) {
+    // If the entity type was found then try and get the entity's value from the world data.
+    if (entityType != null) {
+      String entityName = entityType.getResourcePath();
+
       EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forWorld(entity.world);
       MobGriefingValue mobGriefingValue = entityMobGriefingData.getMobGriefingValue(entityName);
 

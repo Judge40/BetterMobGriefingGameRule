@@ -157,17 +157,6 @@ public class ClassTransformer implements IClassTransformer {
     TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntitySilverfish$AIHideInStone",
         entitySilverfishHideTargets);
 
-    FieldInsnNode entitySilverfishSummonFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
-        "net/minecraft/entity/monster/EntitySilverfish$AISummonSilverfish",
-        ObfuscationHelper.convertName("field_179464_a"),
-        "Lnet/minecraft/entity/monster/EntitySilverfish;");
-    List<AbstractInsnNode> entitySilverfishSummonInstructions =
-        Arrays.asList(instanceVariable, entitySilverfishSummonFieldNode, invocation);
-    Map<String, List<AbstractInsnNode>> entitySilverfishSummonTargets = Collections.singletonMap(
-        ObfuscationHelper.convertName("func_75246_d"), entitySilverfishSummonInstructions);
-    TRANSFORM_TARGETS.put("net.minecraft.entity.monster.EntitySilverfish$AISummonSilverfish",
-        entitySilverfishSummonTargets);
-
     // Add SmallFireball targets.
     FieldInsnNode entitySmallFireballFieldNode = new FieldInsnNode(Opcodes.GETFIELD,
         "net/minecraft/entity/projectile/EntitySmallFireball",

@@ -1,7 +1,7 @@
 ![Better mobGriefing GameRule](src/main/resources/assets/bettermobgriefinggamerule/logo.png)
 
 ![Minecraft 1.12.2](https://img.shields.io/badge/Minecraft-1.12.2-lightgrey.svg)
-![Forge 1.12.2-14.23.0.2491](https://img.shields.io/badge/Forge-1.12.2--14.23.0.2491-lightgrey.svg)  
+![Forge 1.12.2-14.23.2.2611](https://img.shields.io/badge/Forge-1.12.2--14.23.2.2611-lightgrey.svg)  
 [![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## About
@@ -65,7 +65,8 @@ rules.
  - Sheep
     - Whether the Sheep eating grass damages the grass.
  - Silverfish
-    - Whether the Silverfish egg can hatch and destroy the block.
+    - ~~Whether the Silverfish egg can hatch and destroy the block.~~
+      (Not currently handled, removed to resolve spawning issues.)
     - Whether the Silverfish can hide and convert stone to monster eggs.
  - SnowMan
     - Whether the SnowMan can place a snow layer as it moves.

@@ -17,7 +17,7 @@ apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: "pmd"
 
 // Mod information.
-version = "1.12.2-6.0.0"
+version = "1.12.2-6.1.0"
 group= "com.judge40.minecraft.bettermobgriefinggamerule"
 archivesBaseName = "bettermobgriefinggamerule"
 
@@ -26,7 +26,7 @@ targetCompatibility = 1.8
 
 minecraft {
   // MinecraftForge version.
-  version = "1.12.2-14.23.0.2491"
+  version = "1.12.2-14.23.2.2611"
 
   // MCP mappings version.
   mappings = "snapshot_20171010"

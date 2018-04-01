@@ -437,37 +437,6 @@ public class ClassTransformerTest {
 
   /**
    * Test that the mob griefing instructions are replaced when the transformation target class is
-   * {@code EntitySilverfish$AISummonSilverfish}.
-   */
-  @Test
-  public void testTransform_entitySilverfishSummon_mobGriefingTransformed() throws IOException {
-    // Set up test data.
-    String targetClassName = EntitySilverfish.class.getName() + "$AISummonSilverfish";
-
-    ClassReader classReader = new ClassReader(targetClassName);
-    ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-    classReader.accept(classWriter, ClassReader.SKIP_DEBUG);
-    byte[] inputBytes = classWriter.toByteArray();
-
-    // Call the method under test.
-    byte[] transformedBytes = classTransformer.transform("", targetClassName, inputBytes);
-
-    // Perform assertions.
-    byte[] originalSearchBytes = String.format("\"%s\"", BetterMobGriefingGameRule.GLOBAL_RULE)
-        .getBytes(Charset.defaultCharset());
-    Assert.assertThat(
-        "A reference to the mobGriefing game rule was still found in the transformed class.",
-        Bytes.indexOf(transformedBytes, originalSearchBytes), CoreMatchers.is(-1));
-
-    byte[] replacementSearchBytes =
-        BetterMobGriefingGameRule.class.getSimpleName().getBytes(Charset.defaultCharset());
-    Assert.assertThat(
-        "A reference to the better mobGriefing game rule was not found in the transformed class.",
-        Bytes.indexOf(transformedBytes, replacementSearchBytes), CoreMatchers.not(-1));
-  }
-
-  /**
-   * Test that the mob griefing instructions are replaced when the transformation target class is
    * {@link EntitySmallFireball}.
    */
   @Test

@@ -22,7 +22,6 @@ package com.judge40.minecraft.bettermobgriefinggamerule;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingEventHandler;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.ObfuscationHelper;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobGriefingCommand;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
@@ -41,7 +40,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -150,7 +148,7 @@ public class BetterMobGriefingGameRuleTest {
     FMLInitializationEvent event = new FMLInitializationEvent();
 
     // Record expectations.
-    new Expectations(MinecraftForge.class) {
+    new Expectations() {
       {
         eventBus.register(withInstanceOf(MobGriefingEventHandler.class));
         times = 1;
@@ -195,8 +193,8 @@ public class BetterMobGriefingGameRuleTest {
         commandHandler.getCommands();
         result = commandMap;
 
-        ReflectionHelper.getPrivateValue(CommandHandler.class, commandHandler,
-            ObfuscationHelper.convertName("field_71561_b"));
+        ReflectionHelper.getPrivateValue(CommandHandler.class, commandHandler, "field_71561_b",
+            "commandSet");
         result = commandSet;
 
         world.getTotalWorldTime();
@@ -259,8 +257,8 @@ public class BetterMobGriefingGameRuleTest {
         commandHandler.getCommands();
         result = commandMap;
 
-        ReflectionHelper.getPrivateValue(CommandHandler.class, commandHandler,
-            ObfuscationHelper.convertName("field_71561_b"));
+        ReflectionHelper.getPrivateValue(CommandHandler.class, commandHandler, "field_71561_b",
+            "commandSet");
         result = commandSet;
 
         world.getTotalWorldTime();

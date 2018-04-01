@@ -354,7 +354,7 @@ public class BetterMobGriefingCommandTest {
     String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
 
     // Record Expectations.
-    new Expectations(entityMobGriefingData, EntityList.class) {
+    new Expectations(EntityList.class, EntityMobGriefingData.class) {
       {
         commandSender.getEntityWorld();
         result = world;
@@ -396,7 +396,7 @@ public class BetterMobGriefingCommandTest {
     String[] commandWords = new String[] {"mobGriefing", entityName, ""};
 
     // Record Expectations.
-    new Expectations(entityMobGriefingData, EntityList.class) {
+    new Expectations(EntityList.class, EntityMobGriefingData.class) {
       {
         commandSender.getEntityWorld();
         result = world;
@@ -436,7 +436,7 @@ public class BetterMobGriefingCommandTest {
     String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
 
     // Record Expectations.
-    new Expectations(entityMobGriefingData, EntityList.class) {
+    new Expectations(EntityList.class, EntityMobGriefingData.class) {
       {
         commandSender.getEntityWorld();
         result = world;
@@ -475,7 +475,7 @@ public class BetterMobGriefingCommandTest {
     String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
 
     // Record Expectations.
-    new Expectations(entityMobGriefingData, EntityList.class) {
+    new Expectations(EntityList.class, EntityMobGriefingData.class) {
       {
         commandSender.getEntityWorld();
         result = world;
@@ -512,7 +512,7 @@ public class BetterMobGriefingCommandTest {
     String[] commandWords = new String[] {"mobGriefing", "entity_name1", "inherit", ""};
 
     // Record Expectations.
-    new Expectations(entityMobGriefingData) {
+    new Expectations(EntityMobGriefingData.class) {
       {
         commandSender.getEntityWorld();
         result = world;
@@ -594,7 +594,7 @@ public class BetterMobGriefingCommandTest {
     String[] commandWords = new String[] {"mobGriefing", ""};
 
     // Record expectations.
-    new Expectations(BetterMobGriefingCommand.class, EntityMobGriefingData.class) {
+    new Expectations(entityMobGriefingData, BetterMobGriefingCommand.class) {
       {
         commandSender.getEntityWorld();
         result = world;

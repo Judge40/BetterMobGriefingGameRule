@@ -21,7 +21,6 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.world;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.ObfuscationHelper;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 
 import mockit.Expectations;
@@ -33,7 +32,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -76,10 +74,6 @@ public class EntityMobGriefingDataTest {
   @Test
   public void testForWorld_dataExists_existingDataInstance(@Mocked World world,
       @Mocked MapStorage mapStorage) {
-    // Set up test data.
-    ReflectionHelper.setPrivateValue(World.class, world, mapStorage,
-        ObfuscationHelper.convertName("field_72988_C"));
-
     // Record expectations.
     new Expectations() {
       {
@@ -111,10 +105,6 @@ public class EntityMobGriefingDataTest {
   @Test
   public void testForWorld_dataNotExists_newDataInstance(@Mocked World world,
       @Mocked MapStorage mapStorage) {
-    // Set up test data.
-    ReflectionHelper.setPrivateValue(World.class, world, mapStorage,
-        ObfuscationHelper.convertName("field_72988_C"));
-
     // Record expectations.
     new Expectations() {
       {

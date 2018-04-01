@@ -22,7 +22,6 @@ package com.judge40.minecraft.bettermobgriefinggamerule;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingEventHandler;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.ObfuscationHelper;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobGriefingCommand;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
@@ -112,7 +111,7 @@ public class BetterMobGriefingGameRule {
     // Remove the original game rule command handler from the command set and register the new
     // handler.
     Set<?> commandSet = ReflectionHelper.getPrivateValue(CommandHandler.class, commandHandler,
-        ObfuscationHelper.convertName("field_71561_b"));
+        "field_71561_b", "commandSet");
     commandSet.remove(originalGameRuleHandler);
     commandHandler.registerCommand(newGameRuleHandler);
 

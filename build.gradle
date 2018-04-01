@@ -17,7 +17,7 @@ apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: "pmd"
 
 // Mod information.
-version = "1.12.2-6.1.0"
+version = "1.12.2-7.0.0"
 group= "com.judge40.minecraft.bettermobgriefinggamerule"
 archivesBaseName = "bettermobgriefinggamerule"
 
@@ -26,7 +26,7 @@ targetCompatibility = 1.8
 
 minecraft {
   // MinecraftForge version.
-  version = "1.12.2-14.23.2.2611"
+  version = "1.12.2-14.23.2.2646"
 
   // MCP mappings version.
   mappings = "snapshot_20171010"
@@ -63,13 +63,6 @@ tasks.withType(FindBugs) {
   reports {
     xml.enabled = false
     html.enabled = true
-  }
-}
-
-jar {
-  manifest {
-    attributes "FMLCorePlugin":"com.judge40.minecraft.bettermobgriefinggamerule.asm.LoadingPlugin",
-        "FMLCorePluginContainsFMLMod":"true"
   }
 }
 

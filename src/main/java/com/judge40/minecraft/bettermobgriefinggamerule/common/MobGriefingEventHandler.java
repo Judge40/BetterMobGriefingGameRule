@@ -22,15 +22,10 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common;
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.projectile.EntityFireball;
-import net.minecraft.entity.projectile.EntityLargeFireball;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.GameRules;
-import net.minecraftforge.event.world.ExplosionEvent.Detonate;
+import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 /**
  * An event handler for all mob griefing events.
@@ -50,75 +45,21 @@ public class MobGriefingEventHandler {
   }
 
   /**
-   * On the explosion detonate event check whether mob griefing is enabled for a specific entity and
-   * update the relevant fields to reflect the desired value.
+   * When mob griefing occurs, check whether mob griefing is enabled for the griefing entity and set
+   * event's result accordingly. {@link Result#ALLOW} indicates that mob griefing is enabled and
+   * {@link Result#DENY} indicates that mob griefing is disabled.
    * 
-   * @param detonateEvent The detonate event for the explosion to update.
+   * @param mobGriefingEvent The {@link EntityMobGriefingEvent} to update.
    */
   @SubscribeEvent
-  public void onDetonate(Detonate detonateEvent) {
-    // Try and get the explosion source from the explosion.
-    Explosion explosion = detonateEvent.getExplosion();
-    Entity explosionSource = null;
-    Entity exploder = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
-        ObfuscationHelper.convertName("field_77283_e"));
+  public void onMobGriefing(EntityMobGriefingEvent mobGriefingEvent) {
+    Entity greifingEntity = mobGriefingEvent.getEntity();
+    boolean isEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(greifingEntity);
 
-    if (exploder instanceof EntityLiving) {
-      explosionSource = exploder;
-    } else if (exploder instanceof EntityFireball) {
-      explosionSource = ((EntityFireball) exploder).shootingEntity;
-    }
-
-    // If the explosion source could not be determined from the explosion then check the affected
-    // entities for a match.
-    if (explosionSource == null) {
-      for (Entity affectedEntity : detonateEvent.getAffectedEntities()) {
-        if (affectedEntity instanceof EntityFireball) {
-          EntityFireball entityFireball = (EntityFireball) affectedEntity;
-
-          // Compare the fireball and explosion positions to determine if the fireball is the source
-          // of the explosion.
-          double explosionX = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
-              ObfuscationHelper.convertName("field_77284_b"));
-          double explosionY = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
-              ObfuscationHelper.convertName("field_77285_c"));
-          double explosionZ = ReflectionHelper.getPrivateValue(Explosion.class, explosion,
-              ObfuscationHelper.convertName("field_77282_d"));
-
-          if (Math.abs(entityFireball.posX - explosionX) == 0
-              && Math.abs(entityFireball.posY - explosionY) == 0
-              && Math.abs(entityFireball.posZ - explosionZ) == 0
-              && entityFireball.shootingEntity instanceof EntityLiving) {
-            explosionSource = entityFireball.shootingEntity;
-            break;
-          }
-        }
-      }
-    }
-
-    if (explosionSource != null) {
-      // Get whether mobGriefing is enabled for this entity
-      boolean entityMobGriefing = BetterMobGriefingGameRule.isMobGriefingEnabled(explosionSource);
-
-      GameRules gameRules = detonateEvent.getWorld().getGameRules();
-      boolean globalMobGriefing = gameRules.getBoolean(BetterMobGriefingGameRule.GLOBAL_RULE);
-
-      // If entity mobGriefing has overridden the global value then update the explosion's flags.
-      if (entityMobGriefing != globalMobGriefing) {
-        ReflectionHelper.setPrivateValue(Explosion.class, explosion, entityMobGriefing,
-            ObfuscationHelper.convertName("field_82755_b"));
-
-        // Large fireball's ability to create fire is controlled by mob griefing.
-        if (exploder instanceof EntityLargeFireball) {
-          ReflectionHelper.setPrivateValue(Explosion.class, explosion, entityMobGriefing,
-              ObfuscationHelper.convertName("field_77286_a"));
-        }
-
-        // If mobGriefing is not enabled then clear down the affected blocks
-        if (!entityMobGriefing) {
-          detonateEvent.getAffectedBlocks().clear();
-        }
-      }
+    if (isEnabled) {
+      mobGriefingEvent.setResult(Result.ALLOW);
+    } else {
+      mobGriefingEvent.setResult(Result.DENY);
     }
   }
 }

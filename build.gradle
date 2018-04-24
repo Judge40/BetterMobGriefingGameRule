@@ -17,7 +17,7 @@ apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: "pmd"
 
 // Mod information.
-version = "1.12.2-7.0.0"
+version = "1.12.2-7.0.1"
 group= "com.judge40.minecraft.bettermobgriefinggamerule"
 archivesBaseName = "bettermobgriefinggamerule"
 

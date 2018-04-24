@@ -122,6 +122,22 @@ public class MobGriefingEventHandlerTest {
   }
 
   /**
+   * Test that the event result is set to DEFAULT when the entity is null.
+   */
+  @Test
+  public void testOnMobGriefing_entityNull_default() {
+    // Set up test data.
+    EntityMobGriefingEvent event = new EntityMobGriefingEvent(null);
+
+    // Call the method under test.
+    eventHandler.onMobGriefing(event);
+
+    // Perform assertions.
+    Assert.assertThat("The event result is not match the expected value.", event.getResult(),
+        CoreMatchers.is(Result.DEFAULT));
+  }
+
+  /**
    * Test that the event result is set to DENY when mob griefing is disabled.
    */
   @Test

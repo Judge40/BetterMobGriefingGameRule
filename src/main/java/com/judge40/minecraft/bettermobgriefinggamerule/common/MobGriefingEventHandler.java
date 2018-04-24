@@ -53,13 +53,16 @@ public class MobGriefingEventHandler {
    */
   @SubscribeEvent
   public void onMobGriefing(EntityMobGriefingEvent mobGriefingEvent) {
-    Entity greifingEntity = mobGriefingEvent.getEntity();
-    boolean isEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(greifingEntity);
+    Entity griefingEntity = mobGriefingEvent.getEntity();
 
-    if (isEnabled) {
-      mobGriefingEvent.setResult(Result.ALLOW);
-    } else {
-      mobGriefingEvent.setResult(Result.DENY);
+    if (griefingEntity != null) {
+      boolean isEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(griefingEntity);
+
+      if (isEnabled) {
+        mobGriefingEvent.setResult(Result.ALLOW);
+      } else {
+        mobGriefingEvent.setResult(Result.DENY);
+      }
     }
   }
 }

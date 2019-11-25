@@ -117,8 +117,8 @@ public class EntityMobGriefingData extends WorldSavedData {
       MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(externalForm);
 
       if (EntityList.isRegistered(entityType)) {
-        String entityPath = entityType.getResourcePath();
-        entityNamesToMobGriefingValue.put(entityType.getResourcePath(), mobGriefingValue);
+        String entityPath = entityType.getPath();
+        entityNamesToMobGriefingValue.put(entityType.getPath(), mobGriefingValue);
 
         if (!entityName.equals(entityPath)) {
           keys.remove();
@@ -141,7 +141,7 @@ public class EntityMobGriefingData extends WorldSavedData {
         MobGriefingValue mobGriefingValue = invalidNameToMobGriefingValue.remove(translationName);
 
         if (mobGriefingValue != null) {
-          entityNamesToMobGriefingValue.put(entityType.getResourcePath(), mobGriefingValue);
+          entityNamesToMobGriefingValue.put(entityType.getPath(), mobGriefingValue);
         }
 
         if (invalidNameToMobGriefingValue.isEmpty()) {

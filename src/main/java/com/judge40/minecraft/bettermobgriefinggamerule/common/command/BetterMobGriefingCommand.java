@@ -42,7 +42,7 @@ import java.util.List;
 
 /**
  * A custom command handler for the mob griefing game rule, it allows auto-completion and assignment
- * of {@link EntityMobGriefingValue EntityMobGriefingValues}.
+ * of {@link MobGriefingValue EntityMobGriefingValues}.
  */
 public class BetterMobGriefingCommand extends CommandGameRule {
 
@@ -90,7 +90,7 @@ public class BetterMobGriefingCommand extends CommandGameRule {
           super.execute(server, commandSender, commandWords);
         } else {
           ResourceLocation entityType = new ResourceLocation(commandWords[1]);
-          String entityName = entityType.getResourcePath();
+          String entityName = entityType.getPath();
           MobGriefingValue entityMobGriefingValue =
               entityMobGriefingData.getMobGriefingValue(entityName);
 
@@ -113,13 +113,13 @@ public class BetterMobGriefingCommand extends CommandGameRule {
         // If the second word is a valid entity name then try and set the entity rule to the value
         // given in the third word, otherwise throw a wrong usage exception.
         ResourceLocation entityType = new ResourceLocation(commandWords[1]);
-        String entityName = entityType.getResourcePath();
+        String entityName = entityType.getPath();
         Class<? extends Entity> entityClass = EntityList.getClass(entityType);
 
         if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
           try {
             MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(commandWords[2]);
-            entityMobGriefingData.setMobGriefingValue(entityType.getResourcePath(),
+            entityMobGriefingData.setMobGriefingValue(entityType.getPath(),
                 mobGriefingValue);
             notifyCommandListener(commandSender, this, "commands.gamerule.success", new Object[] {
                 String.format("%s %s", commandWords[0], entityName), commandWords[2]});

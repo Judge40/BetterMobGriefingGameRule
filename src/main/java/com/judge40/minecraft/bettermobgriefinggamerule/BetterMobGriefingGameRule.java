@@ -141,7 +141,7 @@ public class BetterMobGriefingGameRule {
 
     // If the entity type was found then try and get the entity's value from the world data.
     if (entityType != null) {
-      String entityName = entityType.getResourcePath();
+      String entityName = entityType.getPath();
 
       EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forWorld(entity.world);
       MobGriefingValue mobGriefingValue = entityMobGriefingData.getMobGriefingValue(entityName);

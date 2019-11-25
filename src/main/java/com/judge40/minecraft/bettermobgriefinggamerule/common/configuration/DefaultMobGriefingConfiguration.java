@@ -120,7 +120,7 @@ public class DefaultMobGriefingConfiguration extends Configuration {
         entityTypes.add(entityType);
 
         // Update the configuration key if it does not match the resource path.
-        String entityPath = entityType.getResourcePath();
+        String entityPath = entityType.getPath();
 
         if (!entityName.equals(entityPath)) {
           Property entityPropertyValue = category.get(entityName);
@@ -143,11 +143,11 @@ public class DefaultMobGriefingConfiguration extends Configuration {
 
         if (removed) {
           Property entityPropertyValue = category.remove(translationName);
-          String entityName = entityType.getResourcePath();
+          String entityName = entityType.getPath();
           entityPropertyValue.setName(entityName);
           entityPropertyValue.setLanguageKey(entityName);
 
-          entityNamesToPropertyValue.put(entityType.getResourcePath(), entityPropertyValue);
+          entityNamesToPropertyValue.put(entityType.getPath(), entityPropertyValue);
           entityTypes.add(entityType);
         }
 
@@ -175,7 +175,7 @@ public class DefaultMobGriefingConfiguration extends Configuration {
       Class<? extends Entity> entityClass = EntityList.getClass(entityType);
 
       if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
-        String entityName = entityType.getResourcePath();
+        String entityName = entityType.getPath();
         String entityPropertyValue = getString(ConfigurationConstants.ENTITY_RULES_CATEGORY,
             entityName, MobGriefingValue.INHERIT.toExternalForm(), validValues);
         entityNamesToMobGriefingValue.put(entityName,

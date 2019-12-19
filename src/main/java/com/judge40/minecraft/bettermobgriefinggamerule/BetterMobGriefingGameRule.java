@@ -1,15 +1,15 @@
 /*
  * Better mobGriefing GameRule Copyright (c) 2016 Judge40
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
  * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or
  * substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
  * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -42,6 +42,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 import java.util.Objects;
@@ -55,13 +57,15 @@ import java.util.Set;
     acceptableRemoteVersions = "*")
 public class BetterMobGriefingGameRule {
 
+  private static final Logger LOGGER = LogManager.getLogger();
+
   public static final String GLOBAL_RULE = "mobGriefing";
 
   private DefaultMobGriefingConfiguration configuration = null;
 
   /**
    * Get the instance of {@link BetterMobGriefingGameRule} from the {@link Loader}'s mod list.
-   * 
+   *
    * @return The instance of the {@code BetterMobGriefingGameRule} mod.
    */
   public static BetterMobGriefingGameRule getInstance() {
@@ -74,7 +78,7 @@ public class BetterMobGriefingGameRule {
   /**
    * Perform pre-initialization actions. The configuration file is loaded and the default
    * mobGriefing rule values are retrieved.
-   * 
+   *
    * @param event The FMLPreInitializationEvent.
    */
   @EventHandler
@@ -85,7 +89,7 @@ public class BetterMobGriefingGameRule {
 
   /**
    * On initialization registers the event handler.
-   * 
+   *
    * @param event The FMLInitializationEvent.
    */
   @EventHandler
@@ -96,11 +100,12 @@ public class BetterMobGriefingGameRule {
 
   /**
    * On server starting add new mobGriefing game rules.
-   * 
+   *
    * @param event The FMLServerStartingEvent.
    */
   @EventHandler()
   public void onFmlServerStartingEvent(FMLServerStartingEvent event) {
+    LOGGER.debug("Server starting.");
     CommandHandler commandHandler = (CommandHandler) event.getServer().getCommandManager();
 
     // Create a new game rule command handler and retrieve the original handler.
@@ -120,8 +125,11 @@ public class BetterMobGriefingGameRule {
 
     // Set the global mob griefing game rule value if this is a new world.
     if (world.getTotalWorldTime() == 0) {
+      LOGGER.debug("New world detected, creating game rules.");
       world.getGameRules().setOrCreateGameRule(GLOBAL_RULE,
           configuration.getGlobalMobGriefingValue().toExternalForm());
+    } else {
+      LOGGER.debug("Existing world detected, no game rules created.");
     }
 
     // Add the entity mob griefing game rules.
@@ -131,7 +139,7 @@ public class BetterMobGriefingGameRule {
 
   /**
    * Whether mob griefing is enabled to the given {@link Entity}.
-   * 
+   *
    * @param entity The Entity to get the mob griefing value for.
    * @return Whether mob griefing is enabled.
    */

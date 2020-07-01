@@ -1,15 +1,15 @@
 /*
  * w * Better mobGriefing GameRule Copyright (c) 2016 Judge40
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
  * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or
  * substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
  * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -22,14 +22,6 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.world;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
-
-import net.minecraft.entity.EntityList;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.MapStorage;
-import net.minecraft.world.storage.WorldSavedData;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,6 +30,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import net.minecraft.entity.EntityList;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraft.world.storage.MapStorage;
+import net.minecraft.world.storage.WorldSavedData;
 
 /**
  * A custom {@link WorldSavedData} which stores the entity specific {@link MobGriefingValue
@@ -50,7 +48,7 @@ public class EntityMobGriefingData extends WorldSavedData {
   /**
    * {@link EntityMobGriefingData#forWorld(World)} should be used to construct an instance, instead
    * of this constructor.
-   * 
+   *
    * @param modIdentifier The mod identifier to create the {@code EntityMobGriefingData} for.
    */
   public EntityMobGriefingData(String modIdentifier) {
@@ -58,10 +56,10 @@ public class EntityMobGriefingData extends WorldSavedData {
   }
 
   /**
-   * Retrieve the {@link EntityMobGriefingData} for the given {@link World}. If the
-   * {@code EntityMobGriefingData} does not already exist then a new instance is created and added
-   * to the {@code World}'s {@link MapStorage}.
-   * 
+   * Retrieve the {@link EntityMobGriefingData} for the given {@link World}. If the {@code
+   * EntityMobGriefingData} does not already exist then a new instance is created and added to the
+   * {@code World}'s {@link MapStorage}.
+   *
    * @param world The {@code World} to retrieve the {@code EntityMobGriefingData} for.
    * @return The {@code EntityMobGriefingData} for the {@code World}.
    */
@@ -85,7 +83,7 @@ public class EntityMobGriefingData extends WorldSavedData {
    * Populate the {@link EntityMobGriefingData} with the {@link DefaultMobGriefingConfiguration}'s
    * values. Only entities which are not already in the {@code EntityMobGriefingData} will be
    * populated.
-   * 
+   *
    * @param configuration The {@code DefaultMobGriefingConfiguration} to get the values from.
    */
   public void populateFromConfiguration(DefaultMobGriefingConfiguration configuration) {
@@ -110,7 +108,7 @@ public class EntityMobGriefingData extends WorldSavedData {
     // the entity name is invalid then record it.
     Map<String, MobGriefingValue> invalidNameToMobGriefingValue = new HashMap<>();
 
-    for (Iterator<String> keys = nbtTagCompound.getKeySet().iterator(); keys.hasNext();) {
+    for (Iterator<String> keys = nbtTagCompound.getKeySet().iterator(); keys.hasNext(); ) {
       String entityName = keys.next();
       ResourceLocation entityType = new ResourceLocation(entityName);
       String externalForm = nbtTagCompound.getString(entityName);
@@ -165,7 +163,7 @@ public class EntityMobGriefingData extends WorldSavedData {
 
   /**
    * Get the {@link MobGriefingValue} for the given entity name.
-   * 
+   *
    * @param entityName The name of the entity to get the {@code MobGriefingValue} of.
    * @return The {@code MobGriefingValue}.
    */
@@ -175,9 +173,9 @@ public class EntityMobGriefingData extends WorldSavedData {
 
   /**
    * Set the {@link MobGriefingValue} for the given entity name.
-   * 
+   *
    * @param entityName The name of the entity to set the {@code MobGriefingValue} of.
-   * @param value The {@code MobGriefingValue} to set.
+   * @param value      The {@code MobGriefingValue} to set.
    */
   public void setMobGriefingValue(String entityName, MobGriefingValue value) {
     MobGriefingValue previousValue = entityNamesToMobGriefingValue.put(entityName, value);
@@ -190,7 +188,7 @@ public class EntityMobGriefingData extends WorldSavedData {
 
   /**
    * Get the names of all entities which have {@link MobGriefingValue} registered.
-   * 
+   *
    * @return The registered entity names.
    */
   public Set<String> getRegisteredEntityNames() {

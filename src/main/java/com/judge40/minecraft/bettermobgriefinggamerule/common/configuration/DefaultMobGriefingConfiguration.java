@@ -1,15 +1,15 @@
 /*
  * Better mobGriefing GameRule Copyright (c) 2017 Judge40
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
  * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or
  * substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
  * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -21,15 +21,6 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.configuration;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,6 +29,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.config.ConfigCategory;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 /**
  * A custom {@link Configuration} which adds convenience methods for retrieving default mob griefing
@@ -187,11 +185,11 @@ public class DefaultMobGriefingConfiguration extends Configuration {
   /**
    * Get the string value of a property from the configuration file, any property values which are
    * missing or invalid will be populated with the default value.
-   * 
+   *
    * @param categoryName The name of the property's category.
    * @param propertyName The name of the property.
    * @param defaultValue The default value for the property.
-   * @param validValues The valid values for the property.
+   * @param validValues  The valid values for the property.
    * @return The property string value.
    */
   private String getString(String categoryName, String propertyName, String defaultValue,
@@ -209,7 +207,7 @@ public class DefaultMobGriefingConfiguration extends Configuration {
 
   /**
    * Get the configured default global mobGriefing value.
-   * 
+   *
    * @return The configured default value for global mobGriefing.
    */
   public MobGriefingValue getGlobalMobGriefingValue() {
@@ -218,9 +216,9 @@ public class DefaultMobGriefingConfiguration extends Configuration {
 
   /**
    * Get the configured default mobGriefing values for all entities.
-   * 
+   *
    * @return A map where the key is the entity name and the value is the configured default
-   *         mobGriefing value.
+   *     mobGriefing value.
    */
   public Map<String, MobGriefingValue> getEntityMobGriefingValues() {
     return entityNamesToMobGriefingValue;

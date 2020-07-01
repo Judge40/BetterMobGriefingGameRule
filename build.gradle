@@ -46,6 +46,11 @@ dependencies {
   testCompile "junit:junit:4.12"
 }
 
+checkstyle {
+  toolVersion = "8.34"
+  config = resources.text.fromArchiveEntry(configurations.checkstyle[0], "google_checks.xml")
+}
+
 findbugs {
   effort = "max"
   reportLevel = "low"

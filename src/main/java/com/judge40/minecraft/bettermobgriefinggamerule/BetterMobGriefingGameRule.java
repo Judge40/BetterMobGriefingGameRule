@@ -25,7 +25,9 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobGriefingCommand;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
-
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
@@ -44,10 +46,6 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * Base class for Better mobGriefing GameRule mod.
@@ -169,8 +167,10 @@ public class BetterMobGriefingGameRule {
   }
 
   /**
-   * @return The {@link DefaultMobGriefingConfiguration}, will be null until the
-   *         {@link FMLPreInitializationEvent} fires.
+   * Get the default configuration.
+   *
+   * @return The {@link DefaultMobGriefingConfiguration}, will be null until the {@link
+   * FMLPreInitializationEvent} fires.
    */
   public DefaultMobGriefingConfiguration getDefaultMobGriefingConfiguration() {
     return configuration;

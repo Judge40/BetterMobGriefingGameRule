@@ -1,15 +1,15 @@
 /*
  * Better mobGriefing GameRule Copyright (c) 2016 Judge40
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
  * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or
  * substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
  * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -22,7 +22,9 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.command;
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandGameRule;
 import net.minecraft.command.CommandResultStats;
@@ -36,10 +38,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.GameRules;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * A custom command handler for the mob griefing game rule, it allows auto-completion and assignment
  * of {@link MobGriefingValue EntityMobGriefingValues}.
@@ -50,9 +48,9 @@ public class BetterMobGriefingCommand extends CommandGameRule {
    * Process the command and perform the relevant actions. The mob griefing game rule will either be
    * updated or the current value will be output, depending on the command entered. Other commands
    * will be routed to the default handling.
-   * 
+   *
    * @param commandSender The entity the command was sent by.
-   * @param commandWords A string array of words making up the command.
+   * @param commandWords  A string array of words making up the command.
    * @throws CommandException when the command entered is invalid.
    */
   @Override

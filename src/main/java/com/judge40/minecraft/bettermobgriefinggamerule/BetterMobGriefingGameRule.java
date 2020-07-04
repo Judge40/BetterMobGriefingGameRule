@@ -22,12 +22,12 @@ package com.judge40.minecraft.bettermobgriefinggamerule;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingEventHandler;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobGriefingCommand;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 import java.util.Objects;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.GameRules.BooleanValue;
 import net.minecraft.world.GameRules.RuleKey;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
@@ -90,18 +90,7 @@ public class BetterMobGriefingGameRule {
   @SubscribeEvent
   public void onFmlServerStartingEvent(FMLServerStartingEvent event) {
     LOGGER.debug("Server starting.");
-//    CommandHandler commandHandler = (CommandHandler) event.getServer().getCommandManager();
-//
-//    // Create a new game rule command handler and retrieve the original handler.
-//    BetterMobGriefingCommand newGameRuleHandler = new BetterMobGriefingCommand();
-//    ICommand originalGameRuleHandler =
-//        commandHandler.getCommands().get(newGameRuleHandler.getName());
-//
-//    // Remove the original game rule command handler from the command set and register the new
-//    // handler.
-//    Set<?> commandSet = ObfuscationReflectionHelper.getPrivateValue(CommandHandler.class, commandHandler, "field_71561_b");
-//    commandSet.remove(originalGameRuleHandler);
-//    commandHandler.registerCommand(newGameRuleHandler);
+    BetterMobGriefingCommand.register(event.getCommandDispatcher());
 
     // Add new game rules to world data
     World world = event.getServer().getWorld(DimensionType.OVERWORLD);

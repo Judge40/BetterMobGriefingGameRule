@@ -19,14 +19,72 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.common.command;
 
+import static net.minecraft.command.Commands.argument;
+import static net.minecraft.command.Commands.literal;
+
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.arguments.EntitySummonArgument;
+import net.minecraft.command.arguments.SuggestionProviders;
 import net.minecraft.command.impl.GameRuleCommand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
 
 /**
  * A custom command handler for the mob griefing game rule, it allows auto-completion and assignment
  * of {@link MobGriefingValue EntityMobGriefingValues}.
  */
 public class BetterMobGriefingCommand extends GameRuleCommand {
+
+  public static void register(CommandDispatcher<CommandSource> dispatcher) {
+    dispatcher.register(
+        literal("gamerule")
+            .then(
+                literal("betterMobGriefing")
+                    .requires(source -> source.hasPermissionLevel(2))
+                    .executes(BetterMobGriefingCommand::listMobGriefing)
+                    .then(
+                        argument("entity", EntitySummonArgument.entitySummon())
+                            .executes(BetterMobGriefingCommand::showMobGriefing)
+                            .suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
+                            .then(
+                                argument("value", new BetterMobGriefingArgument())
+                                    .executes(BetterMobGriefingCommand::setMobGriefing)
+                            )
+                    )
+            )
+    );
+  }
+
+  // TODO: Show all entity values.
+  private static int listMobGriefing(CommandContext<CommandSource> context) {
+    CommandSource source = context.getSource();
+    source.sendFeedback(new StringTextComponent("TODO: list all values"), true);
+    return 1;
+  }
+
+  // TODO: Show entity value.
+  private static int showMobGriefing(CommandContext<CommandSource> context) {
+    ResourceLocation entity = context.getArgument("entity", ResourceLocation.class);
+    String message = String.format("TODO: show %s value", entity.getPath());
+
+    CommandSource source = context.getSource();
+    source.sendFeedback(new StringTextComponent(message), true);
+    return 1;
+  }
+
+  // TODO: Set entity value.
+  private static int setMobGriefing(CommandContext<CommandSource> context) {
+    ResourceLocation entity = context.getArgument("entity", ResourceLocation.class);
+    MobGriefingValue mobGriefingValue = context.getArgument("value", MobGriefingValue.class);
+    String message = String.format("TODO: set %s to %s", entity.getPath(), mobGriefingValue.toExternalForm());
+
+    CommandSource source = context.getSource();
+    source.sendFeedback(new StringTextComponent(message), true);
+    return 1;
+  }
 
 //  /**
 //   * Process the command and perform the relevant actions. The mob griefing game rule will either be

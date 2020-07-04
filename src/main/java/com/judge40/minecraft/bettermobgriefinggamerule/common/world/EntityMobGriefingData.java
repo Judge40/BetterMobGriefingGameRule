@@ -30,12 +30,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import net.minecraft.entity.EntityList;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * A custom {@link WorldSavedData} which stores the entity specific {@link MobGriefingValue
@@ -58,25 +57,26 @@ public class EntityMobGriefingData extends WorldSavedData {
   /**
    * Retrieve the {@link EntityMobGriefingData} for the given {@link World}. If the {@code
    * EntityMobGriefingData} does not already exist then a new instance is created and added to the
-   * {@code World}'s {@link MapStorage}.
+   * {@code World}'s {@code MapStorage}.
    *
    * @param world The {@code World} to retrieve the {@code EntityMobGriefingData} for.
    * @return The {@code EntityMobGriefingData} for the {@code World}.
    */
   public static EntityMobGriefingData forWorld(World world) {
-    // Get the world data instance from the World's MapStorage.
-    MapStorage mapStorage = world.getMapStorage();
-    EntityMobGriefingData entityMobGriefingData = (EntityMobGriefingData) mapStorage
-        .getOrLoadData(EntityMobGriefingData.class, ModInfoConstants.ID);
-
-    // If the MapStorage did not contain a world data instance then create a new one and store it in
-    // the MapStorage.
-    if (entityMobGriefingData == null) {
-      entityMobGriefingData = new EntityMobGriefingData(ModInfoConstants.ID);
-      mapStorage.setData(ModInfoConstants.ID, entityMobGriefingData);
-    }
-
-    return entityMobGriefingData;
+//    // Get the world data instance from the World's MapStorage.
+//    MapStorage mapStorage = world.getMapStorage();
+//    EntityMobGriefingData entityMobGriefingData = (EntityMobGriefingData) mapStorage
+//        .getOrLoadData(EntityMobGriefingData.class, ModInfoConstants.ID);
+//
+//    // If the MapStorage did not contain a world data instance then create a new one and store it in
+//    // the MapStorage.
+//    if (entityMobGriefingData == null) {
+//      entityMobGriefingData = new EntityMobGriefingData(ModInfoConstants.ID);
+//      mapStorage.setData(ModInfoConstants.ID, entityMobGriefingData);
+//    }
+//
+//    return entityMobGriefingData;
+    return new EntityMobGriefingData(ModInfoConstants.ID);
   }
 
   /**
@@ -87,34 +87,34 @@ public class EntityMobGriefingData extends WorldSavedData {
    * @param configuration The {@code DefaultMobGriefingConfiguration} to get the values from.
    */
   public void populateFromConfiguration(DefaultMobGriefingConfiguration configuration) {
-    Set<String> registeredEntityNames = getRegisteredEntityNames();
-    Map<String, MobGriefingValue> configEntityNamesToMobGriefingValue =
-        configuration.getEntityMobGriefingValues();
-
-    // Set the MobGriefingValue for each entity in the configuration.
-    for (Entry<String, MobGriefingValue> entry : configEntityNamesToMobGriefingValue.entrySet()) {
-      String entityName = entry.getKey();
-
-      // Only set the MobGriefingValue if the entity is not already in the world data.
-      if (!registeredEntityNames.contains(entityName)) {
-        setMobGriefingValue(entityName, entry.getValue());
-      }
-    }
+//    Set<String> registeredEntityNames = getRegisteredEntityNames();
+//    Map<String, MobGriefingValue> configEntityNamesToMobGriefingValue =
+//        configuration.getEntityMobGriefingValues();
+//
+//    // Set the MobGriefingValue for each entity in the configuration.
+//    for (Entry<String, MobGriefingValue> entry : configEntityNamesToMobGriefingValue.entrySet()) {
+//      String entityName = entry.getKey();
+//
+//      // Only set the MobGriefingValue if the entity is not already in the world data.
+//      if (!registeredEntityNames.contains(entityName)) {
+//        setMobGriefingValue(entityName, entry.getValue());
+//      }
+//    }
   }
 
   @Override
-  public void readFromNBT(NBTTagCompound nbtTagCompound) {
+  public void read(CompoundNBT nbtTagCompound) {
     // Add the entity name and MobGriefingValue from each NBTTagCompound entry to the world data, if
     // the entity name is invalid then record it.
     Map<String, MobGriefingValue> invalidNameToMobGriefingValue = new HashMap<>();
 
-    for (Iterator<String> keys = nbtTagCompound.getKeySet().iterator(); keys.hasNext(); ) {
+    for (Iterator<String> keys = nbtTagCompound.keySet().iterator(); keys.hasNext(); ) {
       String entityName = keys.next();
       ResourceLocation entityType = new ResourceLocation(entityName);
       String externalForm = nbtTagCompound.getString(entityName);
       MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(externalForm);
 
-      if (EntityList.isRegistered(entityType)) {
+      if (ForgeRegistries.ENTITIES.containsKey(entityType)) {
         String entityPath = entityType.getPath();
         entityNamesToMobGriefingValue.put(entityType.getPath(), mobGriefingValue);
 
@@ -131,12 +131,11 @@ public class EntityMobGriefingData extends WorldSavedData {
     if (!invalidNameToMobGriefingValue.isEmpty()) {
       // Remove any invalid names from the nbtTagCompound.
       for (String invalidName : invalidNameToMobGriefingValue.keySet()) {
-        nbtTagCompound.removeTag(invalidName);
+        nbtTagCompound.remove(invalidName);
       }
 
-      for (ResourceLocation entityType : EntityList.getEntityNameList()) {
-        String translationName = EntityList.getTranslationName(entityType);
-        MobGriefingValue mobGriefingValue = invalidNameToMobGriefingValue.remove(translationName);
+      for (ResourceLocation entityType : ForgeRegistries.ENTITIES.getKeys()) {
+        MobGriefingValue mobGriefingValue = invalidNameToMobGriefingValue.remove(entityType.getPath());
 
         if (mobGriefingValue != null) {
           entityNamesToMobGriefingValue.put(entityType.getPath(), mobGriefingValue);
@@ -150,12 +149,12 @@ public class EntityMobGriefingData extends WorldSavedData {
   }
 
   @Override
-  public NBTTagCompound writeToNBT(NBTTagCompound nbtTagCompound) {
+  public CompoundNBT write(CompoundNBT nbtTagCompound) {
     // Add the entity name and MobGriefingValue from each world data entry to the NBTTagCompound.
     for (Entry<String, MobGriefingValue> entry : entityNamesToMobGriefingValue.entrySet()) {
       MobGriefingValue mobGriefingValue = entry.getValue();
       String externalForm = mobGriefingValue.toExternalForm();
-      nbtTagCompound.setString(entry.getKey(), externalForm);
+      nbtTagCompound.putString(entry.getKey(), externalForm);
     }
 
     return nbtTagCompound;

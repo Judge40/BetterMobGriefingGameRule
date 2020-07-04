@@ -19,57 +19,46 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.ConfigurationConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
-import mockit.Expectations;
-import mockit.Mocked;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.fml.client.config.GuiConfig;
-import net.minecraftforge.fml.common.FMLModContainer;
-import net.minecraftforge.fml.common.Loader;
-import org.junit.Test;
-
 /**
  * The unit tests for {@link DefaultMobGriefingConfigGui}.
  */
 public class DefaultMobGriefingConfigGuiTest {
 
-  /**
-   * Test that the constructor retrieves the expected configuration category and builds the title
-   * correctly.
-   */
-  @Test
-  public void testConstructor_configurationElementsAndTitleRetrieved(
-      @Mocked DefaultMobGriefingConfiguration configuration, @Mocked FMLModContainer modContainer,
-      @Mocked Loader loader) {
-    // Set up test data.
-    BetterMobGriefingGameRule entryPoint = new BetterMobGriefingGameRule();
-
-    // Record expectations.
-    new Expectations(entryPoint, GuiConfig.class) {
-      {
-        BetterMobGriefingGameRule.getInstance();
-        result = entryPoint;
-
-        entryPoint.getDefaultMobGriefingConfiguration();
-        result = configuration;
-
-        configuration.getCategory(ConfigurationConstants.GLOBAL_RULE_CATEGORY);
-        result = new ConfigCategory("globalCategoryName");
-
-        configuration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
-        result = new ConfigCategory("entityCategoryName");
-
-        configuration.toString();
-        result = "parent-folder/.minecraft/config-folder/config-file.cfg";
-
-        GuiConfig.getAbridgedConfigPath("parent-folder/.minecraft/config-folder/config-file.cfg");
-        result = "/.minecraft/config-folder/config-file.cfg";
-      }
-    };
-
-    // Call the constructor under test.
-    new DefaultMobGriefingConfigGui(null);
-  }
+//  /**
+//   * Test that the constructor retrieves the expected configuration category and builds the title
+//   * correctly.
+//   */
+//  @Test
+//  public void testConstructor_configurationElementsAndTitleRetrieved(
+//      @Mocked DefaultMobGriefingConfiguration configuration, @Mocked FMLModContainer modContainer,
+//      @Mocked Loader loader) {
+//    // Set up test data.
+//    BetterMobGriefingGameRule entryPoint = new BetterMobGriefingGameRule();
+//
+//    // Record expectations.
+//    new Expectations(entryPoint, GuiConfig.class) {
+//      {
+//        BetterMobGriefingGameRule.getInstance();
+//        result = entryPoint;
+//
+//        entryPoint.getDefaultMobGriefingConfiguration();
+//        result = configuration;
+//
+//        configuration.getCategory(ConfigurationConstants.GLOBAL_RULE_CATEGORY);
+//        result = new ConfigCategory("globalCategoryName");
+//
+//        configuration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
+//        result = new ConfigCategory("entityCategoryName");
+//
+//        configuration.toString();
+//        result = "parent-folder/.minecraft/config-folder/config-file.cfg";
+//
+//        GuiConfig.getAbridgedConfigPath("parent-folder/.minecraft/config-folder/config-file.cfg");
+//        result = "/.minecraft/config-folder/config-file.cfg";
+//      }
+//    };
+//
+//    // Call the constructor under test.
+//    new DefaultMobGriefingConfigGui(null);
+//  }
 }

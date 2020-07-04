@@ -23,25 +23,14 @@ import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 
 /**
- * A custom {@link Configuration} which adds convenience methods for retrieving default mob griefing
+ * A custom {@code Configuration} which adds convenience methods for retrieving default mob griefing
  * configurations.
  */
-public class DefaultMobGriefingConfiguration extends Configuration {
+public class DefaultMobGriefingConfiguration {
 
   private MobGriefingValue globalMobGriefingValue;
 
@@ -54,14 +43,14 @@ public class DefaultMobGriefingConfiguration extends Configuration {
    */
   public DefaultMobGriefingConfiguration(File file) {
     // Load the configuration file, it will be created if it does not exist.
-    super(file);
-    load();
-
-    // Set configuration category language keys
-    setCategoryLanguageKey(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
-        ConfigurationConstants.GLOBAL_RULE_KEY);
-    setCategoryLanguageKey(ConfigurationConstants.ENTITY_RULES_CATEGORY,
-        ConfigurationConstants.ENTITY_RULES_KEY);
+//    super(file);
+//    load();
+//
+//    // Set configuration category language keys
+//    setCategoryLanguageKey(ConfigurationConstants.GLOBAL_RULE_CATEGORY,
+//        ConfigurationConstants.GLOBAL_RULE_KEY);
+//    setCategoryLanguageKey(ConfigurationConstants.ENTITY_RULES_CATEGORY,
+//        ConfigurationConstants.ENTITY_RULES_KEY);
 
     // Synchronize the configuration values.
     synchronize();
@@ -76,10 +65,10 @@ public class DefaultMobGriefingConfiguration extends Configuration {
     synchronizeGlobalValue();
     synchronizeEntityValues();
 
-    // Save any changes made to the configuration.
-    if (hasChanged()) {
-      save();
-    }
+//    // Save any changes made to the configuration.
+//    if (hasChanged()) {
+//      save();
+//    }
   }
 
   /**
@@ -102,84 +91,84 @@ public class DefaultMobGriefingConfiguration extends Configuration {
    * property values which are missing or invalid will be populated with their default values.
    */
   private void synchronizeEntityValues() {
-    // Get the names of all configured entities.
-    ConfigCategory category = getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
-    Set<String> invalidEntityNames = new HashSet<>();
-    Set<ResourceLocation> entityTypes = new HashSet<>();
-
-    // Get the entity type for each entity in the config, if the entity is not registered record it.
-    Map<String, Property> entityNamesToPropertyValue = new HashMap<>();
-
-    for (Iterator<String> entityNames = category.keySet().iterator(); entityNames.hasNext();) {
-      String entityName = entityNames.next();
-      ResourceLocation entityType = new ResourceLocation(entityName);
-
-      if (EntityList.isRegistered(entityType)) {
-        entityTypes.add(entityType);
-
-        // Update the configuration key if it does not match the resource path.
-        String entityPath = entityType.getPath();
-
-        if (!entityName.equals(entityPath)) {
-          Property entityPropertyValue = category.get(entityName);
-          entityPropertyValue.setName(entityPath);
-          entityPropertyValue.setLanguageKey(entityPath);
-
-          entityNamesToPropertyValue.put(entityPath, entityPropertyValue);
-          entityNames.remove();
-        }
-      } else {
-        invalidEntityNames.add(entityName);
-      }
-    }
-
-    // If there are invalid entity names, attempt to match them based on the older translation name.
-    if (!invalidEntityNames.isEmpty()) {
-      for (ResourceLocation entityType : EntityList.getEntityNameList()) {
-        String translationName = EntityList.getTranslationName(entityType);
-        boolean removed = invalidEntityNames.remove(translationName);
-
-        if (removed) {
-          Property entityPropertyValue = category.remove(translationName);
-          String entityName = entityType.getPath();
-          entityPropertyValue.setName(entityName);
-          entityPropertyValue.setLanguageKey(entityName);
-
-          entityNamesToPropertyValue.put(entityType.getPath(), entityPropertyValue);
-          entityTypes.add(entityType);
-        }
-
-        if (invalidEntityNames.isEmpty()) {
-          break;
-        }
-      }
-    }
-
-    category.putAll(entityNamesToPropertyValue);
-
-    // Add all entities supported by default, this will cover newly supported entities and any
-    // entities which have been removed from the configuration.
-    for (Class<? extends EntityLiving> entityClass : ConfigurationConstants.ENTITY_CLASSES) {
-      ResourceLocation entityType = EntityList.getKey(entityClass);
-      entityTypes.add(entityType);
-    }
-
-    // Get the property value for each entity.
-    entityNamesToMobGriefingValue = new HashMap<>();
-    List<String> validValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
-        MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
-
-    for (ResourceLocation entityType : entityTypes) {
-      Class<? extends Entity> entityClass = EntityList.getClass(entityType);
-
-      if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
-        String entityName = entityType.getPath();
-        String entityPropertyValue = getString(ConfigurationConstants.ENTITY_RULES_CATEGORY,
-            entityName, MobGriefingValue.INHERIT.toExternalForm(), validValues);
-        entityNamesToMobGriefingValue.put(entityName,
-            MobGriefingValue.toEnumeration(entityPropertyValue));
-      }
-    }
+//    // Get the names of all configured entities.
+//    ConfigCategory category = getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY);
+//    Set<String> invalidEntityNames = new HashSet<>();
+//    Set<ResourceLocation> entityTypes = new HashSet<>();
+//
+//    // Get the entity type for each entity in the config, if the entity is not registered record it.
+//    Map<String, Property> entityNamesToPropertyValue = new HashMap<>();
+//
+//    for (Iterator<String> entityNames = category.keySet().iterator(); entityNames.hasNext();) {
+//      String entityName = entityNames.next();
+//      ResourceLocation entityType = new ResourceLocation(entityName);
+//
+//      if (EntityList.isRegistered(entityType)) {
+//        entityTypes.add(entityType);
+//
+//        // Update the configuration key if it does not match the resource path.
+//        String entityPath = entityType.getPath();
+//
+//        if (!entityName.equals(entityPath)) {
+//          Property entityPropertyValue = category.get(entityName);
+//          entityPropertyValue.setName(entityPath);
+//          entityPropertyValue.setLanguageKey(entityPath);
+//
+//          entityNamesToPropertyValue.put(entityPath, entityPropertyValue);
+//          entityNames.remove();
+//        }
+//      } else {
+//        invalidEntityNames.add(entityName);
+//      }
+//    }
+//
+//    // If there are invalid entity names, attempt to match them based on the older translation name.
+//    if (!invalidEntityNames.isEmpty()) {
+//      for (ResourceLocation entityType : EntityList.getEntityNameList()) {
+//        String translationName = EntityList.getTranslationName(entityType);
+//        boolean removed = invalidEntityNames.remove(translationName);
+//
+//        if (removed) {
+//          Property entityPropertyValue = category.remove(translationName);
+//          String entityName = entityType.getPath();
+//          entityPropertyValue.setName(entityName);
+//          entityPropertyValue.setLanguageKey(entityName);
+//
+//          entityNamesToPropertyValue.put(entityType.getPath(), entityPropertyValue);
+//          entityTypes.add(entityType);
+//        }
+//
+//        if (invalidEntityNames.isEmpty()) {
+//          break;
+//        }
+//      }
+//    }
+//
+//    category.putAll(entityNamesToPropertyValue);
+//
+//    // Add all entities supported by default, this will cover newly supported entities and any
+//    // entities which have been removed from the configuration.
+//    for (Class<? extends EntityLiving> entityClass : ConfigurationConstants.ENTITY_CLASSES) {
+//      ResourceLocation entityType = EntityList.getKey(entityClass);
+//      entityTypes.add(entityType);
+//    }
+//
+//    // Get the property value for each entity.
+//    entityNamesToMobGriefingValue = new HashMap<>();
+//    List<String> validValues = Arrays.asList(MobGriefingValue.TRUE.toExternalForm(),
+//        MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
+//
+//    for (ResourceLocation entityType : entityTypes) {
+//      Class<? extends Entity> entityClass = EntityList.getClass(entityType);
+//
+//      if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
+//        String entityName = entityType.getPath();
+//        String entityPropertyValue = getString(ConfigurationConstants.ENTITY_RULES_CATEGORY,
+//            entityName, MobGriefingValue.INHERIT.toExternalForm(), validValues);
+//        entityNamesToMobGriefingValue.put(entityName,
+//            MobGriefingValue.toEnumeration(entityPropertyValue));
+//      }
+//    }
   }
 
   /**
@@ -194,15 +183,15 @@ public class DefaultMobGriefingConfiguration extends Configuration {
    */
   private String getString(String categoryName, String propertyName, String defaultValue,
       List<String> validValues) {
-    String propertyValue = getString(propertyName, categoryName, defaultValue,
-        String.format("[valid values: %s]", validValues),
-        validValues.toArray(new String[validValues.size()]));
+//    String propertyValue = getString(propertyName, categoryName, defaultValue,
+//        String.format("[valid values: %s]", validValues),
+//        validValues.toArray(new String[validValues.size()]));
+//
+//    if (!validValues.contains(propertyValue)) {
+//      propertyValue = defaultValue;
+//    }
 
-    if (!validValues.contains(propertyValue)) {
-      propertyValue = defaultValue;
-    }
-
-    return propertyValue;
+    return defaultValue;
   }
 
   /**

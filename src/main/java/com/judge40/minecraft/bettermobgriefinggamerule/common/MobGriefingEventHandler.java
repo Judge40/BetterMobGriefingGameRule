@@ -22,9 +22,9 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common;
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * An event handler for all mob griefing events.

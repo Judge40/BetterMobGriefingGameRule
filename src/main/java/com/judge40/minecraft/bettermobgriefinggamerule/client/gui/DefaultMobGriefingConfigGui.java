@@ -21,28 +21,27 @@ package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.ConfigurationConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.common.config.ConfigElement;
-import net.minecraftforge.fml.client.config.GuiConfig;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
 /**
  * The configuration GUI for setting the default value of mob griefing rules.
  */
-public class DefaultMobGriefingConfigGui extends GuiConfig {
+public class DefaultMobGriefingConfigGui extends Screen {
 
   /**
    * Constructor which initializes the configuration GUI with the configuration elements and title.
    *
    * @param parent The configuration GUI's parent screen.
    */
-  public DefaultMobGriefingConfigGui(GuiScreen parent) {
-    super(parent, getConfigurationCategories(), ModInfoConstants.ID, false, false,
-        getAbridgedConfigPath(getConfiguration().toString()));
+  public DefaultMobGriefingConfigGui(Screen parent) {
+    super(new StringTextComponent(ModInfoConstants.DISPLAY_NAME));
+//    super(parent, getConfigurationCategories(), ModInfoConstants.ID, false, false,
+//        getAbridgedConfigPath(getConfiguration().toString()));
   }
 
   /**
@@ -62,13 +61,14 @@ public class DefaultMobGriefingConfigGui extends GuiConfig {
    * @return The configuration categories.
    */
   private static List<IConfigElement> getConfigurationCategories() {
-    DefaultMobGriefingConfiguration configuration = getConfiguration();
-    ConfigElement globalCategory =
-        new ConfigElement(configuration.getCategory(ConfigurationConstants.GLOBAL_RULE_CATEGORY));
-    ConfigElement entityCategory =
-        new ConfigElement(configuration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY));
-    List<IConfigElement> configurationCategories = Arrays.asList(globalCategory, entityCategory);
-
-    return configurationCategories;
+//    DefaultMobGriefingConfiguration configuration = getConfiguration();
+//    DummyConfigElement globalCategory =
+//        new ConfigElement(configuration.getCategory(ConfigurationConstants.GLOBAL_RULE_CATEGORY));
+//    ConfigElement entityCategory =
+//        new ConfigElement(configuration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY));
+//    List<IConfigElement> configurationCategories = Arrays.asList(globalCategory, entityCategory);
+//
+//    return configurationCategories;
+    return Collections.emptyList();
   }
 }

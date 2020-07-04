@@ -22,23 +22,23 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.configuration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.boss.EntityWither;
-import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.monster.EntityEvoker;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntityHusk;
-import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.monster.EntitySilverfish;
-import net.minecraft.entity.monster.EntitySnowman;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.monster.EntityZombieVillager;
-import net.minecraft.entity.passive.EntityRabbit;
-import net.minecraft.entity.passive.EntitySheep;
-import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.boss.WitherEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.monster.BlazeEntity;
+import net.minecraft.entity.monster.CreeperEntity;
+import net.minecraft.entity.monster.EndermanEntity;
+import net.minecraft.entity.monster.EvokerEntity;
+import net.minecraft.entity.monster.GhastEntity;
+import net.minecraft.entity.monster.HuskEntity;
+import net.minecraft.entity.monster.SilverfishEntity;
+import net.minecraft.entity.monster.ZombieEntity;
+import net.minecraft.entity.monster.ZombiePigmanEntity;
+import net.minecraft.entity.monster.ZombieVillagerEntity;
+import net.minecraft.entity.passive.RabbitEntity;
+import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.entity.passive.SnowGolemEntity;
 
 /**
  * The constants for mob griefing default value configuration information.
@@ -55,10 +55,10 @@ public class ConfigurationConstants {
   public static final String ENTITY_RULES_CATEGORY = "defaultentityrules";
 
   // The entity classes with configuration support available by default.
-  public static final List<Class<? extends EntityLiving>> ENTITY_CLASSES =
-      Collections.unmodifiableList(Arrays.asList(EntityBlaze.class, EntityCreeper.class,
-          EntityDragon.class, EntityEnderman.class, EntityEvoker.class, EntityGhast.class,
-          EntityHusk.class, EntityPigZombie.class, EntityRabbit.class, EntitySheep.class,
-          EntitySilverfish.class, EntitySnowman.class, EntityVillager.class, EntityWither.class,
-          EntityZombie.class, EntityZombieVillager.class));
+  public static final List<Class<? extends LivingEntity>> ENTITY_CLASSES =
+      Collections.unmodifiableList(Arrays.asList(BlazeEntity.class, CreeperEntity.class,
+          EnderDragonEntity.class, EndermanEntity.class, EvokerEntity.class, GhastEntity.class,
+          HuskEntity.class, ZombiePigmanEntity.class, RabbitEntity.class, SheepEntity.class,
+          SilverfishEntity.class, SnowGolemEntity.class, VillagerEntity.class, WitherEntity.class,
+          ZombieEntity.class, ZombieVillagerEntity.class));
 }

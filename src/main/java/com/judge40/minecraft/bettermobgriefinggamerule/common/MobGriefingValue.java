@@ -25,7 +25,9 @@ import java.util.Locale;
  * An enumeration representing the valid values for the mobGriefing game rules.
  */
 public enum MobGriefingValue {
-  FALSE, INHERIT, TRUE;
+  FALSE,
+  TRUE,
+  INHERIT;
 
   /**
    * Convert an enumeration's external form to the enumeration.

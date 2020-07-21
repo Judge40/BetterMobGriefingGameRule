@@ -20,11 +20,14 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.common;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHelper;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.config.ModConfig.ModConfigEvent;
 
 /**
  * An event handler for all mob griefing events.
@@ -34,12 +37,14 @@ public class MobGriefingEventHandler {
   /**
    * Synchronize the configuration changes when the configuration is changed.
    *
-   * @param configChangedEvent The OnConfigChangedEvent.
+   * @param event The ModConfigEvent.
    */
   @SubscribeEvent
-  public void onConfigChanged(OnConfigChangedEvent configChangedEvent) {
-    if (configChangedEvent.getModID().equals(ModInfoConstants.ID)) {
-      BetterMobGriefingGameRule.getInstance().getDefaultMobGriefingConfiguration().synchronize();
+  public void onModConfigEvent(ModConfigEvent event) {
+    ModConfig config = event.getConfig();
+
+    if (config.getSpec() == ConfigHolder.COMMON_SPEC) {
+      ConfigHelper.synchronizeCommon();
     }
   }
 

@@ -21,7 +21,7 @@ package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
 import java.util.Collections;
 import java.util.List;
 import net.minecraft.client.gui.screen.Screen;
@@ -42,17 +42,6 @@ public class DefaultMobGriefingConfigGui extends Screen {
     super(new StringTextComponent(ModInfoConstants.DISPLAY_NAME));
 //    super(parent, getConfigurationCategories(), ModInfoConstants.ID, false, false,
 //        getAbridgedConfigPath(getConfiguration().toString()));
-  }
-
-  /**
-   * Get the {@link DefaultMobGriefingConfiguration} from the mod's {@link
-   * BetterMobGriefingGameRule} instance.
-   *
-   * @return The {@code DefaultMobGriefingConfiguration}.
-   */
-  private static DefaultMobGriefingConfiguration getConfiguration() {
-    BetterMobGriefingGameRule entryPoint = BetterMobGriefingGameRule.getInstance();
-    return entryPoint.getDefaultMobGriefingConfiguration();
   }
 
   /**

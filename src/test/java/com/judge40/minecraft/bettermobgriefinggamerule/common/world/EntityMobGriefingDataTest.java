@@ -20,13 +20,7 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.common.world;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import mockit.Expectations;
-import mockit.Mocked;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import org.hamcrest.CoreMatchers;

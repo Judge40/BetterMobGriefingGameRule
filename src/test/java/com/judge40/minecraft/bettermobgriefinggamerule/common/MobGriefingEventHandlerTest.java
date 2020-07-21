@@ -19,20 +19,9 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.common;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
-import mockit.Expectations;
 import mockit.Mocked;
-import mockit.Verifications;
-import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.EntityMobGriefingEvent;
-import net.minecraftforge.eventbus.api.Event.Result;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  * The unit tests for {@link MobGriefingEventHandler}.

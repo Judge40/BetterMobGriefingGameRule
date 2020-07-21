@@ -21,8 +21,10 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.world;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -74,27 +76,22 @@ public class EntityMobGriefingData extends WorldSavedData {
   }
 
   /**
-   * Populate the {@link EntityMobGriefingData} with the {@link DefaultMobGriefingConfiguration}'s
-   * values. Only entities which are not already in the {@code EntityMobGriefingData} will be
-   * populated.
-   *
-   * @param configuration The {@code DefaultMobGriefingConfiguration} to get the values from.
+   * Populate the {@link EntityMobGriefingData} with the {@link Config}'s values. Only entities
+   * which are not already in the {@code EntityMobGriefingData} will be populated.
    */
-  public void populateFromConfiguration(DefaultMobGriefingConfiguration configuration) {
-//    Set<ResourceLocation> registeredEntityIds = entityIdsToMobGriefingValue.keySet();
-//    Map<String, MobGriefingValue> configEntityNamesToMobGriefingValue = configuration
-//        .getEntityMobGriefingValues();
-//
-//    // Set the MobGriefingValue for each entity in the configuration.
-//    for (Entry<String, MobGriefingValue> entry : configEntityNamesToMobGriefingValue.entrySet()) {
-//      String entityName = entry.getKey();
-//      ResourceLocation entityId = new ResourceLocation(entityName);
-//
-//      // Only set the MobGriefingValue if the entity is not already in the world data.
-//      if (!registeredEntityIds.contains(entityId)) {
-//        setMobGriefingValue(entityId, entry.getValue());
-//      }
-//    }
+  public void populateFromConfiguration() {
+    Map<ResourceLocation, MobGriefingValue> configEntityIdsToMobGriefingValue = Config.entityIdsToDefaultEntityValue;
+
+    // Set the MobGriefingValue for each entity in the configuration.
+    for (Entry<ResourceLocation, MobGriefingValue> entry : configEntityIdsToMobGriefingValue
+        .entrySet()) {
+      ResourceLocation entityId = entry.getKey();
+
+      // Only set the MobGriefingValue if the entity is not already in the world data.
+      if (!entityIdsToMobGriefingValue.containsKey(entityId)) {
+        setMobGriefingValue(entityId, entry.getValue());
+      }
+    }
   }
 
   @Override

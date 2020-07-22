@@ -21,6 +21,7 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,13 +34,13 @@ import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 
-public class CommonConfig {
+class CommonConfig {
 
   // The constants for the localizable configuration UI message keys.
-  private static final String GLOBAL_RULE_TITLE = "bettermobgriefinggamerule.config.defaultGlobalRule.title";
-  private static final String GLOBAL_RULE_DESCRIPTION = "bettermobgriefinggamerule.config.defaultGlobalRule.description";
-  private static final String ENTITY_RULES_TITLE = "bettermobgriefinggamerule.config.defaultEntityRules.title";
-  private static final String ENTITY_RULES_DESCRIPTION = "bettermobgriefinggamerule.config.defaultEntityRules.description";
+  private static final String GLOBAL_RULE_DESCRIPTION =
+      ModInfoConstants.ID + ".config.defaultGlobalRule.description";
+  private static final String ENTITY_RULES_DESCRIPTION =
+      ModInfoConstants.ID + ".config.defaultEntityRules.description";
 
   private static final String GLOBAL_RULE_CATEGORY = "global";
   private static final String ENTITY_RULES_CATEGORY = "entity";
@@ -59,8 +60,7 @@ public class CommonConfig {
   CommonConfig(Builder configBuilder) {
     configBuilder
         .comment("Default Global Rule")
-        // TODO: Enable translation when/if top-level comments can be translated.
-        // .translation(GLOBAL_RULE_TITLE)
+        // TODO: Use translation for title when/if top-level comments can be translated.
         .push(GLOBAL_RULE_CATEGORY);
 
     defaultGlobalBooleanValue = configBuilder
@@ -73,8 +73,7 @@ public class CommonConfig {
 
     configBuilder
         .comment("Default Entity Rules")
-        // TODO: Enable translation when/if top-level comments can be translated.
-        // .translation(ENTITY_RULES_TITLE)
+        // TODO: Use translation for title when/if top-level comments can be translated.
         .push(ENTITY_RULES_CATEGORY)
         .comment(
             "The default entity specific mobGriefing rules which will be used when creating a new world or opening an existing world with no existing rule for the entity.")

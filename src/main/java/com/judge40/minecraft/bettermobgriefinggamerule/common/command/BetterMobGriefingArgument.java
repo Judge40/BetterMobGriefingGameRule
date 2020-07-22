@@ -20,11 +20,12 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.common.command;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.util.Arrays;
@@ -32,23 +33,26 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class BetterMobGriefingArgument implements ArgumentType<MobGriefingValue> {
+
+  private static final DynamicCommandExceptionType INVALID_VALUE = new DynamicCommandExceptionType(
+      (input) -> new TranslationTextComponent(
+          ModInfoConstants.ID + ".parsing.mobGriefingValue.invalid", input));
 
   private static final Collection<String> EXAMPLES = Arrays.stream(MobGriefingValue.values())
       .map(MobGriefingValue::toString).collect(Collectors.toList());
 
   @Override
   public MobGriefingValue parse(StringReader reader) throws CommandSyntaxException {
+    int cursor = reader.getCursor();
     String value = reader.readString();
     try {
       return MobGriefingValue.toEnumeration(value);
     } catch (IllegalArgumentException e) {
-      // TODO: Switch to dynamic exception type with translation, see entity argument.
-      SimpleCommandExceptionType exceptionType = new SimpleCommandExceptionType(
-          new StringTextComponent("Invalid value"));
-      throw exceptionType.createWithContext(reader);
+      reader.setCursor(cursor);
+      throw INVALID_VALUE.createWithContext(reader, value);
     }
   }
 

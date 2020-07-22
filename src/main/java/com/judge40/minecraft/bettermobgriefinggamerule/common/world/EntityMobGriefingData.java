@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
@@ -40,35 +39,25 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * A custom {@link WorldSavedData} which stores the entity specific {@link MobGriefingValue
- * MobGriefingValues} for a {@link World}.
+ * MobGriefingValues} for a {@link MinecraftServer}.
  */
 public class EntityMobGriefingData extends WorldSavedData {
 
   private SortedMap<ResourceLocation, MobGriefingValue> entityIdsToMobGriefingValue = new TreeMap<>(
       Comparator.comparing(ResourceLocation::toString));
 
-  /**
-   * {@link EntityMobGriefingData#forWorld(World)} should be used to construct an instance, instead
-   * of this constructor.
-   */
-  public EntityMobGriefingData() {
+  private EntityMobGriefingData() {
     super(ModInfoConstants.ID);
   }
 
   /**
-   * Retrieve the {@link EntityMobGriefingData} for the given {@link World}. If the {@code
+   * Retrieve the {@link EntityMobGriefingData} for the given {@link MinecraftServer}. If the {@code
    * EntityMobGriefingData} does not already exist then a new instance is created and added to the
-   * {@code World}'s {@code MapStorage}.
+   * {@code MinecraftServer}'s Overworld {@code MapStorage}.
    *
-   * @param world The {@code World} to retrieve the {@code EntityMobGriefingData} for.
-   * @return The {@code EntityMobGriefingData} for the {@code World}.
-   * @deprecated Use {@link #forServer(MinecraftServer)}.
+   * @param server The {@code MinecraftServer} to retrieve the {@code EntityMobGriefingData} for.
+   * @return The {@code EntityMobGriefingData} for the {@code MinecraftServer}.
    */
-  @Deprecated
-  public static EntityMobGriefingData forWorld(World world) {
-    return forServer(world.getServer());
-  }
-
   public static EntityMobGriefingData forServer(MinecraftServer server) {
     ServerWorld world = server.getWorld(DimensionType.OVERWORLD);
     DimensionSavedDataManager savedData = world.getSavedData();
@@ -119,19 +108,13 @@ public class EntityMobGriefingData extends WorldSavedData {
   }
 
   /**
-   * Get the {@link MobGriefingValue} for the given entity name.
+   * Get the {@link MobGriefingValue} for the given entity ID.
    *
-   * @param entityName The name of the entity to get the {@code MobGriefingValue} of.
-   * @return The {@code MobGriefingValue}.
-   * @deprecated Use {@link #getMobGriefingValue(ResourceLocation)}.
+   * @param entityId The id of the entity to get the {@code MobGriefingValue} of.
+   * @return The {@code MobGriefingValue}, defaults to {@link MobGriefingValue#INHERIT}.
    */
-  @Deprecated
-  public MobGriefingValue getMobGriefingValue(String entityName) {
-    return entityIdsToMobGriefingValue.get(new ResourceLocation(entityName));
-  }
-
   public MobGriefingValue getMobGriefingValue(ResourceLocation entityId) {
-    return entityIdsToMobGriefingValue.get(entityId);
+    return entityIdsToMobGriefingValue.getOrDefault(entityId, MobGriefingValue.INHERIT);
   }
 
   /**
@@ -149,6 +132,11 @@ public class EntityMobGriefingData extends WorldSavedData {
     }
   }
 
+  /**
+   * Get the number of entities with values set.
+   *
+   * @return The number of entities.
+   */
   public int size() {
     return entityIdsToMobGriefingValue.size();
   }

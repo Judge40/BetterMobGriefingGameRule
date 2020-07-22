@@ -26,23 +26,20 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobG
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
-import java.util.Objects;
 import net.minecraft.entity.Entity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.GameRules.BooleanValue;
-import net.minecraft.world.GameRules.RuleKey;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.config.ModConfig.ModConfigEvent;
 import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -68,28 +65,6 @@ public class BetterMobGriefingGameRule {
   }
 
   /**
-   * Get the instance of {@link BetterMobGriefingGameRule} from the {@code Loader}'s mod list.
-   *
-   * @return The instance of the {@code BetterMobGriefingGameRule} mod.
-   */
-  public static BetterMobGriefingGameRule getInstance() {
-//    Map<String, ModContainer> modList = Loader.instance().getIndexedModList();
-//    FMLModContainer modContainer = (FMLModContainer) modList.get(ModInfoConstants.ID);
-//
-//    return (BetterMobGriefingGameRule) modContainer.getMod();
-    return new BetterMobGriefingGameRule();
-  }
-
-  @SubscribeEvent
-  public void onModConfigEvent(ModConfigEvent event) {
-    ModConfig config = event.getConfig();
-
-    if (config.getSpec() == ConfigHolder.COMMON_SPEC) {
-      //DefaultMobGriefingConfiguration.bake();
-    }
-  }
-
-  /**
    * On server starting add new mobGriefing game rules.
    *
    * @param event The FMLServerStartingEvent.
@@ -104,13 +79,13 @@ public class BetterMobGriefingGameRule {
 
     // Set the global mob griefing game rule value if this is a new world.
     if (world.getGameTime() == 0) {
-      LOGGER.debug("New world detected, creating game rules.");
+      LOGGER.debug("New world detected, overwriting global mobGriefing rule.");
 
       boolean globalMobGriefingValue = Config.defaultGlobalValue;
-      BooleanValue mobGriefing = world.getGameRules().get(new RuleKey<BooleanValue>(GLOBAL_RULE));
+      BooleanValue mobGriefing = world.getGameRules().get(GameRules.MOB_GRIEFING);
       mobGriefing.set(globalMobGriefingValue, event.getServer());
     } else {
-      LOGGER.debug("Existing world detected, no game rules created.");
+      LOGGER.debug("Existing world detected, global mobGriefing rule not overwritten.");
     }
 
     // Add the entity mob griefing game rules.
@@ -127,24 +102,23 @@ public class BetterMobGriefingGameRule {
    */
   public static boolean isMobGriefingEnabled(Entity entity) {
     Boolean mobGriefingEnabled = null;
-    ResourceLocation entityType = ForgeRegistries.ENTITIES.getKey(entity.getType());
+    ResourceLocation entityId = entity.getType().getRegistryName();
+    MinecraftServer entityServer = entity.getServer();
 
     // If the entity type was found then try and get the entity's value from the world data.
-    if (entityType != null) {
-      String entityName = entityType.getPath();
+    if (entityId != null && entityServer != null) {
+      EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forServer(entityServer);
+      MobGriefingValue mobGriefingValue = entityMobGriefingData.getMobGriefingValue(entityId);
 
-      EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forWorld(entity.world);
-      MobGriefingValue mobGriefingValue = entityMobGriefingData.getMobGriefingValue(entityName);
-
-      if (Objects.equals(mobGriefingValue, MobGriefingValue.TRUE)
-          || Objects.equals(mobGriefingValue, MobGriefingValue.FALSE)) {
-        mobGriefingEnabled = Boolean.valueOf(mobGriefingValue.toExternalForm());
+      if (!mobGriefingValue.equals(MobGriefingValue.INHERIT)) {
+        mobGriefingEnabled = Boolean.valueOf(mobGriefingValue.toString());
       }
     }
 
     // If no entity rule was found then default to the global value.
     if (mobGriefingEnabled == null) {
-      mobGriefingEnabled = entity.world.getGameRules().getBoolean(new RuleKey<>(GLOBAL_RULE));
+      World world = entity.getEntityWorld();
+      mobGriefingEnabled = world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
     }
 
     return mobGriefingEnabled;

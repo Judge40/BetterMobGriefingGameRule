@@ -36,7 +36,8 @@ import net.minecraft.util.text.StringTextComponent;
 
 public class BetterMobGriefingArgument implements ArgumentType<MobGriefingValue> {
 
-  private static final Collection<String> EXAMPLES = Arrays.stream(MobGriefingValue.values()).map(MobGriefingValue::toExternalForm).collect(Collectors.toList());
+  private static final Collection<String> EXAMPLES = Arrays.stream(MobGriefingValue.values())
+      .map(MobGriefingValue::toString).collect(Collectors.toList());
 
   @Override
   public MobGriefingValue parse(StringReader reader) throws CommandSyntaxException {
@@ -45,17 +46,19 @@ public class BetterMobGriefingArgument implements ArgumentType<MobGriefingValue>
       return MobGriefingValue.toEnumeration(value);
     } catch (IllegalArgumentException e) {
       // TODO: Switch to dynamic exception type with translation, see entity argument.
-      SimpleCommandExceptionType exceptionType = new SimpleCommandExceptionType(new StringTextComponent("Invalid value"));
+      SimpleCommandExceptionType exceptionType = new SimpleCommandExceptionType(
+          new StringTextComponent("Invalid value"));
       throw exceptionType.createWithContext(reader);
     }
   }
 
   @Override
-  public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+  public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context,
+      SuggestionsBuilder builder) {
     String remaining = builder.getRemaining().toLowerCase(Locale.ENGLISH);
 
     for (MobGriefingValue value : MobGriefingValue.values()) {
-      String externalFrom = value.toExternalForm();
+      String externalFrom = value.toString();
 
       if (externalFrom.startsWith(remaining)) {
         builder.suggest(externalFrom);

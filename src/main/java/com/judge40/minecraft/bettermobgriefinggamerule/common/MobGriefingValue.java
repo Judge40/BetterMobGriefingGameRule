@@ -41,16 +41,10 @@ public enum MobGriefingValue {
   }
 
   /**
-   * Converts the enumeration to its external form, which is its name as lower case.
+   * Converts the enumeration to its string representation, which is its name as lower case.
    *
-   * @return The enumeration's external form.
-   * @deprecated use {@link #toString()}
+   * @return The enumeration's string representation.
    */
-  @Deprecated
-  public String toExternalForm() {
-    return toString();
-  }
-
   @Override
   public String toString() {
     return name().toLowerCase(Locale.ENGLISH);

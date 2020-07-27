@@ -55,7 +55,7 @@ class CommonConfig {
 
   final BooleanValue defaultGlobalBooleanValue;
 
-  final Map<ResourceLocation, EnumValue<MobGriefingValue>> entityIdsToDefaultEntityEnumValue;
+  final Map<ResourceLocation, EnumValue<MobGriefingValue>> entityIdsToDefaultEntityEnumValue = new HashMap<>();
 
   CommonConfig(Builder configBuilder) {
     configBuilder
@@ -79,21 +79,16 @@ class CommonConfig {
             "The default entity specific mobGriefing rules which will be used when creating a new world or opening an existing world with no existing rule for the entity.")
         .translation(ENTITY_RULES_DESCRIPTION);
 
-    Map<ResourceLocation, EnumValue<MobGriefingValue>> entityKeysToEntityEnumValue = new HashMap<>();
-
     for (EntityType<? extends LivingEntity> entityType : ENTITY_TYPES) {
-      ResourceLocation entityKey = entityType.getRegistryName();
+      ResourceLocation entityId = entityType.getRegistryName();
 
-      if (entityKey != null) {
+      if (entityId != null) {
         EnumValue<MobGriefingValue> entityValue = configBuilder
-            .defineEnum(entityKey.toString(), MobGriefingValue.INHERIT);
-        entityKeysToEntityEnumValue.put(entityKey, entityValue);
+            .defineEnum(entityId.toString(), MobGriefingValue.INHERIT);
+        entityIdsToDefaultEntityEnumValue.put(entityId, entityValue);
       }
     }
 
     configBuilder.pop();
-
-    this.entityIdsToDefaultEntityEnumValue = Collections
-        .unmodifiableMap(entityKeysToEntityEnumValue);
   }
 }

@@ -20,13 +20,20 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.AbstractConfigEntry;
+import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.BooleanConfigEntry;
 import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.ConfigEntryList;
+import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.MobGriefingValueConfigEntry;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHelper;
+import java.util.Map;
+import java.util.stream.Collectors;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractOptionList.Entry;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 
@@ -71,7 +78,6 @@ public class DefaultMobGriefingConfigGui extends Screen {
 
                 if (child instanceof AbstractConfigEntry) {
                   ((AbstractConfigEntry) child).restoreInitialValue();
-                  ;
                 }
               }
             }));
@@ -90,8 +96,27 @@ public class DefaultMobGriefingConfigGui extends Screen {
     addButton(new GuiButtonExt(x + 10 + BUTTON_WIDTH * 2, y, BUTTON_WIDTH * 2, BUTTON_HEIGHT,
         I18n.format("gui.done"),
         (button) -> {
+          updateConfig();
           minecraft.displayGuiScreen(parent);
         }));
+  }
+
+  private void updateConfig() {
+    BooleanConfigEntry globalEntry = configEntryList.getGlobalEntry();
+
+    if (globalEntry.isChanged()) {
+      ConfigHelper.updateGlobalMobGriefing(globalEntry.getCurrentValue());
+    }
+
+    Map<ResourceLocation, MobGriefingValue> entityIdsToChangedValue = configEntryList
+        .getEntityEntries().stream()
+        .filter(MobGriefingValueConfigEntry::isChanged)
+        .collect(Collectors.toMap(MobGriefingValueConfigEntry::getEntityId,
+            MobGriefingValueConfigEntry::getCurrentValue));
+
+    if (entityIdsToChangedValue.size() > 0) {
+      ConfigHelper.updateEntityMobGriefing(entityIdsToChangedValue);
+    }
   }
 
   @Override

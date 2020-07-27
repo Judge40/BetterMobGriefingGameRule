@@ -77,6 +77,14 @@ public class ConfigEntryList extends AbstractOptionList<AbstractEntry> {
         });
   }
 
+  public BooleanConfigEntry getGlobalEntry() {
+    return globalEntry;
+  }
+
+  public List<MobGriefingValueConfigEntry> getEntityEntries() {
+    return entityEntries;
+  }
+
   @Override
   protected int getScrollbarPosition() {
     return super.getScrollbarPosition() + 35;

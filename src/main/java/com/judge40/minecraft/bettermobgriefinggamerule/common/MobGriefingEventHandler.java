@@ -27,7 +27,6 @@ import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.config.ModConfig.ModConfigEvent;
 
 /**
  * An event handler for all mob griefing events.
@@ -39,8 +38,10 @@ public class MobGriefingEventHandler {
    *
    * @param event The ModConfigEvent.
    */
+  // TODO: The ModConfigEvent does not fire consistently despite the toml file being updated,
+  //  updates are synchronized manually as a workaround so only handle the Loading event here.
   @SubscribeEvent
-  public void onModConfigEvent(ModConfigEvent event) {
+  public void onModConfigEvent(ModConfig.Loading event) {
     ModConfig config = event.getConfig();
 
     if (config.getSpec() == ConfigHolder.COMMON_SPEC) {

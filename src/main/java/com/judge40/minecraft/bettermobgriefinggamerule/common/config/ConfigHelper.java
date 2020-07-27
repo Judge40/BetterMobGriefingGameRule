@@ -21,8 +21,12 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
 
 import static com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder.COMMON_CONFIG;
 
+import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 
 public class ConfigHelper {
 
@@ -32,5 +36,24 @@ public class ConfigHelper {
     Config.entityIdsToDefaultEntityValue = COMMON_CONFIG.entityIdsToDefaultEntityEnumValue
         .entrySet().stream()
         .collect(Collectors.toMap(Entry::getKey, entry -> entry.getValue().get()));
+  }
+
+  public static void updateGlobalMobGriefing(boolean value) {
+    COMMON_CONFIG.defaultGlobalBooleanValue.set(value);
+
+    // TODO: The ModConfigEvent does not fire consistently despite the toml file being updated, manually synchronize as a workaround.
+    Config.defaultGlobalValue = value;
+  }
+
+  public static void updateEntityMobGriefing(
+      Map<ResourceLocation, MobGriefingValue> entityIdToValue) {
+    entityIdToValue.forEach((entityId, value) -> {
+      EnumValue<MobGriefingValue> enumValue = COMMON_CONFIG.entityIdsToDefaultEntityEnumValue
+          .get(entityId);
+      enumValue.set(value);
+
+      // TODO: The ModConfigEvent does not fire consistently despite the toml file being updated, manually synchronize as a workaround.
+      Config.entityIdsToDefaultEntityValue.put(entityId, value);
+    });
   }
 }

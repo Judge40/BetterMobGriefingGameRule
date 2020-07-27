@@ -41,7 +41,7 @@ import net.minecraft.world.GameRules.BooleanValue;
  */
 public class BetterMobGriefingCommand {
 
-  private static final String RULE_NAME = "betterMobGriefing";
+  private static final String RULE_NAME = "mobGriefing";
   private static final String RULE_PARENT = "gamerule";
   private static final String RULE_TARGET = "entity";
   private static final String RULE_VALUE = "value";

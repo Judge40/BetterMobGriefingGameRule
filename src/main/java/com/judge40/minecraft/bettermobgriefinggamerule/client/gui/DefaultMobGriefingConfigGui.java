@@ -42,6 +42,12 @@ import net.minecraftforge.fml.client.config.GuiButtonExt;
  */
 public class DefaultMobGriefingConfigGui extends Screen {
 
+  private static final String DEFAULT_ALL = I18n
+      .format("bettermobgriefinggamerule.config.gui.defaultAll");
+  private static final String DONE = I18n.format("gui.done");
+  private static final String RESET_ALL = I18n
+      .format("bettermobgriefinggamerule.config.gui.resetAll");
+
   private static final int BUTTON_HEIGHT = 20;
   private static final int BUTTON_WIDTH = 75;
 
@@ -71,19 +77,18 @@ public class DefaultMobGriefingConfigGui extends Screen {
     final int x = width / 2 - 155;
     final int y = height - 29;
 
-    resetButton = addButton(
-        new GuiButtonExt(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, "Reset All",
-            (button) -> {
-              for (Entry child : configEntryList.children()) {
+    resetButton = addButton(new GuiButtonExt(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, RESET_ALL,
+        (button) -> {
+          for (Entry child : configEntryList.children()) {
 
-                if (child instanceof AbstractConfigEntry) {
-                  ((AbstractConfigEntry) child).restoreInitialValue();
-                }
-              }
-            }));
+            if (child instanceof AbstractConfigEntry) {
+              ((AbstractConfigEntry) child).restoreInitialValue();
+            }
+          }
+        }));
 
     defaultButton = addButton(
-        new GuiButtonExt(x + BUTTON_WIDTH, y, BUTTON_WIDTH, BUTTON_HEIGHT, "Default All",
+        new GuiButtonExt(x + BUTTON_WIDTH, y, BUTTON_WIDTH, BUTTON_HEIGHT, DEFAULT_ALL,
             (button) -> {
               for (Entry child : configEntryList.children()) {
 
@@ -93,8 +98,7 @@ public class DefaultMobGriefingConfigGui extends Screen {
               }
             }));
 
-    addButton(new GuiButtonExt(x + 10 + BUTTON_WIDTH * 2, y, BUTTON_WIDTH * 2, BUTTON_HEIGHT,
-        I18n.format("gui.done"),
+    addButton(new GuiButtonExt(x + 10 + BUTTON_WIDTH * 2, y, BUTTON_WIDTH * 2, BUTTON_HEIGHT, DONE,
         (button) -> {
           updateConfig();
           minecraft.displayGuiScreen(parent);

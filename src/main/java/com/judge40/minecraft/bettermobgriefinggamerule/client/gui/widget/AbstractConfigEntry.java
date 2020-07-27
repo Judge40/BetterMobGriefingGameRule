@@ -35,6 +35,12 @@ import net.minecraftforge.fml.client.config.GuiButtonExt;
 @OnlyIn(Dist.CLIENT)
 public abstract class AbstractConfigEntry<T> extends AbstractEntry {
 
+  private static final String DEFAULT = I18n.format("bettermobgriefinggamerule.config.gui.default");
+  private static final String RESET = I18n.format("bettermobgriefinggamerule.config.gui.reset");
+
+  private static final int BUTTON_HEIGHT = 20;
+  private static final int BUTTON_WIDTH = 50;
+
   private final FontRenderer fontRenderer;
   private final int labelOffset;
   private final String label;
@@ -66,13 +72,14 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
     this.initialValue = currentValue = initialValue;
     this.defaultValue = defaultValue;
 
-    valueButton = new GuiButtonExt(0, 0, 50, 20, currentValue.toString(),
+    valueButton = new GuiButtonExt(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, currentValue.toString(),
         (button) -> currentValue = getNextValue());
 
-    resetButton = new GuiButtonExt(0, 0, 50, 20, I18n.format("controls.reset"),
+    resetButton = new GuiButtonExt(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, RESET,
         (button) -> restoreInitialValue());
 
-    defaultButton = new GuiButtonExt(0, 0, 50, 20, "Default", (button) -> restoreDefaultValue());
+    defaultButton = new GuiButtonExt(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, DEFAULT,
+        (button) -> restoreDefaultValue());
   }
 
   /**

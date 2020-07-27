@@ -1,5 +1,5 @@
 /*
- * Better mobGriefing GameRule Copyright (c) 2016 Judge40
+ * Better mobGriefing GameRule Copyright (c) 2020 Judge40
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -17,35 +17,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
+package com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget;
 
-import java.util.Set;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraftforge.fml.client.IModGuiFactory;
+import net.minecraft.client.gui.widget.list.AbstractOptionList;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-/**
- * The GUI factory for the mob griefing rules's default value configuration GUI.
- */
-public class DefaultMobGriefingConfigGuiFactory implements IModGuiFactory {
+@OnlyIn(Dist.CLIENT)
+abstract class AbstractEntry extends AbstractOptionList.Entry<AbstractEntry> {
 
-  @Override
-  public Screen createConfigGui(Screen parentScreen) {
-    return new DefaultMobGriefingConfigGui(parentScreen);
-  }
-
-  @Override
-  public boolean hasConfigGui() {
-    return true;
-  }
-
-  @Override
-  public void initialize(Minecraft minecraftInstance) {
-
-  }
-
-  @Override
-  public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
-    return null;
-  }
 }

@@ -19,6 +19,7 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
+import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.DefaultMobGriefingConfigGui;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingEventHandler;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
@@ -35,6 +36,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig.Type;
@@ -62,6 +64,7 @@ public class BetterMobGriefingGameRule {
 
     ModLoadingContext modLoadingContext = ModLoadingContext.get();
     modLoadingContext.registerConfig(Type.COMMON, ConfigHolder.COMMON_SPEC);
+    modLoadingContext.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> DefaultMobGriefingConfigGui::new);
   }
 
   /**

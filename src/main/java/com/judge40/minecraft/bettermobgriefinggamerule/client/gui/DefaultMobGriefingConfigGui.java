@@ -19,45 +19,104 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
+import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.AbstractConfigEntry;
+import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.ConfigEntryList;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
-import java.util.Collections;
-import java.util.List;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.widget.list.AbstractOptionList.Entry;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.client.config.IConfigElement;
+import net.minecraftforge.fml.client.config.GuiButtonExt;
 
 /**
  * The configuration GUI for setting the default value of mob griefing rules.
  */
 public class DefaultMobGriefingConfigGui extends Screen {
 
+  private static final int BUTTON_HEIGHT = 20;
+  private static final int BUTTON_WIDTH = 75;
+
+  private final Minecraft minecraft;
+  private final Screen parent;
+  private ConfigEntryList configEntryList;
+  private Button resetButton;
+  private Button defaultButton;
+
   /**
    * Constructor which initializes the configuration GUI with the configuration elements and title.
    *
    * @param parent The configuration GUI's parent screen.
    */
-  public DefaultMobGriefingConfigGui(Screen parent) {
+  public DefaultMobGriefingConfigGui(Minecraft minecraft, Screen parent) {
     super(new StringTextComponent(ModInfoConstants.DISPLAY_NAME));
-//    super(parent, getConfigurationCategories(), ModInfoConstants.ID, false, false,
-//        getAbridgedConfigPath(getConfiguration().toString()));
+    this.minecraft = minecraft;
+    this.parent = parent;
+
   }
 
-  /**
-   * Get the list of configuration categories for the mod's configuration.
-   *
-   * @return The configuration categories.
-   */
-  private static List<IConfigElement> getConfigurationCategories() {
-//    DefaultMobGriefingConfiguration configuration = getConfiguration();
-//    DummyConfigElement globalCategory =
-//        new ConfigElement(configuration.getCategory(ConfigurationConstants.GLOBAL_RULE_CATEGORY));
-//    ConfigElement entityCategory =
-//        new ConfigElement(configuration.getCategory(ConfigurationConstants.ENTITY_RULES_CATEGORY));
-//    List<IConfigElement> configurationCategories = Arrays.asList(globalCategory, entityCategory);
-//
-//    return configurationCategories;
-    return Collections.emptyList();
+  @Override
+  public void init() {
+    configEntryList = new ConfigEntryList(this, minecraft);
+    children.add(configEntryList);
+
+    final int x = width / 2 - 155;
+    final int y = height - 29;
+
+    resetButton = addButton(
+        new GuiButtonExt(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, "Reset All",
+            (button) -> {
+              for (Entry child : configEntryList.children()) {
+
+                if (child instanceof AbstractConfigEntry) {
+                  ((AbstractConfigEntry) child).restoreInitialValue();
+                  ;
+                }
+              }
+            }));
+
+    defaultButton = addButton(
+        new GuiButtonExt(x + BUTTON_WIDTH, y, BUTTON_WIDTH, BUTTON_HEIGHT, "Default All",
+            (button) -> {
+              for (Entry child : configEntryList.children()) {
+
+                if (child instanceof AbstractConfigEntry) {
+                  ((AbstractConfigEntry) child).restoreDefaultValue();
+                }
+              }
+            }));
+
+    addButton(new GuiButtonExt(x + 10 + BUTTON_WIDTH * 2, y, BUTTON_WIDTH * 2, BUTTON_HEIGHT,
+        I18n.format("gui.done"),
+        (button) -> {
+          minecraft.displayGuiScreen(parent);
+        }));
+  }
+
+  @Override
+  public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
+    renderBackground();
+    configEntryList.render(p_render_1_, p_render_2_, p_render_3_);
+    drawCenteredString(font, title.getFormattedText(), width / 2, 8, 16777215);
+
+    boolean enableReset = false;
+    boolean enableDefault = false;
+
+    for (Entry child : configEntryList.children()) {
+
+      if (child instanceof AbstractConfigEntry) {
+        enableReset |= ((AbstractConfigEntry) child).isChanged();
+        enableDefault |= !((AbstractConfigEntry) child).isDefault();
+
+        if (enableReset && enableDefault) {
+          break;
+        }
+      }
+    }
+
+    resetButton.active = enableReset;
+    defaultButton.active = enableDefault;
+    super.render(p_render_1_, p_render_2_, p_render_3_);
   }
 }

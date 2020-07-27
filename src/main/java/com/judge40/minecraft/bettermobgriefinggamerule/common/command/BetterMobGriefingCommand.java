@@ -25,12 +25,15 @@ import static net.minecraft.command.Commands.literal;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.arguments.EntitySummonArgument;
 import net.minecraft.command.arguments.SuggestionProviders;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.GameRules.BooleanValue;
 
 /**
  * A custom command handler for the mob griefing game rule, it allows auto-completion and assignment
@@ -63,12 +66,16 @@ public class BetterMobGriefingCommand {
                     .requires(source -> source.hasPermissionLevel(2))
                     .executes(BetterMobGriefingCommand::listMobGriefing)
                     .then(
+                        argument(RULE_VALUE, BoolArgumentType.bool())
+                            .executes(BetterMobGriefingCommand::setGlobalMobGriefing)
+                    )
+                    .then(
                         argument(RULE_TARGET, EntitySummonArgument.entitySummon())
                             .executes(BetterMobGriefingCommand::showMobGriefing)
                             .suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
                             .then(
                                 argument(RULE_VALUE, new BetterMobGriefingArgument())
-                                    .executes(BetterMobGriefingCommand::setMobGriefing)
+                                    .executes(BetterMobGriefingCommand::setEntityMobGriefing)
                             )
                     )
             )
@@ -85,7 +92,10 @@ public class BetterMobGriefingCommand {
     CommandSource source = context.getSource();
     EntityMobGriefingData data = EntityMobGriefingData.forServer(source.getServer());
 
-    String values = String.format("\n%s", data);
+    GameRules gameRules = source.getServer().getGameRules();
+    BooleanValue mobGriefing = gameRules.get(GameRules.MOB_GRIEFING);
+
+    String values = String.format("\n%s = %s\n%s", RULE_NAME, mobGriefing, data);
     TranslationTextComponent message = new TranslationTextComponent(RULE_QUERY_KEY, RULE_NAME,
         values);
     source.sendFeedback(message, true);
@@ -118,14 +128,34 @@ public class BetterMobGriefingCommand {
   }
 
   /**
-   * Set the mob griefing value based on the command context, which requires two arguments be
+   * Set the global mob griefing value based on the command context, which requires {@value
+   * RULE_VALUE} populated as the boolean to set.
+   *
+   * @param context The command context to process.
+   * @return The int representation of the set value where 0 is false, 1 is true.
+   */
+  private static int setGlobalMobGriefing(CommandContext<CommandSource> context) {
+    CommandSource source = context.getSource();
+    GameRules gameRules = source.getServer().getGameRules();
+    BooleanValue mobGriefing = gameRules.get(GameRules.MOB_GRIEFING);
+    mobGriefing.func_223554_b(context, RULE_VALUE);
+
+    TranslationTextComponent message = new TranslationTextComponent(RULE_SET_KEY, RULE_NAME,
+        mobGriefing);
+    source.sendFeedback(message, true);
+
+    return mobGriefing.func_223557_c();
+  }
+
+  /**
+   * Set the entity mob griefing value based on the command context, which requires two arguments be
    * populated. {@value RULE_TARGET} is the {@link ResourceLocation} of the target to set the value
    * for and {@value RULE_VALUE} is the {@link MobGriefingValue} to set.
    *
    * @param context The command context to process.
    * @return The int representation of the set value where 0 is false, 1 is true and 2 is inherit.
    */
-  private static int setMobGriefing(CommandContext<CommandSource> context) {
+  private static int setEntityMobGriefing(CommandContext<CommandSource> context) {
     ResourceLocation targetId = context.getArgument(RULE_TARGET, ResourceLocation.class);
     MobGriefingValue mobGriefingValue = context.getArgument(RULE_VALUE, MobGriefingValue.class);
 

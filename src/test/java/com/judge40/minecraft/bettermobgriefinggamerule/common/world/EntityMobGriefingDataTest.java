@@ -19,10 +19,18 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.common.world;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import java.io.File;
 import java.util.Collections;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.DimensionSavedDataManager;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -48,7 +56,14 @@ public class EntityMobGriefingDataTest {
 
   @Before
   public void setUp() {
-    entityMobGriefingData = new EntityMobGriefingData();
+    MinecraftServer server = mock(MinecraftServer.class);
+    ServerWorld world = mock(ServerWorld.class);
+    DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""), null);
+
+    when(server.getWorld(DimensionType.OVERWORLD)).thenReturn(world);
+    when(world.getSavedData()).thenReturn(savedDataManager);
+
+    entityMobGriefingData = EntityMobGriefingData.forServer(server);
   }
 
 //  /**
@@ -471,13 +486,18 @@ public class EntityMobGriefingDataTest {
     entityMobGriefingData.write(nbt);
 
     // Perform assertions.
-    Assert.assertThat("The NBT did not contain the expected value.", nbt.getString("minecraft:path2"), CoreMatchers.is("false"));
-    Assert.assertThat("The NBT did not contain the expected value.", nbt.getString("namespace1:path1"), CoreMatchers.is("inherit"));
-    Assert.assertThat("The NBT did not contain the expected value.", nbt.getString("namespace1:path3"), CoreMatchers.is("true"));
+    Assert
+        .assertThat("The NBT did not contain the expected value.", nbt.getString("minecraft:path2"),
+            CoreMatchers.is("false"));
+    Assert.assertThat("The NBT did not contain the expected value.",
+        nbt.getString("namespace1:path1"), CoreMatchers.is("inherit"));
+    Assert.assertThat("The NBT did not contain the expected value.",
+        nbt.getString("namespace1:path3"), CoreMatchers.is("true"));
   }
 
   /**
-   * Test that the {@link CompoundNBT} is not populated when the {@link EntityMobGriefingData} is not populated.
+   * Test that the {@link CompoundNBT} is not populated when the {@link EntityMobGriefingData} is
+   * not populated.
    */
   @Test
   public void testWriteToNbt_entityDataNotPopulated_nbtDataNotPopulated() {
@@ -488,7 +508,8 @@ public class EntityMobGriefingDataTest {
     entityMobGriefingData.write(nbt);
 
     // Perform assertions.
-    Assert.assertThat("The NBT did not contain the expected value.", nbt.keySet(), CoreMatchers.is(Collections.emptySet()));
+    Assert.assertThat("The NBT did not contain the expected value.", nbt.keySet(),
+        CoreMatchers.is(Collections.emptySet()));
   }
 
   /**

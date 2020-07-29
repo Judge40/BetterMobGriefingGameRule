@@ -48,8 +48,8 @@ public class ConfigCategoryEntry extends AbstractEntry {
   @Override
   public void render(int p_render_1_, int p_render_2_, int p_render_3_, int p_render_4_,
       int p_render_5_, int p_render_6_, int p_render_7_, boolean p_render_8_, float p_render_9_) {
-    float x = (float) (parentWidth / 2 - labelWidth / 2);
-    float y = (float) (p_render_2_ + p_render_5_ - 10);
+    float x = parentWidth / 2F - labelWidth / 2F;
+    float y = p_render_2_ + p_render_5_ - 10F;
     fontRenderer.drawString(labelText, x, y, 16777215);
   }
 

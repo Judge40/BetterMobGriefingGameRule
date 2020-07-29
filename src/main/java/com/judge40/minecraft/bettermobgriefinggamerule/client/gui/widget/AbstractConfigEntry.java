@@ -134,7 +134,7 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
   public void render(int p_render_1_, int p_render_2_, int p_render_3_, int p_render_4_,
       int p_render_5_, int p_render_6_, int p_render_7_, boolean p_render_8_, float p_render_9_) {
     float x = p_render_3_ + 90 - labelOffset;
-    float y = (float) (p_render_2_ + p_render_5_ / 2 - 4.5);
+    float y = p_render_2_ + p_render_5_ / 2F - 4.5F;
     fontRenderer.drawString(label, x, y, 16777215);
 
     valueButton.x = p_render_3_ + 105;
@@ -157,19 +157,5 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
   @Override
   public List<? extends IGuiEventListener> children() {
     return Collections.unmodifiableList(Arrays.asList(valueButton, resetButton, defaultButton));
-  }
-
-  @Override
-  public boolean mouseClicked(double x, double y, int button) {
-    return valueButton.mouseClicked(x, y, button)
-        || resetButton.mouseClicked(x, y, button)
-        || defaultButton.mouseClicked(x, y, button);
-  }
-
-  @Override
-  public boolean mouseReleased(double x, double y, int button) {
-    return valueButton.mouseReleased(x, y, button)
-        || resetButton.mouseReleased(x, y, button)
-        || defaultButton.mouseReleased(x, y, button);
   }
 }

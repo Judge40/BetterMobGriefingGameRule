@@ -54,7 +54,7 @@ public class ConfigEntryList extends AbstractOptionList<AbstractEntry> {
     int globalLabelWidth = fontRenderer.getStringWidth(BetterMobGriefingGameRule.GLOBAL_RULE);
 
     final int maxLabelWidth = Config.entityIdsToDefaultEntityValue.keySet().stream()
-        .mapToInt(entityId -> minecraft.fontRenderer.getStringWidth(entityId.toString()))
+        .mapToInt(entityId -> fontRenderer.getStringWidth(entityId.toString()))
         .filter(width -> width > globalLabelWidth)
         .max()
         .orElse(globalLabelWidth);

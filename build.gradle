@@ -86,11 +86,19 @@ repositories {
 dependencies {
   minecraft "net.minecraftforge:forge:1.14.4-28.2.0"
 
-  // JMockit dependency.
-  testCompile "org.jmockit:jmockit:1.35"
-  // JUnit dependency.
-  testCompile "junit:junit:4.12"
+  // Test dependencies.
+  ext.junitVersion = "5.6.2"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+
+  testImplementation("junit:junit:4.13")
+  testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.6.2")
+
+  testImplementation "org.mockito:mockito-core:3.4.4"
+  testImplementation "org.jmockit:jmockit:1.35"
 }
+
 
 checkstyle {
   toolVersion = "8.34"
@@ -118,6 +126,7 @@ tasks.withType(FindBugs) {
 }
 
 test {
+  useJUnitPlatform()
   systemProperties["jmockit-coverage-metrics"] = "all"
   systemProperties["jmockit-coverage-outputDir"] = "build/reports/coverage"
 }

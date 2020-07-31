@@ -23,6 +23,7 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
@@ -86,16 +87,17 @@ public class EntityMobGriefingData extends WorldSavedData {
   @Override
   public void read(CompoundNBT nbt) {
     // Add the entity name and MobGriefingValue from each NBT entry to the world data.
-    for (String key : nbt.keySet()) {
+    for (Iterator<String> iterator = nbt.keySet().iterator(); iterator.hasNext(); ) {
+      String key = iterator.next();
       ResourceLocation entityId = new ResourceLocation(key);
-      String externalForm = nbt.getString(key);
-      MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(externalForm);
 
       if (ForgeRegistries.ENTITIES.containsKey(entityId)) {
+        String externalForm = nbt.getString(key);
+        MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(externalForm);
         entityIdsToMobGriefingValue.put(entityId, mobGriefingValue);
       } else {
         // If the entity name is invalid then remove it.
-        nbt.remove(entityId.toString());
+        iterator.remove();
       }
     }
   }

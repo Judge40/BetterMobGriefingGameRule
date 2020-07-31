@@ -19,43 +19,42 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.common.world;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.judge40.minecraft.bettermobgriefinggamerule.TestUtils;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import java.io.File;
 import java.util.Collections;
+import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * The unit tests for {@link EntityMobGriefingData}.
  */
-public class EntityMobGriefingDataTest {
+class EntityMobGriefingDataTest {
 
-  private EntityMobGriefingData entityMobGriefingData;
+  private EntityMobGriefingData data;
 
-//  /**
-//   * Populate the {@code fml.deobfuscatedEnvironment} flag.
-//   */
-//  @BeforeClass
-//  public static void setUpBeforeClass() {
-//    // Set the deobfuscation flag.
-//    Map<String, Object> blackboard = new HashMap<>();
-//    blackboard.put("fml.deobfuscatedEnvironment", true);
-//    Launch.blackboard = blackboard;
-//  }
+  @BeforeAll
+  static void setUpBeforeAll() {
+    // Load dimension type here to avoid console errors during test run.
+    Registry<DimensionType> dimensionType = Registry.DIMENSION_TYPE;
+  }
 
-  @Before
-  public void setUp() {
+  @BeforeEach
+  void setUp() {
     MinecraftServer server = mock(MinecraftServer.class);
     ServerWorld world = mock(ServerWorld.class);
     DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""), null);
@@ -63,492 +62,142 @@ public class EntityMobGriefingDataTest {
     when(server.getWorld(DimensionType.OVERWORLD)).thenReturn(world);
     when(world.getSavedData()).thenReturn(savedDataManager);
 
-    entityMobGriefingData = EntityMobGriefingData.forServer(server);
+    data = EntityMobGriefingData.forServer(server);
   }
 
-//  /**
-//   * Test that the existing {@link EntityMobGriefingData} is returned when an instance exists in the
-//   * {@link World}'s {@link MapStorage}.
-//   */
-//  @Test
-//  public void testForWorld_dataExists_existingDataInstance(@Mocked World world,
-//      @Mocked MapStorage mapStorage) {
-//    // Record expectations.
-//    new Expectations() {
-//      {
-//        mapStorage.getOrLoadData(EntityMobGriefingData.class, ModInfoConstants.ID);
-//        result = entityMobGriefingData;
-//      }
-//    };
-//
-//    // Call the method under test.
-//    EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forWorld(world);
-//
-//    // Perform assertions.
-//    Assert.assertThat("The EntityMobGriefingData instance did not match the expected instance.",
-//        entityMobGriefingData, CoreMatchers.sameInstance(this.entityMobGriefingData));
-//
-//    // Verify expectations.
-//    new Verifications() {
-//      {
-//        mapStorage.setData(ModInfoConstants.ID, withInstanceOf(EntityMobGriefingData.class));
-//        times = 0;
-//      }
-//    };
-//  }
-//
-//  /**
-//   * Test that a new instance of {@link EntityMobGriefingData} is returned when an instance does not
-//   * exist in the {@link World}'s {@link MapStorage}.
-//   */
-//  @Test
-//  public void testForWorld_dataNotExists_newDataInstance(@Mocked World world,
-//      @Mocked MapStorage mapStorage) {
-//    // Record expectations.
-//    new Expectations() {
-//      {
-//        mapStorage.getOrLoadData(EntityMobGriefingData.class, ModInfoConstants.ID);
-//        result = null;
-//
-//        new EntityMobGriefingData(ModInfoConstants.ID);
-//
-//        mapStorage.setData(ModInfoConstants.ID, withInstanceOf(EntityMobGriefingData.class));
-//      }
-//    };
-//
-//    // Call the method under test.
-//    EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forWorld(world);
-//
-//    // Perform assertions.
-//    Assert.assertThat("The EntityMobGriefingData instance did not match the expected class.",
-//        entityMobGriefingData, CoreMatchers.instanceOf(EntityMobGriefingData.class));
-//    Assert.assertThat("The EntityMobGriefingData instance did not match the expected instance.",
-//        entityMobGriefingData,
-//        CoreMatchers.not(CoreMatchers.sameInstance(this.entityMobGriefingData)));
-//  }
-
-//  /**
-//   * Test that the {@link EntityMobGriefingData} is not updated when all configured entity names
-//   * match and all configured {@link MobGriefingValue}s match.
-//   */
-//  @Test
-//  public void testPopulateFromConfiguration_matchedNamesMatchedValues_dataNotUpdated(
-//      @Mocked DefaultMobGriefingConfiguration configuration) {
-//    // Set up test data.
-//    Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
-//    entityMobGriefingValues.put("entity_name1", MobGriefingValue.TRUE);
-//    entityMobGriefingValues.put("entity_name2", MobGriefingValue.FALSE);
-//    entityMobGriefingValues.put("entity_name3", MobGriefingValue.INHERIT);
-//
-//    entityMobGriefingData.setMobGriefingValue("entity_name1", MobGriefingValue.TRUE);
-//    entityMobGriefingData.setMobGriefingValue("entity_name2", MobGriefingValue.FALSE);
-//    entityMobGriefingData.setMobGriefingValue("entity_name3", MobGriefingValue.INHERIT);
-//    entityMobGriefingData.setDirty(false);
-//
-//    // Record expectations.
-//    new Expectations() {
-//      {
-//        configuration.getEntityMobGriefingValues();
-//        result = entityMobGriefingValues;
-//      }
-//    };
-//
-//    // Call the method under test.
-//    entityMobGriefingData.populateFromConfiguration(configuration);
-//
-//    // Perform assertions.
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name1"),
-//        CoreMatchers.is(MobGriefingValue.TRUE));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name2"),
-//        CoreMatchers.is(MobGriefingValue.FALSE));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name3"),
-//        CoreMatchers.is(MobGriefingValue.INHERIT));
-//
-//    Assert.assertThat("The EntityMobGriefingData's dirty flag did not match the expected value.",
-//        entityMobGriefingData.isDirty(), CoreMatchers.is(false));
-//  }
-//
-//  /**
-//   * Test that the {@link EntityMobGriefingData} is not updated when all configured entity names
-//   * match and not all configured {@link MobGriefingValue}s match.
-//   */
-//  @Test
-//  public void testPopulateFromConfiguration_matchedNamesNotMatchedValues_dataNotUpdated(
-//      @Mocked DefaultMobGriefingConfiguration configuration) {
-//    // Set up test data.
-//    Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
-//    entityMobGriefingValues.put("entity_name1", MobGriefingValue.TRUE);
-//    entityMobGriefingValues.put("entity_name2", MobGriefingValue.FALSE);
-//    entityMobGriefingValues.put("entity_name3", MobGriefingValue.INHERIT);
-//
-//    entityMobGriefingData.setMobGriefingValue("entity_name1", MobGriefingValue.INHERIT);
-//    entityMobGriefingData.setMobGriefingValue("entity_name2", MobGriefingValue.TRUE);
-//    entityMobGriefingData.setMobGriefingValue("entity_name3", MobGriefingValue.FALSE);
-//    entityMobGriefingData.setDirty(false);
-//
-//    // Record expectations.
-//    new Expectations() {
-//      {
-//        configuration.getEntityMobGriefingValues();
-//        result = entityMobGriefingValues;
-//      }
-//    };
-//
-//    // Call the method under test.
-//    entityMobGriefingData.populateFromConfiguration(configuration);
-//
-//    // Perform assertions.
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name1"),
-//        CoreMatchers.is(MobGriefingValue.INHERIT));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name2"),
-//        CoreMatchers.is(MobGriefingValue.TRUE));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name3"),
-//        CoreMatchers.is(MobGriefingValue.FALSE));
-//
-//    Assert.assertThat("The EntityMobGriefingData's dirty flag did not match the expected value.",
-//        entityMobGriefingData.isDirty(), CoreMatchers.is(false));
-//  }
-//
-//  /**
-//   * Test that the {@link EntityMobGriefingData} is updated when not all configured entity names
-//   * match.
-//   */
-//  @Test
-//  public void testPopulateFromConfiguration_notMatchedNames_dataUpdated(
-//      @Mocked DefaultMobGriefingConfiguration configuration) {
-//    // Set up test data.
-//    Map<String, MobGriefingValue> entityMobGriefingValues = new HashMap<>();
-//    entityMobGriefingValues.put("entity_name1", MobGriefingValue.TRUE);
-//    entityMobGriefingValues.put("entity_name2", MobGriefingValue.FALSE);
-//
-//    entityMobGriefingData.setMobGriefingValue("entity_name1", MobGriefingValue.INHERIT);
-//    entityMobGriefingData.setMobGriefingValue("entity_name3", MobGriefingValue.INHERIT);
-//    entityMobGriefingData.setDirty(false);
-//
-//    // Record expectations.
-//    new Expectations() {
-//      {
-//        configuration.getEntityMobGriefingValues();
-//        result = entityMobGriefingValues;
-//      }
-//    };
-//
-//    // Call the method under test.
-//    entityMobGriefingData.populateFromConfiguration(configuration);
-//
-//    // Perform assertions.
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name1"),
-//        CoreMatchers.is(MobGriefingValue.INHERIT));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name2"),
-//        CoreMatchers.is(MobGriefingValue.FALSE));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name3"),
-//        CoreMatchers.is(MobGriefingValue.INHERIT));
-//
-//    Assert.assertThat("The EntityMobGriefingData's dirty flag did not match the expected value.",
-//        entityMobGriefingData.isDirty(), CoreMatchers.is(true));
-//  }
-
-//  /**
-//   * Test that the {@link EntityMobGriefingData} is populated when the {@link NBTTagCompound} is
-//   * populated and the entities are registered and the entity name and path do not match.
-//   */
-//  @Test
-//  public void testReadFromNbt_nbtDataPopulatedEntitiesRegisteredMismatch_entityDataPopulated() {
-//    // Set up test data.
-//    NBTTagCompound nbtTagCompound = new NBTTagCompound();
-//    nbtTagCompound.setString("entity_name1", "true");
-//    nbtTagCompound.setString("entity_name2", "false");
-//    nbtTagCompound.setString("Entity_Name3", "inherit");
-//
-//    // Record expectations.
-//    new Expectations(EntityList.class) {
-//      {
-//        EntityList.isRegistered((ResourceLocation) any);
-//        result = true;
-//      }
-//    };
-//
-//    // Call the method under test.
-//    entityMobGriefingData.readFromNBT(nbtTagCompound);
-//
-//    // Perform assertions.
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected number of entries.",
-//        entityMobGriefingData.getRegisteredEntityNames().size(), CoreMatchers.is(3));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name1"),
-//        CoreMatchers.is(MobGriefingValue.TRUE));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name2"),
-//        CoreMatchers.is(MobGriefingValue.FALSE));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name3"),
-//        CoreMatchers.is(MobGriefingValue.INHERIT));
-//
-//    Assert.assertThat("The NBT data contains an unexpected numbers of values.",
-//        nbtTagCompound.getSize(), CoreMatchers.is(2));
-//    Assert.assertThat("The NBT data contains an unexpected value.",
-//        nbtTagCompound.getString("Entity_Name3"), CoreMatchers.is(""));
-//  }
-//
-//  /**
-//   * Test that the {@link EntityMobGriefingData} is populated when the {@link NBTTagCompound} is
-//   * populated and the entities are registered and the entity name and path match.
-//   */
-//  @Test
-//  public void testReadFromNbt_nbtDataPopulatedEntitiesRegisteredMatch_entityDataPopulated() {
-//    // Set up test data.
-//    NBTTagCompound nbtTagCompound = new NBTTagCompound();
-//    nbtTagCompound.setString("entity_name1", "true");
-//    nbtTagCompound.setString("entity_name2", "false");
-//    nbtTagCompound.setString("entity_name3", "inherit");
-//
-//    // Record expectations.
-//    new Expectations(EntityList.class) {
-//      {
-//        EntityList.isRegistered((ResourceLocation) any);
-//        result = true;
-//      }
-//    };
-//
-//    // Call the method under test.
-//    entityMobGriefingData.readFromNBT(nbtTagCompound);
-//
-//    // Perform assertions.
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected number of entries.",
-//        entityMobGriefingData.getRegisteredEntityNames().size(), CoreMatchers.is(3));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name1"),
-//        CoreMatchers.is(MobGriefingValue.TRUE));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name2"),
-//        CoreMatchers.is(MobGriefingValue.FALSE));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name3"),
-//        CoreMatchers.is(MobGriefingValue.INHERIT));
-//
-//    Assert.assertThat("The NBT data contains an unexpected numbers of values.",
-//        nbtTagCompound.getSize(), CoreMatchers.is(3));
-//  }
-//
-//  /**
-//   * Test that the {@link EntityMobGriefingData} is populated when the {@link NBTTagCompound} is
-//   * populated and an entity is using its translation name.
-//   */
-//  @Test
-//  public void testReadFromNbt_nbtDataPopulatedEntityUsingTranslationName_entityDataPopulated() {
-//    // Set up test data.
-//    NBTTagCompound nbtTagCompound = new NBTTagCompound();
-//    nbtTagCompound.setString("entity_name1", "true");
-//    nbtTagCompound.setString("entityName2", "false");
-//    nbtTagCompound.setString("entityName3", "inherit");
-//
-//    ResourceLocation entityType2 = new ResourceLocation("entity_name2");
-//    ResourceLocation entityType3 = new ResourceLocation("entity_name3");
-//
-//    // Record expectations.
-//    new Expectations(EntityList.class) {
-//      {
-//        EntityList.isRegistered(new ResourceLocation("entity_name1"));
-//        result = true;
-//
-//        EntityList.isRegistered((ResourceLocation) any);
-//        result = false;
-//
-//        EntityList.getEntityNameList();
-//        result = new HashSet<>(Arrays.asList(entityType2, entityType3));
-//
-//        EntityList.getTranslationName(entityType2);
-//        result = "entityName2";
-//
-//        EntityList.getTranslationName(entityType3);
-//        result = "entityName3";
-//      }
-//    };
-//
-//    // Call the method under test.
-//    entityMobGriefingData.readFromNBT(nbtTagCompound);
-//
-//    // Perform assertions.
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected number of entries.",
-//        entityMobGriefingData.getRegisteredEntityNames().size(), CoreMatchers.is(3));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name1"),
-//        CoreMatchers.is(MobGriefingValue.TRUE));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name2"),
-//        CoreMatchers.is(MobGriefingValue.FALSE));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name3"),
-//        CoreMatchers.is(MobGriefingValue.INHERIT));
-//
-//    Assert.assertThat("The NBTTagCompound contains an unexpected value.",
-//        nbtTagCompound.getKeySet(), CoreMatchers.not(CoreMatchers.hasItem("entityName2")));
-//    Assert.assertThat("The NBTTagCompound contains an unexpected value.",
-//        nbtTagCompound.getKeySet(), CoreMatchers.not(CoreMatchers.hasItem("entityName3")));
-//  }
-//
-//  /**
-//   * Test that the {@link EntityMobGriefingData} is populated when the {@link NBTTagCompound} is
-//   * populated and an entity cannot be found by its name or translation name.
-//   */
-//  @Test
-//  public void testReadFromNbt_nbtDataPopulatedEntityNotFound_entityDataPopulated() {
-//    // Set up test data.
-//    NBTTagCompound nbtTagCompound = new NBTTagCompound();
-//    nbtTagCompound.setString("entity_name1", "true");
-//    nbtTagCompound.setString("unfoundEntityName2", "false");
-//    nbtTagCompound.setString("unfoundEntityName3", "inherit");
-//
-//    ResourceLocation entityType2 = new ResourceLocation("entity_name2");
-//    ResourceLocation entityType3 = new ResourceLocation("entity_name3");
-//
-//    // Record expectations.
-//    new Expectations(EntityList.class) {
-//      {
-//        EntityList.isRegistered(new ResourceLocation("entity_name1"));
-//        result = true;
-//
-//        EntityList.isRegistered((ResourceLocation) any);
-//        result = false;
-//
-//        EntityList.getEntityNameList();
-//        result = new HashSet<>(Arrays.asList(entityType2, entityType3));
-//
-//        EntityList.getTranslationName(entityType2);
-//        result = "entityName2";
-//
-//        EntityList.getTranslationName(entityType3);
-//        result = "entityName3";
-//      }
-//    };
-//
-//    // Call the method under test.
-//    entityMobGriefingData.readFromNBT(nbtTagCompound);
-//
-//    // Perform assertions.
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected number of entries.",
-//        entityMobGriefingData.getRegisteredEntityNames().size(), CoreMatchers.is(1));
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getMobGriefingValue("entity_name1"),
-//        CoreMatchers.is(MobGriefingValue.TRUE));
-//
-//    Assert.assertThat("The NBTTagCompound contains an unexpected value.",
-//        nbtTagCompound.getKeySet(), CoreMatchers.not(CoreMatchers.hasItem("entityName2")));
-//    Assert.assertThat("The NBTTagCompound contains an unexpected value.",
-//        nbtTagCompound.getKeySet(), CoreMatchers.not(CoreMatchers.hasItem("entityName3")));
-//  }
-//
-//  /**
-//   * Test that the {@link EntityMobGriefingData} is not populated when the {@link NBTTagCompound} is
-//   * not populated.
-//   */
-//  @Test
-//  public void testReadFromNbt_nbtDataNotPopulated_entityDataNotPopulated() {
-//    // Set up test data.
-//    NBTTagCompound nbtTagCompound = new NBTTagCompound();
-//
-//    // Call the method under test.
-//    entityMobGriefingData.readFromNBT(nbtTagCompound);
-//
-//    // Perform assertions.
-//    Assert.assertThat("The EntityMobGriefingData did not contain the expected value.",
-//        entityMobGriefingData.getRegisteredEntityNames(), CoreMatchers.is(Collections.emptySet()));
-//  }
-
-  /**
-   * Test that the {@link CompoundNBT} is populated when the {@link EntityMobGriefingData} is
-   * populated.
-   */
   @Test
-  public void testWriteToNbt_entityDataPopulated_nbtDataPopulated() {
-    // Set up test data.
+  void shouldPopulateAllEntriesFromConfigurationWhenNewData() throws IllegalAccessException {
+    // Given.
+    TestUtils.initializeConfig(true, MobGriefingValue.FALSE, MobGriefingValue.TRUE,
+        MobGriefingValue.INHERIT);
+
+    // When.
+    data.populateFromConfiguration();
+
+    // Then.
+    assertThat("Unexpected number of mobGriefing values.", data.size(), is(3));
+
+    MobGriefingValue mobGriefingValue = data
+        .getMobGriefingValue(new ResourceLocation("test:entity1"));
+    assertThat("Unexpected mobGriefing value.", mobGriefingValue, is(MobGriefingValue.FALSE));
+
+    mobGriefingValue = data.getMobGriefingValue(new ResourceLocation("test:entity2"));
+    assertThat("Unexpected mobGriefing value.", mobGriefingValue, is(MobGriefingValue.TRUE));
+
+    mobGriefingValue = data.getMobGriefingValue(new ResourceLocation("test:entity3"));
+    assertThat("Unexpected mobGriefing value.", mobGriefingValue, is(MobGriefingValue.INHERIT));
+  }
+
+  @Test
+  void shouldPopulateNewEntriesFromConfigurationWhenExistingData() throws IllegalAccessException {
+    // Given.
+    TestUtils.initializeConfig(true, MobGriefingValue.FALSE, MobGriefingValue.TRUE,
+        MobGriefingValue.INHERIT);
+    ResourceLocation entityId2 = new ResourceLocation("test:entity2");
+    data.setMobGriefingValue(entityId2, MobGriefingValue.FALSE);
+
+    // When.
+    data.populateFromConfiguration();
+
+    // Then.
+    assertThat("Unexpected number of mobGriefing values.", data.size(), is(3));
+
+    MobGriefingValue mobGriefingValue = data
+        .getMobGriefingValue(new ResourceLocation("test:entity1"));
+    assertThat("Unexpected mobGriefing value.", mobGriefingValue, is(MobGriefingValue.FALSE));
+
+    mobGriefingValue = data.getMobGriefingValue(entityId2);
+    assertThat("Unexpected mobGriefing value.", mobGriefingValue, is(MobGriefingValue.FALSE));
+
+    mobGriefingValue = data.getMobGriefingValue(new ResourceLocation("test:entity3"));
+    assertThat("Unexpected mobGriefing value.", mobGriefingValue, is(MobGriefingValue.INHERIT));
+  }
+
+  @Test
+  void shouldReadFromNbt() {
+    // Given.
+    CompoundNBT nbt = new CompoundNBT();
+
+    ResourceLocation invalidEntityId = new ResourceLocation("invalid-entity");
+    nbt.putString(invalidEntityId.toString(), "inherit");
+
+    ResourceLocation validEntityId = EntityType.CREEPER.getRegistryName();
+    nbt.putString(validEntityId.toString(), "true");
+
+    // When.
+    data.read(nbt);
+
+    // Then.
+    assertThat("Unexpected number of mobGriefing values.", data.size(), is(1));
+
+    MobGriefingValue mobGriefingValue = data.getMobGriefingValue(invalidEntityId);
+    assertThat("Unexpected mobGriefing value.", mobGriefingValue, is(MobGriefingValue.INHERIT));
+
+    mobGriefingValue = data.getMobGriefingValue(validEntityId);
+    assertThat("Unexpected mobGriefing value.", mobGriefingValue, is(MobGriefingValue.TRUE));
+  }
+
+  @Test
+  void shouldWriteToNbtWhenEntityDataPopulated() {
+    // Given.
     ResourceLocation entityResource1 = new ResourceLocation("namespace1:path3");
-    entityMobGriefingData.setMobGriefingValue(entityResource1, MobGriefingValue.TRUE);
+    data.setMobGriefingValue(entityResource1, MobGriefingValue.TRUE);
 
     ResourceLocation entityResource2 = new ResourceLocation("path2");
-    entityMobGriefingData.setMobGriefingValue(entityResource2, MobGriefingValue.FALSE);
+    data.setMobGriefingValue(entityResource2, MobGriefingValue.FALSE);
 
     ResourceLocation entityResource3 = new ResourceLocation("namespace1:path1");
-    entityMobGriefingData.setMobGriefingValue(entityResource3, MobGriefingValue.INHERIT);
+    data.setMobGriefingValue(entityResource3, MobGriefingValue.INHERIT);
 
     CompoundNBT nbt = new CompoundNBT();
 
-    // Call the method under test.
-    entityMobGriefingData.write(nbt);
+    // When.
+    data.write(nbt);
 
-    // Perform assertions.
-    Assert
-        .assertThat("The NBT did not contain the expected value.", nbt.getString("minecraft:path2"),
-            CoreMatchers.is("false"));
-    Assert.assertThat("The NBT did not contain the expected value.",
-        nbt.getString("namespace1:path1"), CoreMatchers.is("inherit"));
-    Assert.assertThat("The NBT did not contain the expected value.",
-        nbt.getString("namespace1:path3"), CoreMatchers.is("true"));
+    // Then.
+    assertThat("Unexpected NBT value.", nbt.getString("minecraft:path2"), is("false"));
+    assertThat("Unexpected NBT value.", nbt.getString("namespace1:path1"), is("inherit"));
+    assertThat("Unexpected NBT value.", nbt.getString("namespace1:path3"), is("true"));
   }
 
-  /**
-   * Test that the {@link CompoundNBT} is not populated when the {@link EntityMobGriefingData} is
-   * not populated.
-   */
   @Test
-  public void testWriteToNbt_entityDataNotPopulated_nbtDataNotPopulated() {
-    // Set up test data.
+  void shouldNotWriteToNbtWhenEntityDataNotPopulated() {
+    // Given.
     CompoundNBT nbt = new CompoundNBT();
 
-    // Call the method under test.
-    entityMobGriefingData.write(nbt);
+    // When.
+    data.write(nbt);
 
-    // Perform assertions.
-    Assert.assertThat("The NBT did not contain the expected value.", nbt.keySet(),
-        CoreMatchers.is(Collections.emptySet()));
+    // Then.
+    assertThat("Unexpected NBT.", nbt.keySet(), is(Collections.emptySet()));
   }
 
-  /**
-   * Test that a string containing a readable representation of the {@link EntityMobGriefingData} is
-   * returned when {@code EntityMobGriefingData} is populated.
-   */
   @Test
-  public void testToString_dataPopulated_readableString() {
-    // Set up test data.
+  void shouldProduceEmptyStringWhenDataNotPopulated() {
+    // When.
+    String stringRepresentation = data.toString();
+
+    // Then.
+    assertThat("Unexpected string representation", stringRepresentation, is(""));
+  }
+
+  @Test
+  void shouldProduceReadableStringWhenDataPopulated() {
+    // Given.
     ResourceLocation entityResource1 = new ResourceLocation("namespace1:path3");
-    entityMobGriefingData.setMobGriefingValue(entityResource1, MobGriefingValue.TRUE);
+    data.setMobGriefingValue(entityResource1, MobGriefingValue.TRUE);
 
     ResourceLocation entityResource2 = new ResourceLocation("path2");
-    entityMobGriefingData.setMobGriefingValue(entityResource2, MobGriefingValue.FALSE);
+    data.setMobGriefingValue(entityResource2, MobGriefingValue.FALSE);
 
     ResourceLocation entityResource3 = new ResourceLocation("namespace1:path1");
-    entityMobGriefingData.setMobGriefingValue(entityResource3, MobGriefingValue.INHERIT);
+    data.setMobGriefingValue(entityResource3, MobGriefingValue.INHERIT);
 
-    // Call the method under test.
-    String stringRepresentation = entityMobGriefingData.toString();
+    // When.
+    String stringRepresentation = data.toString();
 
-    // Perform assertions.
+    // Then.
     String expectedString = "minecraft:path2 = false\nnamespace1:path1 = inherit\nnamespace1:path3 = true";
-    Assert.assertThat(
-        "The string representation of the EntityMobGriefingData did not match the expected value.",
-        stringRepresentation, CoreMatchers.is(expectedString));
-  }
-
-  /**
-   * Test that an empty string is returned when the {@link EntityMobGriefingData} is not populated.
-   */
-  @Test
-  public void testToString_dataNotPopulated_emptyString() {
-    // Call the method under test.
-    String stringRepresentation = entityMobGriefingData.toString();
-
-    // Perform assertions.
-    Assert.assertThat(
-        "The string representation of the EntityMobGriefingData did not match the expected value.",
-        stringRepresentation, CoreMatchers.is(""));
+    assertThat("Unexpected string representation.", stringRepresentation, is(expectedString));
   }
 }

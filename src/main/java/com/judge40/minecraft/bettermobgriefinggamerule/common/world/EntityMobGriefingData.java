@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -129,7 +130,7 @@ public class EntityMobGriefingData extends WorldSavedData {
     MobGriefingValue previousValue = entityIdsToMobGriefingValue.put(entityId, value);
 
     // If the value was changed then mark the data as dirty so it will be stored.
-    if (!value.equals(previousValue)) {
+    if (!Objects.equals(value, previousValue)) {
       this.markDirty();
     }
   }

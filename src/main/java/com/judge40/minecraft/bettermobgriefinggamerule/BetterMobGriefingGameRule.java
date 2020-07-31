@@ -21,15 +21,12 @@ package com.judge40.minecraft.bettermobgriefinggamerule;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.DefaultMobGriefingConfigGui;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingEventHandler;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobGriefingCommand;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHelper;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.GameRules.BooleanValue;
 import net.minecraft.world.World;
@@ -39,6 +36,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -60,11 +58,12 @@ public class BetterMobGriefingGameRule {
     MinecraftForge.EVENT_BUS.register(eventHandler);
     MinecraftForge.EVENT_BUS.register(this);
 
-    FMLJavaModLoadingContext.get().getModEventBus().register(eventHandler);
+    FMLJavaModLoadingContext.get().getModEventBus().register(this);
 
     ModLoadingContext modLoadingContext = ModLoadingContext.get();
     modLoadingContext.registerConfig(Type.COMMON, ConfigHolder.COMMON_SPEC);
-    modLoadingContext.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY, () -> DefaultMobGriefingConfigGui::new);
+    modLoadingContext.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
+        () -> DefaultMobGriefingConfigGui::new);
   }
 
   /**
@@ -98,32 +97,18 @@ public class BetterMobGriefingGameRule {
   }
 
   /**
-   * Whether mob griefing is enabled to the given {@link Entity}.
+   * Synchronize the configuration changes when the configuration is changed.
    *
-   * @param entity The Entity to get the mob griefing value for.
-   * @return Whether mob griefing is enabled.
+   * @param event The ModConfigEvent.
    */
-  public static boolean isMobGriefingEnabled(Entity entity) {
-    Boolean mobGriefingEnabled = null;
-    ResourceLocation entityId = entity.getType().getRegistryName();
-    MinecraftServer entityServer = entity.getServer();
+  // TODO: The ModConfigEvent does not fire consistently despite the toml file being updated,
+  //  updates are synchronized manually as a workaround so only handle the Loading event here.
+  @SubscribeEvent
+  public void onModConfigEvent(ModConfig.Loading event) {
+    ModConfig config = event.getConfig();
 
-    // If the entity type was found then try and get the entity's value from the world data.
-    if (entityId != null && entityServer != null) {
-      EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forServer(entityServer);
-      MobGriefingValue mobGriefingValue = entityMobGriefingData.getMobGriefingValue(entityId);
-
-      if (!mobGriefingValue.equals(MobGriefingValue.INHERIT)) {
-        mobGriefingEnabled = Boolean.valueOf(mobGriefingValue.toString());
-      }
+    if (config.getSpec() == ConfigHolder.COMMON_SPEC) {
+      ConfigHelper.synchronizeCommon();
     }
-
-    // If no entity rule was found then default to the global value.
-    if (mobGriefingEnabled == null) {
-      World world = entity.getEntityWorld();
-      mobGriefingEnabled = world.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
-    }
-
-    return mobGriefingEnabled;
   }
 }

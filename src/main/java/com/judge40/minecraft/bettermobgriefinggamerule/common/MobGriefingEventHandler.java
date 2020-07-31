@@ -19,35 +19,19 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.common;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHelper;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 import net.minecraft.entity.Entity;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.GameRules;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.config.ModConfig;
 
 /**
  * An event handler for all mob griefing events.
  */
 public class MobGriefingEventHandler {
-
-  /**
-   * Synchronize the configuration changes when the configuration is changed.
-   *
-   * @param event The ModConfigEvent.
-   */
-  // TODO: The ModConfigEvent does not fire consistently despite the toml file being updated,
-  //  updates are synchronized manually as a workaround so only handle the Loading event here.
-  @SubscribeEvent
-  public void onModConfigEvent(ModConfig.Loading event) {
-    ModConfig config = event.getConfig();
-
-    if (config.getSpec() == ConfigHolder.COMMON_SPEC) {
-      ConfigHelper.synchronizeCommon();
-    }
-  }
 
   /**
    * When mob griefing occurs, check whether mob griefing is enabled for the griefing entity and set
@@ -61,13 +45,40 @@ public class MobGriefingEventHandler {
     Entity griefingEntity = mobGriefingEvent.getEntity();
 
     if (griefingEntity != null) {
-      boolean isEnabled = BetterMobGriefingGameRule.isMobGriefingEnabled(griefingEntity);
-
-      if (isEnabled) {
+      if (isMobGriefingEnabled(griefingEntity)) {
         mobGriefingEvent.setResult(Result.ALLOW);
       } else {
         mobGriefingEvent.setResult(Result.DENY);
       }
     }
+  }
+
+  /**
+   * Whether mob griefing is enabled to the given {@link Entity}.
+   *
+   * @param entity The Entity to get the mob griefing value for.
+   * @return Whether mob griefing is enabled.
+   */
+  private boolean isMobGriefingEnabled(Entity entity) {
+    Boolean mobGriefingEnabled = null;
+    ResourceLocation entityId = entity.getType().getRegistryName();
+    MinecraftServer entityServer = entity.getServer();
+
+    // If the entity type was found then try and get the entity's value from the world data.
+    if (entityId != null && entityServer != null) {
+      EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forServer(entityServer);
+      MobGriefingValue mobGriefingValue = entityMobGriefingData.getMobGriefingValue(entityId);
+
+      if (!mobGriefingValue.equals(MobGriefingValue.INHERIT)) {
+        mobGriefingEnabled = Boolean.valueOf(mobGriefingValue.toString());
+      }
+    }
+
+    // If no entity rule was found then default to the global value.
+    if (mobGriefingEnabled == null) {
+      mobGriefingEnabled = entityServer.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
+    }
+
+    return mobGriefingEnabled;
   }
 }

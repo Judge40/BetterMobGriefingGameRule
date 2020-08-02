@@ -19,9 +19,9 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
-import static org.mockito.Mockito.mock;
-
+import com.electronwill.nightconfig.core.AbstractCommentedConfig;
 import com.electronwill.nightconfig.core.CommentedConfig;
+import com.electronwill.nightconfig.core.ConfigFormat;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder;
@@ -44,9 +44,8 @@ public class TestUtils {
     // Initialize locale so calling I18n does not cause failures.
     FieldUtils.writeStaticField(I18n.class, "i18nLocale", new Locale(), true);
 
-    CommentedConfig config = mock(CommentedConfig.class);
-    FieldUtils.writeField(ConfigHolder.COMMON_SPEC, "childConfig", config, true);
-    initializeConfig(true);
+    FieldUtils.writeField(ConfigHolder.COMMON_SPEC, "childConfig", new CommentedConfigStub(), true);
+    initializeConfig(true, MobGriefingValue.INHERIT);
   }
 
   public static void initializeConfig(boolean mobGriefing, MobGriefingValue... mobGriefingValues)
@@ -71,6 +70,28 @@ public class TestUtils {
           .defineEnum(entityId.toString(), mobGriefingValue);
       FieldUtils.writeField(mobGriefingValueEnum, "spec", ConfigHolder.COMMON_SPEC, true);
       entityIdsToDefaultEntityEnumValue.put(entityId, mobGriefingValueEnum);
+    }
+  }
+
+  private static class CommentedConfigStub extends AbstractCommentedConfig {
+
+    private CommentedConfigStub() {
+      super(false);
+    }
+
+    @Override
+    public AbstractCommentedConfig clone() {
+      return null;
+    }
+
+    @Override
+    public CommentedConfig createSubConfig() {
+      return new CommentedConfigStub();
+    }
+
+    @Override
+    public ConfigFormat<?> configFormat() {
+      return null;
     }
   }
 }

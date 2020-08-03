@@ -48,8 +48,6 @@ import org.junit.jupiter.params.provider.CsvSource;
  */
 class MobGriefingEventHandlerTest {
 
-  private MobGriefingEventHandler eventHandler;
-
   private EntityMobGriefingData data;
   private Entity entity;
 
@@ -60,8 +58,6 @@ class MobGriefingEventHandlerTest {
 
   @BeforeEach
   void setUp() {
-    eventHandler = new MobGriefingEventHandler();
-
     MinecraftServer server = mock(MinecraftServer.class);
     ServerWorld world = mock(ServerWorld.class);
     DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""), null);
@@ -86,7 +82,7 @@ class MobGriefingEventHandlerTest {
     EntityMobGriefingEvent event = new EntityMobGriefingEvent(null);
 
     // When.
-    eventHandler.onMobGriefing(event);
+    MobGriefingEventHandler.onMobGriefing(event);
 
     // Then.
     assertThat("Unexpected result.", event.getResult(), is(Result.DEFAULT));
@@ -102,7 +98,7 @@ class MobGriefingEventHandlerTest {
     data.setMobGriefingValue(entityId, value);
 
     // When.
-    eventHandler.onMobGriefing(event);
+    MobGriefingEventHandler.onMobGriefing(event);
 
     // Then.
     assertThat("Unexpected result.", event.getResult(), is(result));
@@ -114,7 +110,7 @@ class MobGriefingEventHandlerTest {
     EntityMobGriefingEvent event = new EntityMobGriefingEvent(entity);
 
     // When.
-    eventHandler.onMobGriefing(event);
+    MobGriefingEventHandler.onMobGriefing(event);
 
     // Then.
     assertThat("Unexpected result.", event.getResult(), is(Result.ALLOW));

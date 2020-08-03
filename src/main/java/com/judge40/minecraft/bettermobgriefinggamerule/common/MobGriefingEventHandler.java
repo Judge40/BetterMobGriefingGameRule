@@ -27,10 +27,12 @@ import net.minecraft.world.GameRules;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 /**
  * An event handler for all mob griefing events.
  */
+@EventBusSubscriber()
 public class MobGriefingEventHandler {
 
   /**
@@ -41,7 +43,7 @@ public class MobGriefingEventHandler {
    * @param mobGriefingEvent The {@link EntityMobGriefingEvent} to update.
    */
   @SubscribeEvent
-  public void onMobGriefing(EntityMobGriefingEvent mobGriefingEvent) {
+  public static void onMobGriefing(EntityMobGriefingEvent mobGriefingEvent) {
     Entity griefingEntity = mobGriefingEvent.getEntity();
 
     if (griefingEntity != null) {
@@ -59,7 +61,7 @@ public class MobGriefingEventHandler {
    * @param entity The Entity to get the mob griefing value for.
    * @return Whether mob griefing is enabled.
    */
-  private boolean isMobGriefingEnabled(Entity entity) {
+  private static boolean isMobGriefingEnabled(Entity entity) {
     Boolean mobGriefingEnabled = null;
     ResourceLocation entityId = entity.getType().getRegistryName();
     MinecraftServer entityServer = entity.getServer();

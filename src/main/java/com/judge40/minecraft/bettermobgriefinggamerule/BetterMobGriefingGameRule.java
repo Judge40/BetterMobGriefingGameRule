@@ -20,26 +20,22 @@
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.DefaultMobGriefingConfigGui;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingEventHandler;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobGriefingCommand;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHelper;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.GameRules.BooleanValue;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,6 +43,7 @@ import org.apache.logging.log4j.Logger;
  * Base class for Better mobGriefing GameRule mod.
  */
 @Mod(ModInfoConstants.ID)
+@EventBusSubscriber
 public class BetterMobGriefingGameRule {
 
   private static final Logger LOGGER = LogManager.getLogger();
@@ -54,12 +51,7 @@ public class BetterMobGriefingGameRule {
   public static final String GLOBAL_RULE = "mobGriefing";
 
   public BetterMobGriefingGameRule() {
-    MobGriefingEventHandler eventHandler = new MobGriefingEventHandler();
-    MinecraftForge.EVENT_BUS.register(eventHandler);
-    MinecraftForge.EVENT_BUS.register(this);
-
-    FMLJavaModLoadingContext.get().getModEventBus().register(this);
-
+    // Register mod config.
     ModLoadingContext modLoadingContext = ModLoadingContext.get();
     modLoadingContext.registerConfig(Type.COMMON, ConfigHolder.COMMON_SPEC);
     modLoadingContext.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
@@ -72,7 +64,7 @@ public class BetterMobGriefingGameRule {
    * @param event The FMLServerStartingEvent.
    */
   @SubscribeEvent
-  public void onFmlServerStartingEvent(FMLServerStartingEvent event) {
+  public static void onFmlServerStartingEvent(FMLServerStartingEvent event) {
     LOGGER.debug("Server starting.");
     BetterMobGriefingCommand.register(event.getCommandDispatcher());
 
@@ -94,21 +86,5 @@ public class BetterMobGriefingGameRule {
     EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData
         .forServer(event.getServer());
     entityMobGriefingData.populateFromConfiguration();
-  }
-
-  /**
-   * Synchronize the configuration changes when the configuration is changed.
-   *
-   * @param event The ModConfigEvent.
-   */
-  // TODO: The ModConfigEvent does not fire consistently despite the toml file being updated,
-  //  updates are synchronized manually as a workaround so only handle the Loading event here.
-  @SubscribeEvent
-  public void onModConfigEvent(ModConfig.Loading event) {
-    ModConfig config = event.getConfig();
-
-    if (config.getSpec() == ConfigHolder.COMMON_SPEC) {
-      ConfigHelper.synchronizeCommon();
-    }
   }
 }

@@ -1,155 +1,127 @@
-![Better mobGriefing GameRule](src/main/resources/assets/bettermobgriefinggamerule/logo.png)
+![Better mobGriefing GameRule](src/main/resources/logo.png)
 
-![Minecraft 1.12.2](https://img.shields.io/badge/Minecraft-1.12.2-lightgrey.svg)
-![Forge 1.12.2-14.23.2.2646](https://img.shields.io/badge/Forge-1.12.2--14.23.2.2646-lightgrey.svg)  
+![Minecraft 1.14.4](https://img.shields.io/badge/Minecraft-1.14.4-lightgrey.svg)
+![Forge 1.14.4-28.2.0](https://img.shields.io/badge/Forge-1.14.4--28.2.0-lightgrey.svg)  
 [![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## About
 "Better mobGriefing GameRule" is a Minecraft mod which improves the
-"mobGriefing" game rule, allowing separate values to be specified for
-individual types of entity.
+"mobGriefing" game rule, allowing separate values to be specified for individual
+types of entity.
 
-## Features
+## Command Usage
+The standard `/gamerule mobGriefing true|false` command has been extended to
+allow the entity to be specified as part of the command in the format `/gamerule
+mobGriefing <entity> inherit|true|false`. When the value is `inherit` the
+entity's mobGriefing behaviour will be inherited from the original game rule.
 
-The below game rules can be used to override the mobGriefing behaviour
-for the associated entity type, the value of these rules will be used
-instead of the original "mobGriefing" game rule.
+The `entity` value accepts the same arguments as the `/summon` command and new
+entity types will automatically be added when given in the command arguments,
+e.g.`/gamerule mobGriefing creeper false` or `/gamerule mobGriefing
+minecraft:creeper false`.
 
-| Entity         | GameRule                      |
-| -------------- | ----------------------------- |
-| Blaze          | mobGriefing blaze             |
-| Creeper        | mobGriefing creeper           |
-| EnderDragon    | mobGriefing ender_dragon      |
-| Enderman       | mobGriefing enderman          |
-| Evoker         | mobGriefing evocation_illager |
-| Ghast          | mobGriefing ghast             |
-| Husk           | mobGriefing husk              |
-| PigZombie      | mobGriefing zombie_pigman     |
-| Rabbit         | mobGriefing rabbit            |
-| Sheep          | mobGriefing sheep             |
-| Silverfish     | mobGriefing silverfish        |
-| SnowMan        | mobGriefing snowman           |
-| Villager       | mobGriefing villager          |
-| Wither         | mobGriefing wither            |
-| Zombie         | mobGriefing zombie            |
-| ZombieVillager | mobGriefing zombie_villager   |
+When a world is loaded initial values for entities will be populated based on
+the current configuration values.
 
-Each rule can be set to `true`, `false` or `inherit`, when the value is
-`inherit` the entity's mobGriefing behaviour will be inherited from the
-original "mobGriefing" game rule.
+## Configuration Usage
+The initial values of the mobGriefing game rules can be set using the in-game
+mod configuration menu, these can be changed for both the global mobGriefing
+game rule and each individual entity.
 
-### Entity Rule Effects
-The following list describe the effect of each of the default entity
-rules.
+The specified initial values will be used to set the mobGriefing values during
+world creation as well as any missing entity rules when loading existing worlds.
 
- - Blaze
-    - Whether the Blaze's fireball can set blocks on fire.
- - Creeper
-    - Whether the Creeper's explosion can destroy blocks.
- - EnderDragon
-    - Whether the EnderDragon can destroy blocks upon contact.
- - Enderman
-    - Whether the Enderman can pick up and/or place blocks.
- - Evoker
-    - Whether the Evoker can turn blue sheep in to red sheep.
- - Ghast
-    - Whether the Ghast's fireball can destroy blocks.
-    - Whether the Ghast's fireball can set blocks on fire.
- - Husk
-    - Whether the Husk can destroy wooden doors.
-    - Whether the Husk can pick up loot from the ground.
- - PigZombie
-    - Whether the PigZombie can destroy wooden doors.
- - Rabbit
-    - Whether the rabbit can eat carrot crops.
- - Sheep
-    - Whether the Sheep eating grass damages the grass.
- - Silverfish
-    - Whether the Silverfish egg can hatch and destroy the block.
-    - Whether the Silverfish can hide and convert stone to monster eggs.
- - SnowMan
-    - Whether the SnowMan can place a snow layer as it moves.
- - Villager
-    - Whether the Villager can harvest crops.
-    - Whether the Villager can pick up loot from the ground.
- - Wither
-    - Whether the Wither's spawn explosion can destroy blocks.
-    - Whether the Wither's attacks can destroy blocks.
-    - Whether the Wither can destroy blocks upon contact.
- - Zombie
-    - Whether the Zombie can destroy wooden doors.
-    - Whether the Zombie can pick up loot from the ground.
- - ZombieVillager
-    - Whether the ZombieVillager can destroy wooden doors.
-    - Whether the ZombieVillager can pick up loot from the ground.
+A number of entities will automatically be included in the configuration file,
+consisting of the entities in the "Mob Specific", "Active Actions" and
+"Projectiles" sub-sections of the "Mob Griefing Effects" section. Additional
+entities can be added to the configuration file manually and will then function
+the same as the default entities.
 
-Several behaviours are handled in common code and so can affect multiple
-entities, these are detailed below with the entities which use them as
-standard.
- - Whether an entity falling upon farmland reverts it to dirt.
-   (Used by all entities.)
- - Whether an entity eating grass damages the grass.
-   (Used by Sheep only.)
- - Whether an entity can destroy wooden doors.
-   (Used by Husks, PigZombies, Zombies and ZombieVillager.)
- - Whether an entity can pick up loot from the ground.
-   (Used by PigZombies, Skeletons, Strays, Villagers, WitherSkeletons
-   and Zombies.)
- - Whether large fireballs can destroy blocks.
-   (Used by Ghasts only.)
- - Whether large fireballs can set blocks on fire.
-   (Used by Ghasts only.)
- - Whether wither skull projectiles can destroy blocks.
-   (Used by Wither only.)
- - Whether an entity can harvest crops. (Used by Villager only.)
+Entity configuration entries are in the format `"namespace:entity" =
+"INHERIT|TRUE|FALSE"`.
 
-Any entities which include these behaviours can be added to be handled
-with a separate entity rule at any time by using the command
-`/gamerule mobGriefing <entity-name> <value>`. For example the loot
-pickup behaviour of Skeletons is not handled by standard but could be
-stopped by using `/gamerule mobGriefing Skeleton false`.
+The configuration file uses the Forge config structure:
+```toml
+[global]
+  mobGriefing = false
 
-Any changes made by other mods may change the inheritance of mob
-griefing behaviour, so creating new entity rules as above may be
-necessary to account for changes or new mob types which extend the
-original mob types. 
-
-### Configuration
-The default values of the mobGriefing game rules can be set using the
-in-game configuration menu. Default values can be changed for both the
-global mobGriefing game rule and each individual entity.
-
-The specified default values will be used to set the initial mobGriefing
-values during world creation as well as for any existing world in which
-a given rule does not already exist.
-
-All entities supported out of the box will be added to the configuration
-file automatically, additional entities can be added manually to the
-configuration file. Once added the entity can then be managed using the
-in-game configuration menu.
-The entity name specified must match the name as it appears in the
-EntityList for that entity, for example `S:zombie_pigman=true`.
-
-The structure of the configuration file follows the Forge structure:
+[entity]
+  "minecraft:creeper" = "FALSE"
+  "minecraft:enderman" = "INHERIT"
+  "minecraft:villager" = "TRUE"
 ```
-# Configuration file
-defaultmobgriefingvalues {
 
-    globalrules {
-        S:mobGriefing=true|false
-    }
+## Mob Griefing Effects
+### Mob Specific
+Effects which are coded directly in to the mob.
 
-    entityrules {
-        S:<entity name 1>=true|false|inherit
-        ...
-        S:<entity name n>=true|false|inherit
-    }
-}
-```
+| Name         | Effect                                 | Version |
+| ------------ | -------------------------------------- | ------- |
+| Creeper      | Can destroy blocks when exploding.     | 1.7+    |
+| Ender Dragon | Can destroy blocks on touch.           | 1.7+    |
+| Enderman     | Can pickup and place blocks.           | 1.7+    |
+| Evoker       | Can Wololo sheep.                      | 1.11+   |
+| Fox          | Can eat berries.                       | 1.14+   |
+| Rabbit       | Can eat carrots.                       | 1.8+    |
+| Ravager      | Can destroy crops and leaves.          | 1.14+   |
+| Silverfish   | Can hide in and destroy stone blocks.  | 1.9+    |
+| Snow Golem   | Can leave snow trails.                 | 1.9+    |
+| Wither       | Can destroy blocks on spawn and touch. | 1.7+    |
+| Zombie*      | Can attack turtle eggs.                | 1.13+   |
+
+\* Inherited by Drowned, Husk, Zombie Villager and Zombified Piglin.
+
+### Shared
+Effects which are coded as reusable behaviours, but may only be used by a single
+mob by default.
+
+#### Active Actions
+Effects which occur due to an action actively taken by a mob.
+
+| Effect                                        | Used By              | Version |
+| --------------------------------------------- | -------------------- | ------- |
+| Can eat grass.                                | Sheep                | 1.7+    |
+| Can break doors.                              | Husk                 | 1.11+   |
+|                                               | Zombie               | 1.7+    |
+|                                               | Zombie Villager      | 1.11+   |
+|                                               | Zombified Piglin     | 1.8+    |
+| Can plant and harvest crops.                  | Villager (Farmer)    | 1.8+    |
+| Can create Wither Rose when killed by Wither. | All mobs and players | 1.14+   |
+
+#### Passive Actions
+Effects which occur passively during roaming.
+
+| Effect                   | Used By                             | Version |
+| ------------------------ | ----------------------------------- | ------- |
+| Can trample farmland.    | All mobs over half a block in size. | 1.7+    |
+| Can pick up loot.        | Skeleton                            | 1.7+    |
+|                          | Zombie                              | 1.7+    |
+|                          | Zombified Piglin                    | 1.7+    |
+|                          | Villager                            | 1.8+    |
+|                          | Husk                                | 1.11+   |
+|                          | Stray                               | 1.11+   |
+|                          | Wither Skeleton                     | 1.11+   |
+|                          | Zombie Villager                     | 1.11+   |
+|                          | Dolphin                             | 1.13+   |
+|                          | Drowned                             | 1.13+   |
+|                          | Fox                                 | 1.14+   |
+|                          | Panda                               | 1.14+   |
+|                          | Pillager                            | 1.14+   |
+| Can trample Turtle eggs. | All non-Turtle mobs.                | 1.13+   |
+
+#### Projectiles
+Effects attached to a projectile.
+
+| Name           | Effect                               | Used By | Version |
+| -------------- | ------------------------------------ | ------- | ------- |
+| Fireball       | Impact explosion can destroy blocks. | Ghast   | 1.7+    |
+|                | Impact explosion can start fires.    | Ghast   | 1.8+    |
+| Small Fireball | Impact can start fires.              | Blaze   | 1.8+    |
+| Wither Skull   | Impact explosion can destroy blocks. | Wither  | 1.8+    |
 
 ## Versioning
-The versioning used for this project uses a combination of the target
-Minecraft version and [SemVer](http://semver.org) in the format
+The versioning used for this project uses a combination of the target Minecraft
+version and [SemVer](http://semver.org) in the format
 `MCVERSION-MAJOR.MINOR.PATCH`.
 
 ## License

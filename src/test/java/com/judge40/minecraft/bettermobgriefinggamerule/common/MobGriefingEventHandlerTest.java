@@ -1,15 +1,15 @@
 /*
  * Better mobGriefing GameRule Copyright (c) 2016 Judge40
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
  * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or
  * substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
  * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -19,169 +19,103 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.common;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import mockit.Expectations;
-import mockit.Mocked;
-import mockit.Verifications;
+import com.judge40.minecraft.bettermobgriefinggamerule.TestUtils;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
+import com.mojang.datafixers.DataFixer;
+import java.io.File;
 import net.minecraft.entity.Entity;
-import net.minecraft.launchwrapper.Launch;
-import net.minecraft.world.World;
+import net.minecraft.entity.EntityType;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
+import net.minecraftforge.eventbus.api.Event.Result;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * The unit tests for {@link MobGriefingEventHandler}.
  */
-public class MobGriefingEventHandlerTest {
+class MobGriefingEventHandlerTest {
 
-  private MobGriefingEventHandler eventHandler;
+  private EntityMobGriefingData data;
+  private Entity entity;
 
-  @Mocked
-  private World world;
-
-  /**
-   * Populate the {@code fml.deobfuscatedEnvironment} flag.
-   */
-  @BeforeClass
-  public static void setUpBeforeClass() {
-    // Set the deobfuscation flag.
-    Map<String, Object> blackboard = new HashMap<>();
-    blackboard.put("fml.deobfuscatedEnvironment", true);
-    Launch.blackboard = blackboard;
+  @BeforeAll
+  static void setUpBeforeAll() throws IllegalAccessException {
+    TestUtils.initializeTestEnvironment();
   }
 
-  @Before
-  public void setUp() {
-    eventHandler = new MobGriefingEventHandler();
+  @BeforeEach
+  void setUp() {
+    MinecraftServer server = mock(MinecraftServer.class);
+    ServerWorld world = mock(ServerWorld.class);
+    DataFixer dataFixer = mock(DataFixer.class);
+    DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""),
+        dataFixer);
+
+    when(server.getGameRules()).thenReturn(new GameRules());
+    when(server.func_71218_a(DimensionType.OVERWORLD)).thenReturn(world);
+    when(world.getSavedData()).thenReturn(savedDataManager);
+
+    data = EntityMobGriefingData.forServer(server);
+
+    entity = mock(Entity.class);
+    when(entity.getServer()).thenReturn(server);
+
+    EntityType entityType = mock(EntityType.class);
+    when(entity.getType()).thenReturn(entityType);
+    when(entityType.getRegistryName()).thenReturn(new ResourceLocation("test:entity1"));
   }
 
-  /**
-   * Test that the configuration change event is handled when the configuration's mod ID matches
-   * this mod.
-   */
   @Test
-  public void testOnConfigChanged_defaultMobGriefingConfigurationChanged_handleChange(
-      @Mocked DefaultMobGriefingConfiguration configuration) {
-    // Set up test data.
-    OnConfigChangedEvent event = new OnConfigChangedEvent(ModInfoConstants.ID, "", false, false);
-    BetterMobGriefingGameRule entryPoint = new BetterMobGriefingGameRule();
-
-    // Record expectations.
-    new Expectations(entryPoint) {
-      {
-        BetterMobGriefingGameRule.getInstance();
-        result = entryPoint;
-
-        entryPoint.getDefaultMobGriefingConfiguration();
-        result = configuration;
-      }
-    };
-
-    // Call the method under test.
-    eventHandler.onConfigChanged(event);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        configuration.synchronize();
-      }
-    };
-  }
-
-  /**
-   * Test that the configuration change event is not handled when the configuration's mod ID does
-   * not match this mod.
-   */
-  @Test
-  public void testOnConfigChanged_nonDefaultMobGriefingConfigurationChanged_doNotHandleChange(
-      @Mocked DefaultMobGriefingConfiguration configuration) {
-    // Set up test data.
-    OnConfigChangedEvent event = new OnConfigChangedEvent("dummyModId001", "", false, false);
-
-    // Call the method under test.
-    eventHandler.onConfigChanged(event);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        configuration.synchronize();
-        times = 0;
-      }
-    };
-  }
-
-  /**
-   * Test that the event result is set to DEFAULT when the entity is null.
-   */
-  @Test
-  public void testOnMobGriefing_entityNull_default() {
-    // Set up test data.
+  void shouldNotOverrideGriefingWhenEntityNull() {
+    // Given.
     EntityMobGriefingEvent event = new EntityMobGriefingEvent(null);
 
-    // Call the method under test.
-    eventHandler.onMobGriefing(event);
+    // When.
+    MobGriefingEventHandler.onMobGriefing(event);
 
-    // Perform assertions.
-    Assert.assertThat("The event result is not match the expected value.", event.getResult(),
-        CoreMatchers.is(Result.DEFAULT));
+    // Then.
+    assertThat("Unexpected result.", event.getResult(), is(Result.DEFAULT));
   }
 
-  /**
-   * Test that the event result is set to DENY when mob griefing is disabled.
-   */
-  @Test
-  public void testOnMobGriefing_disabled_deny(@Mocked Entity entity) {
-    // Set up test data.
+  @ParameterizedTest(name = "Should override mobGriefing when entity value is {0}")
+  @CsvSource({"FALSE, DENY", "TRUE, ALLOW", "INHERIT, ALLOW"})
+  void shouldOverrideGriefingWhenEntityExists(MobGriefingValue value, Result result) {
+    // Given.
     EntityMobGriefingEvent event = new EntityMobGriefingEvent(entity);
 
-    // Record expectations.
-    new Expectations(BetterMobGriefingGameRule.class) {
-      {
-        BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
-        result = false;
-      }
-    };
+    ResourceLocation entityId = entity.getType().getRegistryName();
+    data.setMobGriefingValue(entityId, value);
 
-    // Call the method under test.
-    eventHandler.onMobGriefing(event);
+    // When.
+    MobGriefingEventHandler.onMobGriefing(event);
 
-    // Perform assertions.
-    Assert.assertThat("The event result is not match the expected value.", event.getResult(),
-        CoreMatchers.is(Result.DENY));
+    // Then.
+    assertThat("Unexpected result.", event.getResult(), is(result));
   }
 
-  /**
-   * Test that the event result is set to ALLOW when mob griefing is enabled.
-   */
   @Test
-  public void testOnMobGriefing_enabled_allow(@Mocked Entity entity) {
-    // Set up test data.
+  void shouldUseGlobalValueWhenEntityNotExists() {
+    // Given.
     EntityMobGriefingEvent event = new EntityMobGriefingEvent(entity);
 
-    // Record expectations.
-    new Expectations(BetterMobGriefingGameRule.class) {
-      {
-        BetterMobGriefingGameRule.isMobGriefingEnabled(entity);
-        result = true;
-      }
-    };
+    // When.
+    MobGriefingEventHandler.onMobGriefing(event);
 
-    // Call the method under test.
-    eventHandler.onMobGriefing(event);
-
-    // Perform assertions.
-    Assert.assertThat("The event result is not match the expected value.", event.getResult(),
-        CoreMatchers.is(Result.ALLOW));
+    // Then.
+    assertThat("Unexpected result.", event.getResult(), is(Result.ALLOW));
   }
 }

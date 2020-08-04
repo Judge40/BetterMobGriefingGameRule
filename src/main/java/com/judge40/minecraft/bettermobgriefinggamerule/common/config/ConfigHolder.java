@@ -1,5 +1,5 @@
 /*
- * Better mobGriefing GameRule Copyright (c) 2017 Judge40
+ * Better mobGriefing GameRule Copyright (c) 2020 Judge40
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -17,14 +17,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule.common;
+package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
 
-/**
- * The constants for BetterMobGriefingGameRule mod information.
- */
-public class ModInfoConstants {
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.Builder;
+import org.apache.commons.lang3.tuple.Pair;
 
-  public static final String DISPLAY_NAME = "Better mobGriefing GameRule";
+public class ConfigHolder {
 
-  public static final String ID = "bettermobgriefinggamerule";
+  public static final ForgeConfigSpec COMMON_SPEC;
+  public static final CommonConfig COMMON_CONFIG;
+
+  static {
+    {
+      Pair<CommonConfig, ForgeConfigSpec> specPair = new Builder().configure(CommonConfig::new);
+      COMMON_CONFIG = specPair.getLeft();
+      COMMON_SPEC = specPair.getRight();
+    }
+  }
 }

@@ -1,15 +1,15 @@
 /*
  * Better mobGriefing GameRule Copyright (c) 2016 Judge40
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
  * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or
  * substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
  * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -19,169 +19,155 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.common.command;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.BetterMobGriefingGameRule;
+import static net.minecraft.command.Commands.argument;
+import static net.minecraft.command.Commands.literal;
+
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
-
-import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandGameRule;
-import net.minecraft.command.CommandResultStats;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.server.MinecraftServer;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.arguments.EntitySummonArgument;
+import net.minecraft.command.arguments.SuggestionProviders;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameRules;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import net.minecraft.world.GameRules.BooleanValue;
 
 /**
  * A custom command handler for the mob griefing game rule, it allows auto-completion and assignment
  * of {@link MobGriefingValue EntityMobGriefingValues}.
  */
-public class BetterMobGriefingCommand extends CommandGameRule {
+public class BetterMobGriefingCommand {
+
+  private static final String RULE_NAME = "mobGriefing";
+  private static final String RULE_PARENT = "gamerule";
+  private static final String RULE_TARGET = "entity";
+  private static final String RULE_VALUE = "value";
+  private static final String RULE_SET_KEY = "commands.gamerule.set";
+  private static final String RULE_QUERY_KEY = "commands.gamerule.query";
 
   /**
-   * Process the command and perform the relevant actions. The mob griefing game rule will either be
-   * updated or the current value will be output, depending on the command entered. Other commands
-   * will be routed to the default handling.
-   * 
-   * @param commandSender The entity the command was sent by.
-   * @param commandWords A string array of words making up the command.
-   * @throws CommandException when the command entered is invalid.
+   * Register the {@value RULE_NAME} game rule.
+   * <li>List all values: {@code /}{@value RULE_PARENT} {@value RULE_NAME}
+   * <li>List specific value: {@code /}{@value RULE_PARENT} {@value RULE_NAME} {@code
+   * namespace:path}
+   * <li>Set specific value: {@code /}{@value RULE_PARENT} {@value RULE_NAME} {@code namespace:path
+   * true|false|inherit}
+   *
+   * @param dispatcher The command dispatcher to register with.
    */
-  @Override
-  public void execute(MinecraftServer server, ICommandSender commandSender, String[] commandWords)
-      throws CommandException {
-    // Only handle processing of mob griefing game rules.
-    if (commandWords.length >= 1 && commandWords[0].equals(BetterMobGriefingGameRule.GLOBAL_RULE)) {
-      EntityMobGriefingData entityMobGriefingData =
-          EntityMobGriefingData.forWorld(commandSender.getEntityWorld());
-      GameRules gameRules = commandSender.getEntityWorld().getGameRules();
-
-      if (commandWords.length == 1) {
-        // If the length is one then output the mob griefing values for both the global and entity
-        // rules.
-        String globalMobGriefingValue = gameRules.getString(BetterMobGriefingGameRule.GLOBAL_RULE);
-
-        String globalOutput =
-            String.format("%s = %s", BetterMobGriefingGameRule.GLOBAL_RULE, globalMobGriefingValue);
-        commandSender.sendMessage(new TextComponentString(globalOutput));
-
-        if (!entityMobGriefingData.toString().isEmpty()) {
-          String[] entityValues = entityMobGriefingData.toString().split(", ");
-
-          for (String entityValue : entityValues) {
-            String entityOutput =
-                String.format("%s %s", BetterMobGriefingGameRule.GLOBAL_RULE, entityValue);
-            commandSender.sendMessage(new TextComponentString(entityOutput));
-          }
-        }
-      } else if (commandWords.length == 2) {
-        if (commandWords[1].equals(MobGriefingValue.TRUE.toExternalForm())
-            || commandWords[1].equals(MobGriefingValue.FALSE.toExternalForm())) {
-          // If the command length is two and the second word is true or false then pass handling to
-          // the default handler to set the global mob griefing rule.
-          super.execute(server, commandSender, commandWords);
-        } else {
-          ResourceLocation entityType = new ResourceLocation(commandWords[1]);
-          String entityName = entityType.getPath();
-          MobGriefingValue entityMobGriefingValue =
-              entityMobGriefingData.getMobGriefingValue(entityName);
-
-          // If the second word is an entity name with its own value, output the entity name and mob
-          // griefing value. Otherwise inform the sender that there is currently no entity rule for
-          // that entity.
-          if (entityMobGriefingValue != null) {
-            String message = String.format("%s %s = %s", BetterMobGriefingGameRule.GLOBAL_RULE,
-                entityName, entityMobGriefingValue.toExternalForm());
-            commandSender.sendMessage(new TextComponentString(message));
-            commandSender.setCommandStat(CommandResultStats.Type.QUERY_RESULT,
-                gameRules.getInt(commandWords[0]));
-          } else {
-            String message =
-                String.format("%s %s", BetterMobGriefingGameRule.GLOBAL_RULE, commandWords[1]);
-            throw new CommandException("commands.gamerule.norule", new Object[] {message});
-          }
-        }
-      } else if (commandWords.length == 3) {
-        // If the second word is a valid entity name then try and set the entity rule to the value
-        // given in the third word, otherwise throw a wrong usage exception.
-        ResourceLocation entityType = new ResourceLocation(commandWords[1]);
-        String entityName = entityType.getPath();
-        Class<? extends Entity> entityClass = EntityList.getClass(entityType);
-
-        if (entityClass != null && EntityLiving.class.isAssignableFrom(entityClass)) {
-          try {
-            MobGriefingValue mobGriefingValue = MobGriefingValue.toEnumeration(commandWords[2]);
-            entityMobGriefingData.setMobGriefingValue(entityType.getPath(),
-                mobGriefingValue);
-            notifyCommandListener(commandSender, this, "commands.gamerule.success", new Object[] {
-                String.format("%s %s", commandWords[0], entityName), commandWords[2]});
-          } catch (IllegalArgumentException iae) {
-            String exceptionMessage = String.format("/gamerule %s <entity name> %s|%s|%s",
-                BetterMobGriefingGameRule.GLOBAL_RULE, MobGriefingValue.TRUE.toExternalForm(),
-                MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
-            throw new CommandException(exceptionMessage);
-          }
-        } else {
-          throw new CommandException(
-              String.format("%s is not a valid entity name", commandWords[1]));
-        }
-      } else {
-        // Throw a wrong usage exception where there are too many words.
-        String exceptionMessage = String.format("/gamerule %s <entity name> %s|%s|%s",
-            BetterMobGriefingGameRule.GLOBAL_RULE, MobGriefingValue.TRUE.toExternalForm(),
-            MobGriefingValue.FALSE.toExternalForm(), MobGriefingValue.INHERIT.toExternalForm());
-        throw new CommandException(exceptionMessage);
-      }
-    } else {
-      super.execute(server, commandSender, commandWords);
-    }
+  public static void register(CommandDispatcher<CommandSource> dispatcher) {
+    dispatcher.register(
+        literal(RULE_PARENT)
+            .then(
+                literal(RULE_NAME)
+                    .requires(source -> source.hasPermissionLevel(2))
+                    .executes(BetterMobGriefingCommand::listMobGriefing)
+                    .then(
+                        argument(RULE_VALUE, BoolArgumentType.bool())
+                            .executes(BetterMobGriefingCommand::setGlobalMobGriefing)
+                    )
+                    .then(
+                        argument(RULE_TARGET, EntitySummonArgument.entitySummon())
+                            .executes(BetterMobGriefingCommand::showMobGriefing)
+                            .suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
+                            .then(
+                                argument(RULE_VALUE, new BetterMobGriefingArgument())
+                                    .executes(BetterMobGriefingCommand::setEntityMobGriefing)
+                            )
+                    )
+            )
+    );
   }
 
-  @Override
-  public List<String> getTabCompletions(MinecraftServer server, ICommandSender commandSender,
-      String[] commandWords, BlockPos pos) {
-    List<String> tabCompletionOptions;
+  /**
+   * Show the mob griefing values for all targets, the result is sent to the command source.
+   *
+   * @param context The command context to process.
+   * @return The number of targets.
+   */
+  private static int listMobGriefing(CommandContext<CommandSource> context) {
+    CommandSource source = context.getSource();
+    EntityMobGriefingData data = EntityMobGriefingData.forServer(source.getServer());
 
-    if (commandWords.length == 1
-        || !commandWords[0].equals(BetterMobGriefingGameRule.GLOBAL_RULE)) {
-      // When the first word is being completed or the first word is not the mobGriefing game rule
-      // the parent's behavior will handle tab completion.
-      tabCompletionOptions = super.getTabCompletions(server, commandSender, commandWords, pos);
-    } else if (commandWords.length <= 3) {
-      // When the first word is the mobGriefing game rule true and false are always possible words.
-      List<String> possibleWords = new ArrayList<>();
-      possibleWords.add(MobGriefingValue.TRUE.toExternalForm());
-      possibleWords.add(MobGriefingValue.FALSE.toExternalForm());
+    GameRules gameRules = source.getServer().getGameRules();
+    BooleanValue mobGriefing = gameRules.get(GameRules.MOB_GRIEFING);
 
-      if (commandWords.length == 2) {
-        // When the command length is two then registered entity names are also possible words.
-        EntityMobGriefingData entityMobGriefingData =
-            EntityMobGriefingData.forWorld(commandSender.getEntityWorld());
-        List<String> entityNames =
-            new ArrayList<>(entityMobGriefingData.getRegisteredEntityNames());
-        Collections.sort(entityNames);
-        possibleWords.addAll(entityNames);
-      } else {
-        // When the command length is three then an entity rule is being set and inherit is a
-        // possible word.
-        possibleWords.add(MobGriefingValue.INHERIT.toExternalForm());
-      }
+    String values = String.format("\n%s = %s\n%s", RULE_NAME, mobGriefing, data);
+    TranslationTextComponent message = new TranslationTextComponent(RULE_QUERY_KEY, RULE_NAME,
+        values);
+    source.sendFeedback(message, true);
 
-      tabCompletionOptions = getListOfStringsMatchingLastWord(commandWords,
-          possibleWords.toArray(new String[possibleWords.size()]));
-    } else {
-      // Default for no results is an empty list.
-      tabCompletionOptions = Collections.emptyList();
-    }
+    return data.size();
+  }
 
-    return tabCompletionOptions;
+  /**
+   * Show the mob griefing value based on the command context, which requires one argument be
+   * populated. {@value RULE_TARGET} is the {@link ResourceLocation} of the target to get the value
+   * for. The result is sent to the command source.
+   *
+   * @param context The command context to process.
+   * @return The int representation of the current value where 0 is false, 1 is true and 2 is
+   *     inherit.
+   */
+  private static int showMobGriefing(CommandContext<CommandSource> context) {
+    CommandSource source = context.getSource();
+    EntityMobGriefingData data = EntityMobGriefingData.forServer(source.getServer());
+
+    ResourceLocation targetId = context.getArgument(RULE_TARGET, ResourceLocation.class);
+    String ruleName = String.format("%s %s", RULE_NAME, targetId);
+    MobGriefingValue mobGriefingValue = data.getMobGriefingValue(targetId);
+
+    TranslationTextComponent message = new TranslationTextComponent(RULE_QUERY_KEY, ruleName,
+        mobGriefingValue);
+    source.sendFeedback(message, true);
+
+    return mobGriefingValue.ordinal();
+  }
+
+  /**
+   * Set the global mob griefing value based on the command context, which requires {@value
+   * RULE_VALUE} populated as the boolean to set.
+   *
+   * @param context The command context to process.
+   * @return The int representation of the set value where 0 is false, 1 is true.
+   */
+  private static int setGlobalMobGriefing(CommandContext<CommandSource> context) {
+    CommandSource source = context.getSource();
+    GameRules gameRules = source.getServer().getGameRules();
+    BooleanValue mobGriefing = gameRules.get(GameRules.MOB_GRIEFING);
+    mobGriefing.func_223554_b(context, RULE_VALUE);
+
+    TranslationTextComponent message = new TranslationTextComponent(RULE_SET_KEY, RULE_NAME,
+        mobGriefing);
+    source.sendFeedback(message, true);
+
+    return mobGriefing.func_223557_c();
+  }
+
+  /**
+   * Set the entity mob griefing value based on the command context, which requires two arguments be
+   * populated. {@value RULE_TARGET} is the {@link ResourceLocation} of the target to set the value
+   * for and {@value RULE_VALUE} is the {@link MobGriefingValue} to set.
+   *
+   * @param context The command context to process.
+   * @return The int representation of the set value where 0 is false, 1 is true and 2 is inherit.
+   */
+  private static int setEntityMobGriefing(CommandContext<CommandSource> context) {
+    ResourceLocation targetId = context.getArgument(RULE_TARGET, ResourceLocation.class);
+    MobGriefingValue mobGriefingValue = context.getArgument(RULE_VALUE, MobGriefingValue.class);
+
+    CommandSource source = context.getSource();
+    EntityMobGriefingData data = EntityMobGriefingData.forServer(source.getServer());
+    data.setMobGriefingValue(targetId, mobGriefingValue);
+
+    String ruleName = String.format("%s %s", RULE_NAME, targetId);
+    TranslationTextComponent message = new TranslationTextComponent(RULE_SET_KEY, ruleName,
+        mobGriefingValue);
+    source.sendFeedback(message, true);
+
+    return mobGriefingValue.ordinal();
   }
 }

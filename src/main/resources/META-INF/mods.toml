@@ -1,0 +1,16 @@
+modLoader="javafml"
+loaderVersion="[28,)"
+issueTrackerURL="https://github.com/Judge40/BetterMobGriefingGameRule/issues"
+showAsResourcePack=false
+
+[[mods]]
+modId="bettermobgriefinggamerule"
+version="1.14.4-8.0.0"
+displayName="Better mobGriefing GameRule"
+updateJSONURL="https://github.com/Judge40/BetterMobGriefingGameRule/update.json"
+displayURL="https://github.com/Judge40/BetterMobGriefingGameRule"
+logoFile="logo.png"
+authors="Judge40"
+description='''
+"Better mobGriefing GameRule" is a Minecraft mod which improves the "mobGriefing" game rule, allowing separate values to be specified for individual types of entity.
+'''

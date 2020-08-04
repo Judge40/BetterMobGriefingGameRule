@@ -1,15 +1,15 @@
 /*
  * Better mobGriefing GameRule Copyright (c) 2016 Judge40
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
  * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or
  * substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
  * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -19,681 +19,293 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.common.command;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
-
-import mockit.Expectations;
-import mockit.Mocked;
-import mockit.Verifications;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandGameRule;
-import net.minecraft.command.CommandResultStats;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.context.ParsedArgument;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.Suggestion;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import com.mojang.brigadier.tree.CommandNode;
+import com.mojang.brigadier.tree.RootCommandNode;
+import com.mojang.datafixers.DataFixer;
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Predicate;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
+import net.minecraft.world.GameRules.BooleanValue;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.DimensionSavedDataManager;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * The unit tests for {@link BetterMobGriefingCommand}.
  */
-public class BetterMobGriefingCommandTest {
+class BetterMobGriefingCommandTest {
 
-  private BetterMobGriefingCommand command;
+  private CommandNode<CommandSource> mobGriefingCommand;
 
-  @Mocked
-  private ICommandSender commandSender;
-
-  @Mocked
   private MinecraftServer server;
+  private ServerWorld world;
+  private CommandSource commandSource;
+  private CommandContext<CommandSource> commandContext;
 
-  @Mocked
-  private World world;
+  private Map<String, ParsedArgument<CommandSource, ?>> commandArguments;
 
-  @Before
-  public void setUp() {
-    command = new BetterMobGriefingCommand();
+  @BeforeEach
+  void setUp() {
+    CommandDispatcher<CommandSource> dispatcher = new CommandDispatcher<>();
+    BetterMobGriefingCommand.register(dispatcher);
+
+    RootCommandNode<CommandSource> rootCommand = dispatcher.getRoot();
+    CommandNode<CommandSource> gameRuleCommand = rootCommand.getChild("gamerule");
+    mobGriefingCommand = gameRuleCommand.getChild("mobGriefing");
+
+    server = mock(MinecraftServer.class);
+    when(server.getGameRules()).thenReturn(new GameRules());
+    world = mock(ServerWorld.class);
+    when(server.func_71218_a(any())).thenReturn(world);
+
+    DataFixer dataFixer = mock(DataFixer.class);
+    when(world.getSavedData()).thenReturn(new DimensionSavedDataManager(new File(""), dataFixer));
+
+    commandSource = new CommandSource(server, Vec3d.ZERO, Vec2f.ZERO, world, 2, "",
+        new StringTextComponent(""), server, null);
+    commandSource = spy(commandSource);
+
+    commandArguments = new HashMap<>();
+    commandContext = new CommandContext<>(commandSource, null, commandArguments, null, null, null,
+        null, null, null, false);
+
   }
 
-  /**
-   * Test that the parent handles the command when there are no command words.
-   */
+  @ParameterizedTest(name = "Should return {1} from requirement check when permission level is {0}")
+  @CsvSource({"0, false", "1, false", "2, true", "3, true"})
+  void shouldRequirePermissionLevelTwo(int permissionLevel, boolean hasPermission) {
+    // Given.
+    Predicate<CommandSource> commandRequirement = mobGriefingCommand.getRequirement();
+
+    CommandSource commandSource = new CommandSource(server, Vec3d.ZERO, Vec2f.ZERO, world,
+        permissionLevel, "", new StringTextComponent(""), server, null);
+
+    // When.
+    boolean result = commandRequirement.test(commandSource);
+
+    // Then.
+    assertThat("Unexpected suggestion.", result, is(hasPermission));
+  }
+
   @Test
-  public void testExecute_noWords_handledByParent(@Mocked CommandGameRule parentCommand)
-      throws CommandException {
-    // Set up test data.
-    String[] commandWords = new String[0];
+  void shouldOutputListOfMobGriefing() throws CommandSyntaxException {
+    // Given.
+    EntityMobGriefingData data = EntityMobGriefingData.forServer(server);
+    data.setMobGriefingValue(new ResourceLocation("test:entity1"), MobGriefingValue.FALSE);
+    data.setMobGriefingValue(new ResourceLocation("test:entity2"), MobGriefingValue.TRUE);
+    data.setMobGriefingValue(new ResourceLocation("test:entity3"), MobGriefingValue.INHERIT);
 
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
+    Command<CommandSource> command = mobGriefingCommand.getCommand();
 
-    // Verify expectations.
-    new Verifications() {
-      {
-        parentCommand.execute(server, commandSender, commandWords);
-      }
-    };
+    // When.
+    int result = command.run(commandContext);
+
+    // Then.
+    assertThat("Unexpected command result.", result, is(3));
+    verify(commandSource).sendFeedback(any(ITextComponent.class), eq(true));
   }
 
-  /**
-   * Test that the global value and entity values are output when the only command word is
-   * "mobGriefing" and entity values exist.
-   */
-  @Test
-  public void testExecute_mobGriefingEntityValuesExist_globalAndEntityValuesOutput(
-      @Mocked World world) throws CommandException {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
-    entityMobGriefingData.setMobGriefingValue("entity_name1", MobGriefingValue.TRUE);
-    entityMobGriefingData.setMobGriefingValue("entity_name2", MobGriefingValue.FALSE);
-    entityMobGriefingData.setMobGriefingValue("entity_name3", MobGriefingValue.INHERIT);
-    GameRules gameRules = new GameRules();
+  @ParameterizedTest(name = "Should suggest {1} when the argument is {0}")
+  @CsvSource({"Tru, true", "fALS, false"})
+  void shouldSuggestGlobalMobGriefingValue(String input, String suggestion)
+      throws CommandSyntaxException, ExecutionException, InterruptedException {
+    // Given.
+    CommandNode<CommandSource> valueArgument = mobGriefingCommand.getChild("value");
 
-    List<TextComponentString> capturedChatText = new ArrayList<>();
-    String[] commandWords = new String[] {"mobGriefing"};
+    // When.
+    CompletableFuture<Suggestions> completableFuture = valueArgument
+        .listSuggestions(commandContext, new SuggestionsBuilder(input, 0));
 
-    // Record Expectations.
-    new Expectations(gameRules, EntityMobGriefingData.class) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
-
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
-
-        world.getGameRules();
-        result = gameRules;
-
-        gameRules.getString("mobGriefing");
-        result = "globalValue";
-
-        commandSender.sendMessage(withCapture(capturedChatText));
-      }
-    };
-
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
-
-    // Perform assertions.
-    Assert.assertThat("The number of chat outputs did not match the expected number.",
-        capturedChatText.size(), CoreMatchers.is(4));
-    Assert.assertThat("The chat output did not contain the expected value.",
-        capturedChatText.get(0).getUnformattedText(), CoreMatchers.is("mobGriefing = globalValue"));
-    Assert.assertThat("The chat output did not contain the expected value.",
-        capturedChatText.get(1).getUnformattedText(),
-        CoreMatchers.is("mobGriefing entity_name1 = true"));
-    Assert.assertThat("The chat output did not contain the expected value.",
-        capturedChatText.get(2).getUnformattedText(),
-        CoreMatchers.is("mobGriefing entity_name2 = false"));
-    Assert.assertThat("The chat output did not contain the expected value.",
-        capturedChatText.get(3).getUnformattedText(),
-        CoreMatchers.is("mobGriefing entity_name3 = inherit"));
+    // Then.
+    List<Suggestion> suggestions = completableFuture.get().getList();
+    assertThat("Unexpected suggestion size.", suggestions.size(), CoreMatchers.is(1));
+    assertThat("Unexpected suggestion.", suggestions.get(0).getText(), CoreMatchers.is(suggestion));
   }
 
-  /**
-   * Test that the global value is output when the only command word is "mobGriefing" and entity
-   * values do not exist.
-   */
-  @Test
-  public void testExecute_mobGriefingEntityValuesNotExists_globalValueOutput(@Mocked World world)
-      throws CommandException {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
-    GameRules gameRules = new GameRules();
+  @ParameterizedTest(name = "Should suggest {1} values when the argument is {0}")
+  @CsvSource({"'', 2", "x, 0"})
+  void shouldSuggestGlobalMobGriefingValues(String input, int count)
+      throws CommandSyntaxException, ExecutionException, InterruptedException {
+    // Given.
+    CommandNode<CommandSource> valueArgument = mobGriefingCommand.getChild("value");
 
-    List<TextComponentString> capturedChatText = new ArrayList<>();
-    String[] commandWords = new String[] {"mobGriefing"};
+    // When.
+    CompletableFuture<Suggestions> completableFuture = valueArgument
+        .listSuggestions(commandContext, new SuggestionsBuilder(input, 0));
 
-    // Record Expectations.
-    new Expectations(entityMobGriefingData, gameRules) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
-
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
-
-        world.getGameRules();
-        result = gameRules;
-
-        gameRules.getString("mobGriefing");
-        result = "globalValue";
-
-        entityMobGriefingData.toString();
-        result = "";
-
-        commandSender.sendMessage(withCapture(capturedChatText));
-      }
-    };
-
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
-
-    // Perform assertions.
-    Assert.assertThat("The number of chat outputs did not match the expected number.",
-        capturedChatText.size(), CoreMatchers.is(1));
-    Assert.assertThat("The chat output did not contain the expected value.",
-        capturedChatText.get(0).getUnformattedText(), CoreMatchers.is("mobGriefing = globalValue"));
+    // Then.
+    List<Suggestion> suggestions = completableFuture.get().getList();
+    assertThat("Unexpected suggestion size.", suggestions.size(), CoreMatchers.is(count));
   }
 
-  /**
-   * Test that the parent handles the command when the command words are "mobGriefing" and "true".
-   */
-  @Test
-  public void testExecute_mobGriefingTrue_handledByParent(@Mocked CommandGameRule parentCommand)
-      throws CommandException {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+  @ParameterizedTest(name = "Should set the global mobGriefing value when the argument is {0}")
+  @ValueSource(booleans = {true, false})
+  void shouldSetGlobalMobGriefingWhenBoolean(boolean input) throws CommandSyntaxException {
+    // Given.
+    CommandNode<CommandSource> valueArgument = mobGriefingCommand.getChild("value");
+    Command<CommandSource> command = valueArgument.getCommand();
 
-    String[] commandWords = new String[] {"mobGriefing", "true"};
+    commandArguments.put("value", new ParsedArgument<>(0, 0, input));
 
-    // Record Expectations.
-    new Expectations(EntityMobGriefingData.class) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
+    // When.
+    int result = command.run(commandContext);
 
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
-      }
-    };
-
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
-
-    // Verify executions.
-    new Verifications() {
-      {
-        parentCommand.execute(server, commandSender, commandWords);
-      }
-    };
+    // Then.
+    assertThat("Unexpected command result.", result, is(input ? 1 : 0));
+    BooleanValue mobGriefing = server.getGameRules().get(GameRules.MOB_GRIEFING);
+    assertThat("Unexpected mob griefing value.", mobGriefing.get(), is(input));
+    verify(commandSource).sendFeedback(any(ITextComponent.class), eq(true));
   }
 
-  /**
-   * Test that the parent handles the command when the command words are "mobGriefing" and "false".
-   */
-  @Test
-  public void testExecute_mobGriefingFalse_handledByParent(@Mocked CommandGameRule parentCommand)
-      throws CommandException {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+  @ParameterizedTest(name = "Should suggest {1} when the argument is {0}")
+  @CsvSource({"creeper, minecraft:creeper", "GHas, minecraft:ghast"})
+  void shouldSuggestEntityName(String input, String suggestion)
+      throws CommandSyntaxException, ExecutionException, InterruptedException {
+    // Given.
+    CommandNode<CommandSource> entityArgument = mobGriefingCommand.getChild("entity");
 
-    String[] commandWords = new String[] {"mobGriefing", "false"};
+    // When.
+    CompletableFuture<Suggestions> completableFuture = entityArgument
+        .listSuggestions(commandContext, new SuggestionsBuilder(input, 0));
 
-    // Record Expectations.
-    new Expectations(EntityMobGriefingData.class) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
-
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
-      }
-    };
-
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
-
-    // Verify executions.
-    new Verifications() {
-      {
-        parentCommand.execute(server, commandSender, commandWords);
-      }
-    };
+    // Then.
+    List<Suggestion> suggestions = completableFuture.get().getList();
+    assertThat("Unexpected suggestion size.", suggestions.size(), CoreMatchers.is(1));
+    assertThat("Unexpected suggestion.", suggestions.get(0).getText(), CoreMatchers.is(suggestion));
   }
 
-  /**
-   * Test that the entity value is output when the command words are "mobGriefing" and a valid
-   * entity name.
-   */
-  @Test
-  public void testExecute_mobGriefingValidEntityName_entityValueOutput() throws CommandException {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
-    GameRules gameRules = new GameRules();
+  @ParameterizedTest(name = "Should suggest {1} entity names when the argument is {0}")
+  @CsvSource({"ender, 4", "'', 100", "xyz, 0"})
+  void shouldSuggestEntityNames(String input, int count)
+      throws CommandSyntaxException, ExecutionException, InterruptedException {
+    // Given.
+    CommandNode<CommandSource> entityArgument = mobGriefingCommand.getChild("entity");
 
-    List<TextComponentString> capturedChatText = new ArrayList<>();
-    String[] commandWords = new String[] {"mobGriefing", "entity_name1"};
+    // When.
+    CompletableFuture<Suggestions> completableFuture = entityArgument
+        .listSuggestions(commandContext, new SuggestionsBuilder(input, 0));
 
-    // Record Expectations.
-    new Expectations(entityMobGriefingData) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
-
-        world.getGameRules();
-        result = gameRules;
-
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
-
-        entityMobGriefingData.getMobGriefingValue("entity_name1");
-        result = MobGriefingValue.TRUE;
-
-        commandSender.sendMessage(withCapture(capturedChatText));
-
-        commandSender.setCommandStat(CommandResultStats.Type.QUERY_RESULT,
-            gameRules.getInt(commandWords[0]));
-      }
-    };
-
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
-
-    // Perform assertions.
-    Assert.assertThat("The number of chat outputs did not match the expected number.",
-        capturedChatText.size(), CoreMatchers.is(1));
-    Assert.assertThat("The chat output did not contain the expected value.",
-        capturedChatText.get(0).getUnformattedText(),
-        CoreMatchers.is("mobGriefing entity_name1 = true"));
+    // Then.
+    List<Suggestion> suggestions = completableFuture.get().getList();
+    assertThat("Unexpected suggestion size.", suggestions.size(), CoreMatchers.is(count));
   }
 
-  /**
-   * Test that a {@link CommandException} is thrown when the command words are "mobGriefing" and an
-   * invalid entity name.
-   */
-  @Test(expected = CommandException.class)
-  public void testExecute_mobGriefingInvalidEntityName_exception() throws CommandException {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+  @ParameterizedTest(name = "Should show the entity mobGriefing value when the argument is {0} and"
+      + " value is {1}")
+  @CsvSource({"test:entity1, FALSE", "test:entity2, TRUE", "test:entity3, INHERIT"})
+  void shouldShowEntityMobGriefingWhenEntity(String entityName, MobGriefingValue value)
+      throws CommandSyntaxException {
+    // Given.
+    EntityMobGriefingData data = EntityMobGriefingData.forServer(server);
+    ResourceLocation entityId = new ResourceLocation(entityName);
+    data.setMobGriefingValue(entityId, value);
 
-    String[] commandWords = new String[] {"mobGriefing", "entity_name1"};
+    CommandNode<CommandSource> entityArgument = mobGriefingCommand.getChild("entity");
+    Command<CommandSource> command = entityArgument.getCommand();
 
-    // Record Expectations.
-    new Expectations(entityMobGriefingData) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
+    commandArguments.put("entity", new ParsedArgument<>(0, 0, entityId));
 
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
+    // When.
+    int result = command.run(commandContext);
 
-        entityMobGriefingData.getMobGriefingValue("entity_name1");
-        result = null;
-      }
-    };
-
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        entityMobGriefingData.setMobGriefingValue(anyString, (MobGriefingValue) any);
-        times = 0;
-      }
-    };
+    // Then.
+    assertThat("Unexpected command result.", result, is(value.ordinal()));
+    verify(commandSource).sendFeedback(any(ITextComponent.class), eq(true));
   }
 
-  /**
-   * Test that the entity value is set when the command words are "mobGriefing", a valid entity name
-   * and a valid entity value.
-   */
-  @Test
-  public void testExecute_mobGriefingValidEntityNameValidValue_entityValueSet()
-      throws CommandException {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+  @ParameterizedTest(name = "Should suggest {1} when the argument is {0}")
+  @CsvSource({"Tru, true", "fALS, false", "INHER, inherit"})
+  void shouldSuggestEntityMobGriefingValue(String input, String suggestion)
+      throws CommandSyntaxException, ExecutionException, InterruptedException {
+    // Given.
+    CommandNode<CommandSource> entityArgument = mobGriefingCommand.getChild("entity");
+    CommandNode<CommandSource> valueArgument = entityArgument.getChild("value");
 
-    String entityName = "entity_name1";
-    ResourceLocation entityType = new ResourceLocation(entityName);
-    String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
+    // When.
+    CompletableFuture<Suggestions> completableFuture = valueArgument
+        .listSuggestions(commandContext, new SuggestionsBuilder(input, 0));
 
-    // Record Expectations.
-    new Expectations(EntityList.class, EntityMobGriefingData.class) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
-
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
-
-        EntityList.getClass(entityType);
-        result = EntityLiving.class;
-      }
-    };
-
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        entityMobGriefingData.setMobGriefingValue(entityName, MobGriefingValue.INHERIT);
-
-        BetterMobGriefingCommand.notifyCommandListener(commandSender, command,
-            "commands.gamerule.success", new Object[0]);
-      }
-    };
+    // Then.
+    List<Suggestion> suggestions = completableFuture.get().getList();
+    assertThat("Unexpected suggestion size.", suggestions.size(), CoreMatchers.is(1));
+    assertThat("Unexpected suggestion.", suggestions.get(0).getText(), CoreMatchers.is(suggestion));
   }
 
-  /**
-   * Test that a {@link CommandException} is thrown when the command words are "mobGriefing", a
-   * valid entity name and an invalid entity value.
-   */
-  @Test(expected = CommandException.class)
-  public void testExecute_mobGriefingValidEntityNameInvalidValue_exception()
-      throws CommandException {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+  @ParameterizedTest(name = "Should suggest {1} values when the argument is {0}")
+  @CsvSource({"'', 3", "x, 0"})
+  void shouldSuggestEntityMobGriefingValues(String input, int count)
+      throws CommandSyntaxException, ExecutionException, InterruptedException {
+    // Given.
+    CommandNode<CommandSource> entityArgument = mobGriefingCommand.getChild("entity");
+    CommandNode<CommandSource> valueArgument = entityArgument.getChild("value");
 
-    String entityName = "entity_name1";
-    ResourceLocation entityType = new ResourceLocation(entityName);
-    String[] commandWords = new String[] {"mobGriefing", entityName, ""};
+    // When.
+    CompletableFuture<Suggestions> completableFuture = valueArgument
+        .listSuggestions(commandContext, new SuggestionsBuilder(input, 0));
 
-    // Record Expectations.
-    new Expectations(EntityList.class, EntityMobGriefingData.class) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
-
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
-
-        EntityList.getClass(entityType);
-        result = EntityLiving.class;
-      }
-    };
-
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        entityMobGriefingData.setMobGriefingValue(anyString, (MobGriefingValue) any);
-        times = 0;
-      }
-    };
+    // Then.
+    List<Suggestion> suggestions = completableFuture.get().getList();
+    assertThat("Unexpected suggestion size.", suggestions.size(), CoreMatchers.is(count));
   }
 
-  /**
-   * Test that a {@link CommandExceptison} is thrown when the command words are "mobGriefing", the
-   * entity name of an invalid type and a third word.
-   */
-  @Test(expected = CommandException.class)
-  public void testExecute_mobGriefingInvalidEntityNameThirdWord_exception()
-      throws CommandException {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
+  @ParameterizedTest(name = "Should set the entity mobGriefing value when the argument is {0} {1}")
+  @CsvSource({"test:entity1, FALSE", "test:entity2, TRUE", "test:entity3, INHERIT"})
+  void shouldSetEntityMobGriefingWhenEntityAndValue(String entityName, MobGriefingValue value)
+      throws CommandSyntaxException {
+    // Given.
+    EntityMobGriefingData data = EntityMobGriefingData.forServer(server);
+    ResourceLocation entityId = new ResourceLocation(entityName);
+    data.setMobGriefingValue(entityId, MobGriefingValue.INHERIT);
 
-    String entityName = "entity_name1";
-    ResourceLocation entityType = new ResourceLocation(entityName);
-    String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
+    CommandNode<CommandSource> entityArgument = mobGriefingCommand.getChild("entity");
+    CommandNode<CommandSource> valueArgument = entityArgument.getChild("value");
+    Command<CommandSource> command = valueArgument.getCommand();
 
-    // Record Expectations.
-    new Expectations(EntityList.class, EntityMobGriefingData.class) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
+    commandArguments.put("entity", new ParsedArgument<>(0, 0, entityId));
+    commandArguments.put("value", new ParsedArgument<>(0, 0, value));
 
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
+    // When.
+    int result = command.run(commandContext);
 
-        EntityList.getClass(entityType);
-        result = Object.class;
-      }
-    };
-
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        entityMobGriefingData.setMobGriefingValue(anyString, (MobGriefingValue) any);
-        times = 0;
-      }
-    };
-  }
-
-  /**
-   * Test that a {@link CommandException} is thrown when the command words are "mobGriefing", a name
-   * which is not an entity and a third word.
-   */
-  @Test(expected = CommandException.class)
-  public void testExecute_mobGriefingNotEntityNameThirdWord_exception() throws CommandException {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
-
-    String entityName = "entity_name1";
-    ResourceLocation entityType = new ResourceLocation(entityName);
-    String[] commandWords = new String[] {"mobGriefing", entityName, "inherit"};
-
-    // Record Expectations.
-    new Expectations(EntityList.class, EntityMobGriefingData.class) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
-
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
-
-        EntityList.getClass(entityType);
-        result = null;
-      }
-    };
-
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        entityMobGriefingData.setMobGriefingValue(anyString, (MobGriefingValue) any);
-        times = 0;
-      }
-    };
-  }
-
-  /**
-   * Test that a {@link CommandException} is thrown when there are four command words and the first
-   * is "mobGriefing".
-   */
-  @Test(expected = CommandException.class)
-  public void testExecute_mobGriefingFourWords_exception() throws CommandException {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
-
-    String[] commandWords = new String[] {"mobGriefing", "entity_name1", "inherit", ""};
-
-    // Record Expectations.
-    new Expectations(EntityMobGriefingData.class) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
-
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
-      }
-    };
-
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        entityMobGriefingData.setMobGriefingValue(anyString, (MobGriefingValue) any);
-        times = 0;
-      }
-    };
-  }
-
-  /**
-   * Test that the parent handles the command when the first word is not "mobGriefing".
-   */
-  @Test
-  public void testExecute_notMobGriefing_handledByParent(@Mocked CommandGameRule parentCommand)
-      throws CommandException {
-    // Set up test data.
-    String[] commandWords = new String[] {"notMobGriefing"};
-
-    // Call the method under test.
-    command.execute(server, commandSender, commandWords);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        parentCommand.execute(server, commandSender, commandWords);
-      }
-    };
-  }
-
-  /**
-   * Test that the parent handles the tab completion when tab completing the first word and it is
-   * "mobGriefing".
-   */
-  @Test
-  public void testGetTabCompletionOptions_mobGriefingCompleteWordOne_handledByParent(
-      @Mocked CommandGameRule parentCommand) {
-    // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing"};
-
-    // Call the method under test.
-    command.getTabCompletions(server, commandSender, commandWords, null);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        parentCommand.getTabCompletions(server, commandSender, commandWords, null);
-      }
-    };
-  }
-
-  /**
-   * Test that true, false and registered entity names options are returned when tab completing the
-   * second word and the first word is "mobGriefing".
-   */
-  @Test
-  public void testGetTabCompletionOptions_mobGriefingCompleteWordTwo_trueFalseEntityNames(
-      @Mocked World world) {
-    // Set up test data.
-    EntityMobGriefingData entityMobGriefingData = new EntityMobGriefingData("");
-    Set<String> registeredEntityNames =
-        new HashSet<>(Arrays.asList("entity_name1", "entity_name2", "entity_name3"));
-
-    String[] expectedPossibleWords =
-        new String[] {"true", "false", "entity_name1", "entity_name2", "entity_name3"};
-    List<String> matchingWords = Arrays.asList(expectedPossibleWords);
-
-    String[] commandWords = new String[] {"mobGriefing", ""};
-
-    // Record expectations.
-    new Expectations(entityMobGriefingData, BetterMobGriefingCommand.class) {
-      {
-        commandSender.getEntityWorld();
-        result = world;
-
-        EntityMobGriefingData.forWorld(world);
-        result = entityMobGriefingData;
-
-        entityMobGriefingData.getRegisteredEntityNames();
-        result = registeredEntityNames;
-
-        BetterMobGriefingCommand.getListOfStringsMatchingLastWord(commandWords,
-            expectedPossibleWords);
-        result = matchingWords;
-      }
-    };
-
-    // Call the method under test.
-    List<?> tabCompletionOptions =
-        command.getTabCompletions(server, commandSender, commandWords, null);
-
-    // Perform assertions.
-    Assert.assertThat("The tab completion options did not match the expected options.",
-        tabCompletionOptions, CoreMatchers.sameInstance(matchingWords));
-  }
-
-  /**
-   * Test that true, false and inherit options are returned when tab completing the third word and
-   * the first word is "mobGriefing".
-   */
-  @Test
-  public void testGetTabCompletionOptions_mobGriefingCompleteWordThree_trueFalseInherit() {
-    // Set up test data.
-    String[] expectedPossibleWords = new String[] {"true", "false", "inherit"};
-    List<String> matchingWords = Arrays.asList(expectedPossibleWords);
-
-    String[] commandWords = new String[] {"mobGriefing", "", ""};
-
-    // Record expectations.
-    new Expectations(BetterMobGriefingCommand.class) {
-      {
-        BetterMobGriefingCommand.getListOfStringsMatchingLastWord(commandWords,
-            expectedPossibleWords);
-        result = matchingWords;
-      }
-    };
-
-    // Call the method under test.
-    List<?> tabCompletionOptions =
-        command.getTabCompletions(server, commandSender, commandWords, null);
-
-    // Perform assertions.
-    Assert.assertThat("The tab completion options did not match the expected options.",
-        tabCompletionOptions, CoreMatchers.sameInstance(matchingWords));
-  }
-
-  /**
-   * Test that a empty list is returned when tab completing the fourth word and the first word is
-   * "mobGriefing".
-   */
-  @Test
-  public void testGetTabCompletionOptions_mobGriefingCompleteWordFour_emptyList(
-      @Mocked CommandGameRule parentCommand) {
-    // Set up test data.
-    String[] commandWords = new String[] {"mobGriefing", "", "", ""};
-
-    // Call the method under test.
-    List<?> tabCompletionOptions =
-        command.getTabCompletions(server, commandSender, commandWords, null);
-
-    // Perform assertions.
-    Assert.assertThat("The tab completion options did not match the expected options.",
-        tabCompletionOptions, CoreMatchers.is(Collections.emptyList()));
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        BetterMobGriefingCommand.getListOfStringsMatchingLastWord(commandWords, (String[]) any);
-        times = 0;
-      }
-    };
-  }
-
-  /**
-   * Test that the parent handles the tab completion when the first word is not "mobGriefing".
-   */
-  @Test
-  public void testGetTabCompletionOptions_notMobGriefing_handledByParent(
-      @Mocked CommandGameRule parentCommand) {
-    // Set up test data.
-    String[] commandWords = new String[] {"notMobGriefing", ""};
-
-    // Call the method under test.
-    command.getTabCompletions(server, commandSender, commandWords, null);
-
-    // Verify expectations.
-    new Verifications() {
-      {
-        parentCommand.getTabCompletions(server, commandSender, commandWords, null);
-      }
-    };
+    // Then.
+    assertThat("Unexpected command result.", result, is(value.ordinal()));
+    assertThat("Unexpected mob griefing value.", data.getMobGriefingValue(entityId), is(value));
+    verify(commandSource).sendFeedback(any(ITextComponent.class), eq(true));
   }
 }

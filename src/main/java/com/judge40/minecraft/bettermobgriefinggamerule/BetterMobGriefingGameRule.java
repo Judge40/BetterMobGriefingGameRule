@@ -19,83 +19,46 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingEventHandler;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.DefaultMobGriefingConfigGui;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobGriefingCommand;
-import com.judge40.minecraft.bettermobgriefinggamerule.common.configuration.DefaultMobGriefingConfiguration;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
+import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
-
-import net.minecraft.command.CommandHandler;
-import net.minecraft.command.ICommand;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.GameRules;
+import net.minecraft.world.GameRules.BooleanValue;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLModContainer;
-import net.minecraftforge.fml.common.Loader;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.config.ModConfig.Type;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * Base class for Better mobGriefing GameRule mod.
  */
-@Mod(modid = ModInfoConstants.ID, name = ModInfoConstants.DISPLAY_NAME,
-    version = ModInfoConstants.VERSION, guiFactory = ModInfoConstants.GUI_FACTORY,
-    acceptableRemoteVersions = "*")
+@Mod(ModInfoConstants.ID)
+@EventBusSubscriber
 public class BetterMobGriefingGameRule {
 
   private static final Logger LOGGER = LogManager.getLogger();
 
   public static final String GLOBAL_RULE = "mobGriefing";
 
-  private DefaultMobGriefingConfiguration configuration = null;
-
   /**
-   * Get the instance of {@link BetterMobGriefingGameRule} from the {@link Loader}'s mod list.
-   *
-   * @return The instance of the {@code BetterMobGriefingGameRule} mod.
+   * Register the mod config.
    */
-  public static BetterMobGriefingGameRule getInstance() {
-    Map<String, ModContainer> modList = Loader.instance().getIndexedModList();
-    FMLModContainer modContainer = (FMLModContainer) modList.get(ModInfoConstants.ID);
-
-    return (BetterMobGriefingGameRule) modContainer.getMod();
-  }
-
-  /**
-   * Perform pre-initialization actions. The configuration file is loaded and the default
-   * mobGriefing rule values are retrieved.
-   *
-   * @param event The FMLPreInitializationEvent.
-   */
-  @EventHandler
-  public void onFmlPreInitializationEvent(FMLPreInitializationEvent event) {
-    // Create and/or load the configuration
-    configuration = new DefaultMobGriefingConfiguration(event.getSuggestedConfigurationFile());
-  }
-
-  /**
-   * On initialization registers the event handler.
-   *
-   * @param event The FMLInitializationEvent.
-   */
-  @EventHandler
-  public void onFmlInitializationEvent(FMLInitializationEvent event) {
-    MobGriefingEventHandler eventHandler = new MobGriefingEventHandler();
-    MinecraftForge.EVENT_BUS.register(eventHandler);
+  public BetterMobGriefingGameRule() {
+    // Register mod config.
+    ModLoadingContext modLoadingContext = ModLoadingContext.get();
+    modLoadingContext.registerConfig(Type.COMMON, ConfigHolder.COMMON_SPEC);
+    modLoadingContext.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
+        () -> DefaultMobGriefingConfigGui::new);
   }
 
   /**
@@ -103,76 +66,28 @@ public class BetterMobGriefingGameRule {
    *
    * @param event The FMLServerStartingEvent.
    */
-  @EventHandler()
-  public void onFmlServerStartingEvent(FMLServerStartingEvent event) {
+  @SubscribeEvent
+  public static void onFmlServerStartingEvent(FMLServerStartingEvent event) {
     LOGGER.debug("Server starting.");
-    CommandHandler commandHandler = (CommandHandler) event.getServer().getCommandManager();
-
-    // Create a new game rule command handler and retrieve the original handler.
-    BetterMobGriefingCommand newGameRuleHandler = new BetterMobGriefingCommand();
-    ICommand originalGameRuleHandler =
-        commandHandler.getCommands().get(newGameRuleHandler.getName());
-
-    // Remove the original game rule command handler from the command set and register the new
-    // handler.
-    Set<?> commandSet = ReflectionHelper.getPrivateValue(CommandHandler.class, commandHandler,
-        "field_71561_b", "commandSet");
-    commandSet.remove(originalGameRuleHandler);
-    commandHandler.registerCommand(newGameRuleHandler);
+    BetterMobGriefingCommand.register(event.getCommandDispatcher());
 
     // Add new game rules to world data
-    World world = event.getServer().getEntityWorld();
+    World world = event.getServer().func_71218_a(DimensionType.OVERWORLD);
 
     // Set the global mob griefing game rule value if this is a new world.
-    if (world.getTotalWorldTime() == 0) {
-      LOGGER.debug("New world detected, creating game rules.");
-      world.getGameRules().setOrCreateGameRule(GLOBAL_RULE,
-          configuration.getGlobalMobGriefingValue().toExternalForm());
+    if (world.getGameTime() == 0) {
+      LOGGER.debug("New world detected, overwriting global mobGriefing rule.");
+
+      boolean globalMobGriefingValue = Config.defaultGlobalValue;
+      BooleanValue mobGriefing = world.getGameRules().get(GameRules.MOB_GRIEFING);
+      mobGriefing.set(globalMobGriefingValue, event.getServer());
     } else {
-      LOGGER.debug("Existing world detected, no game rules created.");
+      LOGGER.debug("Existing world detected, global mobGriefing rule not overwritten.");
     }
 
     // Add the entity mob griefing game rules.
-    EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forWorld(world);
-    entityMobGriefingData.populateFromConfiguration(configuration);
-  }
-
-  /**
-   * Whether mob griefing is enabled to the given {@link Entity}.
-   *
-   * @param entity The Entity to get the mob griefing value for.
-   * @return Whether mob griefing is enabled.
-   */
-  public static boolean isMobGriefingEnabled(Entity entity) {
-    Boolean mobGriefingEnabled = null;
-    ResourceLocation entityType = EntityList.getKey(entity);
-
-    // If the entity type was found then try and get the entity's value from the world data.
-    if (entityType != null) {
-      String entityName = entityType.getPath();
-
-      EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData.forWorld(entity.world);
-      MobGriefingValue mobGriefingValue = entityMobGriefingData.getMobGriefingValue(entityName);
-
-      if (Objects.equals(mobGriefingValue, MobGriefingValue.TRUE)
-          || Objects.equals(mobGriefingValue, MobGriefingValue.FALSE)) {
-        mobGriefingEnabled = Boolean.valueOf(mobGriefingValue.toExternalForm());
-      }
-    }
-
-    // If no entity rule was found then default to the global value.
-    if (mobGriefingEnabled == null) {
-      mobGriefingEnabled = entity.world.getGameRules().getBoolean(GLOBAL_RULE);
-    }
-
-    return mobGriefingEnabled;
-  }
-
-  /**
-   * @return The {@link DefaultMobGriefingConfiguration}, will be null until the
-   *         {@link FMLPreInitializationEvent} fires.
-   */
-  public DefaultMobGriefingConfiguration getDefaultMobGriefingConfiguration() {
-    return configuration;
+    EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData
+        .forServer(event.getServer());
+    entityMobGriefingData.populateFromConfiguration();
   }
 }

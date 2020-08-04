@@ -1,23 +1,20 @@
 buildscript {
   repositories {
     jcenter()
-    maven {
-      name = "forge"
-      url = "http://files.minecraftforge.net/maven"
-    }
+    maven { url = "http://files.minecraftforge.net/maven" }
   }
   dependencies {
-    classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
+    classpath "net.minecraftforge.gradle:ForgeGradle:3.0.181"
   }
 }
 
 apply plugin: "checkstyle"
 apply plugin: "findbugs"
-apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: "net.minecraftforge.gradle"
 apply plugin: "pmd"
 
 // Mod information.
-version = "1.12.2-7.1.0"
+version = "1.14.4-8.0.0"
 group= "com.judge40.minecraft.bettermobgriefinggamerule"
 archivesBaseName = "bettermobgriefinggamerule"
 
@@ -25,25 +22,86 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-  // MinecraftForge version.
-  version = "1.12.2-14.23.5.2768"
-
   // MCP mappings version.
-  mappings = "stable_39"
+  mappings channel: "stable", version: "58-1.14.4"
 
-  // Use shared run directory if available.
-  if (file("../run").exists()) {
-    runDir = "../run"
-  } else {
-    runDir = "run"
+  // Default run configurations.
+  runs {
+    client {
+      workingDirectory project.file("run")
+
+      // Recommended logging data for a userdev environment.
+      property "forge.logging.markers", "SCAN,REGISTRIES,REGISTRYDUMP"
+
+      // Recommended logging level for the console.
+      property "forge.logging.console.level", "debug"
+
+      mods {
+        bettermobgriefinggamerule {
+          source sourceSets.main
+        }
+      }
+    }
+
+    server {
+      workingDirectory project.file("run")
+
+      // Recommended logging data for a userdev environment.
+      property "forge.logging.markers", "SCAN,REGISTRIES,REGISTRYDUMP"
+
+      // Recommended logging level for the console.
+      property "forge.logging.console.level", "debug"
+
+      mods {
+        bettermobgriefinggamerule {
+          source sourceSets.main
+        }
+      }
+    }
+
+    data {
+      workingDirectory project.file("run")
+
+      // Recommended logging data for a userdev environment.
+      property "forge.logging.markers", "SCAN,REGISTRIES,REGISTRYDUMP"
+
+      // Recommended logging level for the console.
+      property "forge.logging.console.level", "debug"
+
+      args "--mod", "bettermobgriefinggamerule", "--all", "--output", file("src/generated/resources/")
+
+      mods {
+        bettermobgriefinggamerule {
+          source sourceSets.main
+        }
+      }
+    }
   }
 }
 
+repositories {
+  jcenter()
+}
+
 dependencies {
-  // JMockit dependency.
-  testCompile "org.jmockit:jmockit:1.35"
-  // JUnit dependency.
-  testCompile "junit:junit:4.12"
+  minecraft "net.minecraftforge:forge:1.14.4-28.2.0"
+
+  // Test dependencies.
+  ext.junitVersion = "5.6.2"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+
+  testImplementation("junit:junit:4.13")
+  testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.6.2")
+
+  testImplementation "org.mockito:mockito-inline:3.4.4"
+}
+
+
+checkstyle {
+  toolVersion = "8.34"
+  config = resources.text.fromArchiveEntry(configurations.checkstyle[0], "google_checks.xml")
 }
 
 findbugs {
@@ -66,26 +124,6 @@ tasks.withType(FindBugs) {
   }
 }
 
-processResources {
-  // This will ensure that this task is redone when the versions change.
-  inputs.property "version", project.version
-  inputs.property "mcversion", project.minecraft.version
-
-  // Replace stuff in mcmod.info, nothing else.
-  from(sourceSets.main.resources.srcDirs) {
-    include "mcmod.info"
-
-    // Replace version and mcversion.
-    expand "version":project.version,"mcversion":project.minecraft.version
-  }
-
-  // Copy everything else, thats not the mcmod.info.
-  from(sourceSets.main.resources.srcDirs) {
-    exclude "mcmod.info"
-  }
-}
-
 test {
-  systemProperties["jmockit-coverage-metrics"] = "all"
-  systemProperties["jmockit-coverage-outputDir"] = "build/reports/coverage"
+  useJUnitPlatform()
 }

@@ -1,5 +1,5 @@
 /*
- * Better mobGriefing GameRule Copyright (c) 2017 Judge40
+ * Better mobGriefing GameRule Copyright (c) 2020 Judge40
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -17,14 +17,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule.common;
+package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
+
+import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import java.util.Map;
+import net.minecraft.util.ResourceLocation;
 
 /**
- * The constants for BetterMobGriefingGameRule mod information.
+ * A custom {@code Configuration} which adds convenience methods for retrieving default mob griefing
+ * configurations.
  */
-public class ModInfoConstants {
+public class Config {
 
-  public static final String DISPLAY_NAME = "Better mobGriefing GameRule";
+  public static boolean defaultGlobalValue;
 
-  public static final String ID = "bettermobgriefinggamerule";
+  public static Map<ResourceLocation, MobGriefingValue> entityIdsToDefaultEntityValue;
 }

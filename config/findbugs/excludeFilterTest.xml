@@ -1,16 +1,11 @@
 <FindBugsFilter>
   <Match>
-    <Class name="~.+Test\$[0-9]+"/>
-    <Bug code="RV, SIC"/>
+    <Class name="~.+BetterMobGriefingGameRuleTest"/>
+    <Field name="defaultGlobalValue"/>
+    <Bug code="ST"/>
   </Match>
   <Match>
-    <Class name="~.+DefaultMobGriefingConfigurationTest\$[0-9]+\$1"/>
-    <Method name="getKey"/>
-    <Bug code="UMAC"/>
-  </Match>
-  <Match>
-    <Class name="~.+MobGriefingEventHandlerTest"/>
-    <Method name="~testOnDetonate_noSource.+"/>
-    <Bug code="NP"/>
+    <Class name="~.+Test"/>
+    <Bug code="UwF"/>
   </Match>
 </FindBugsFilter>

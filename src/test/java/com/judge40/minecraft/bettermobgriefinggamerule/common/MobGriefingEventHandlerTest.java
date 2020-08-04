@@ -63,7 +63,7 @@ class MobGriefingEventHandlerTest {
     DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""), null);
 
     when(server.getGameRules()).thenReturn(new GameRules());
-    when(server.getWorld(DimensionType.OVERWORLD)).thenReturn(world);
+    when(server.func_71218_a(DimensionType.OVERWORLD)).thenReturn(world);
     when(world.getSavedData()).thenReturn(savedDataManager);
 
     data = EntityMobGriefingData.forServer(server);

@@ -69,7 +69,7 @@ public class BetterMobGriefingGameRule {
     BetterMobGriefingCommand.register(event.getCommandDispatcher());
 
     // Add new game rules to world data
-    World world = event.getServer().getWorld(DimensionType.OVERWORLD);
+    World world = event.getServer().func_71218_a(DimensionType.OVERWORLD);
 
     // Set the global mob griefing game rule value if this is a new world.
     if (world.getGameTime() == 0) {

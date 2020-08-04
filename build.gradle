@@ -4,7 +4,7 @@ buildscript {
     maven { url = "http://files.minecraftforge.net/maven" }
   }
   dependencies {
-    classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "3.+", changing: true
+    classpath "net.minecraftforge.gradle:ForgeGradle:3.0.181"
   }
 }
 
@@ -23,7 +23,7 @@ targetCompatibility = 1.8
 
 minecraft {
   // MCP mappings version.
-  mappings channel: "snapshot", version: "20190719-1.14.3"
+  mappings channel: "stable", version: "58-1.14.4"
 
   // Default run configurations.
   runs {
@@ -96,7 +96,6 @@ dependencies {
   testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.6.2")
 
   testImplementation "org.mockito:mockito-inline:3.4.4"
-  //testImplementation "org.jmockit:jmockit:1.35"
 }
 
 
@@ -127,6 +126,4 @@ tasks.withType(FindBugs) {
 
 test {
   useJUnitPlatform()
-//  systemProperties["jmockit-coverage-metrics"] = "all"
-//  systemProperties["jmockit-coverage-outputDir"] = "build/reports/coverage"
 }

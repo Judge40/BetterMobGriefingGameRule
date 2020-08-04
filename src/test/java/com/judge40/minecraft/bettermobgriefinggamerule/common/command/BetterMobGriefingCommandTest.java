@@ -95,7 +95,7 @@ class BetterMobGriefingCommandTest {
     server = mock(MinecraftServer.class);
     when(server.getGameRules()).thenReturn(new GameRules());
     ServerWorld world = mock(ServerWorld.class);
-    when(server.getWorld(any())).thenReturn(world);
+    when(server.func_71218_a(any())).thenReturn(world);
 
     when(world.getSavedData()).thenReturn(new DimensionSavedDataManager(null, null));
 

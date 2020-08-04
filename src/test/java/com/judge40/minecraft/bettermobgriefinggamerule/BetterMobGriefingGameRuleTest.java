@@ -73,7 +73,7 @@ class BetterMobGriefingGameRuleTest {
     when(server.getCommandManager()).thenReturn(new Commands(false));
 
     world = mock(ServerWorld.class);
-    when(server.getWorld(any())).thenReturn(world);
+    when(server.func_71218_a(any())).thenReturn(world);
     when(world.getGameTime()).thenReturn(1L);
     when(world.getGameRules()).thenReturn(gameRules);
     when(world.getSavedData()).thenReturn(new DimensionSavedDataManager(null, null));

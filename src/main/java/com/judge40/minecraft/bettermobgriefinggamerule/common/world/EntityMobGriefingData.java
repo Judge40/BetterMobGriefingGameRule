@@ -61,7 +61,7 @@ public class EntityMobGriefingData extends WorldSavedData {
    * @return The {@code EntityMobGriefingData} for the {@code MinecraftServer}.
    */
   public static EntityMobGriefingData forServer(MinecraftServer server) {
-    ServerWorld world = server.getWorld(DimensionType.OVERWORLD);
+    ServerWorld world = server.func_71218_a(DimensionType.OVERWORLD);
     DimensionSavedDataManager savedData = world.getSavedData();
     return savedData.getOrCreate(EntityMobGriefingData::new, ModInfoConstants.ID);
   }

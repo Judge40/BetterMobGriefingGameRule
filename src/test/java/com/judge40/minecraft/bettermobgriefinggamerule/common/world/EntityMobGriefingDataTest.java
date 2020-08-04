@@ -59,7 +59,7 @@ class EntityMobGriefingDataTest {
     ServerWorld world = mock(ServerWorld.class);
     DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""), null);
 
-    when(server.getWorld(DimensionType.OVERWORLD)).thenReturn(world);
+    when(server.func_71218_a(DimensionType.OVERWORLD)).thenReturn(world);
     when(world.getSavedData()).thenReturn(savedDataManager);
 
     data = EntityMobGriefingData.forServer(server);

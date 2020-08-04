@@ -59,7 +59,8 @@ class BooleanConfigEntryTest {
     assertThat("Unexpected value for isDefault.", entry.isDefault(), is(initialValue));
   }
 
-  @ParameterizedTest(name = "Should restore initial value when value button pressed {index} times and Reset button pressed.")
+  @ParameterizedTest(name = "Should restore initial value when value button pressed {index} times"
+      + " and Reset button pressed.")
   @ValueSource(booleans = {true, false})
   void shouldRestoreInitialValueWhenResetButtonPressed(boolean initialValue) {
     // Given.
@@ -77,7 +78,8 @@ class BooleanConfigEntryTest {
     assertThat("Unexpected value for isChanged.", entry.isChanged(), is(false));
   }
 
-  @ParameterizedTest(name = "Should restore default value when Default button pressed and current value is {0}")
+  @ParameterizedTest(name = "Should restore default value when Default button pressed and current"
+      + " value is {0}")
   @ValueSource(booleans = {true, false})
   void shouldRestoreDefaultValueWhenDefaultButtonPressed(boolean initialValue) {
     // Given.
@@ -92,7 +94,8 @@ class BooleanConfigEntryTest {
     assertThat("Unexpected value for isDefault.", entry.isDefault(), is(true));
   }
 
-  @ParameterizedTest(name = "Should render buttons with correct state when the initial value is {0} and is unchanged")
+  @ParameterizedTest(name = "Should render buttons with correct state when the initial value is {0}"
+      + " and is unchanged")
   @ValueSource(booleans = {true, false})
   void shouldRenderButtonsWithCorrectStateWhenValueUnchanged(boolean initialValue) {
     // Given.
@@ -121,7 +124,8 @@ class BooleanConfigEntryTest {
     assertThat("Unexpected default button active state.", defaultButton.active, is(!initialValue));
   }
 
-  @ParameterizedTest(name = "Should render buttons with correct state when the initial value is {0} and is changed")
+  @ParameterizedTest(name = "Should render buttons with correct state when the initial value is {0}"
+      + " and is changed")
   @ValueSource(booleans = {true, false})
   void shouldRenderButtonsWithCorrectStateWhenValueChanged(boolean initialValue) {
     // Given.

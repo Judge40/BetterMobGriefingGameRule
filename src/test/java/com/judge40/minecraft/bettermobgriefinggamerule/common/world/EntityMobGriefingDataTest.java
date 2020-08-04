@@ -26,17 +26,16 @@ import static org.mockito.Mockito.when;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.TestUtils;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import com.mojang.datafixers.DataFixer;
 import java.io.File;
 import java.util.Collections;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,17 +46,13 @@ class EntityMobGriefingDataTest {
 
   private EntityMobGriefingData data;
 
-  @BeforeAll
-  static void setUpBeforeAll() {
-    // Load dimension type here to avoid console errors during test run.
-    Registry<DimensionType> dimensionType = Registry.DIMENSION_TYPE;
-  }
-
   @BeforeEach
   void setUp() {
     MinecraftServer server = mock(MinecraftServer.class);
     ServerWorld world = mock(ServerWorld.class);
-    DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""), null);
+    DataFixer dataFixer = mock(DataFixer.class);
+    DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""),
+        dataFixer);
 
     when(server.func_71218_a(DimensionType.OVERWORLD)).thenReturn(world);
     when(world.getSavedData()).thenReturn(savedDataManager);
@@ -197,7 +192,8 @@ class EntityMobGriefingDataTest {
     String stringRepresentation = data.toString();
 
     // Then.
-    String expectedString = "minecraft:path2 = false\nnamespace1:path1 = inherit\nnamespace1:path3 = true";
+    String expectedString = "minecraft:path2 = false\nnamespace1:path1 = inherit\n"
+        + "namespace1:path3 = true";
     assertThat("Unexpected string representation.", stringRepresentation, is(expectedString));
   }
 }

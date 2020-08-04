@@ -56,7 +56,8 @@ class CommonConfig {
 
   final BooleanValue defaultGlobalBooleanValue;
 
-  final Map<ResourceLocation, EnumValue<MobGriefingValue>> entityIdsToDefaultEntityEnumValue = new HashMap<>();
+  final Map<ResourceLocation, EnumValue<MobGriefingValue>>
+      entityIdsToDefaultEntityEnumValue = new HashMap<>();
 
   CommonConfig(Builder configBuilder) {
     configBuilder
@@ -77,7 +78,8 @@ class CommonConfig {
         // TODO: Use translation for title when/if top-level comments can be translated.
         .push(ENTITY_RULES_CATEGORY)
         .comment(
-            "The default entity specific mobGriefing rules which will be used when creating a new world or opening an existing world with no existing rule for the entity.")
+            "The default entity specific mobGriefing rules which will be used when creating a new"
+                + "world or opening an existing world with no existing rule for the entity.")
         .translation(ENTITY_RULES_DESCRIPTION);
 
     for (EntityType<? extends LivingEntity> entityType : ENTITY_TYPES) {

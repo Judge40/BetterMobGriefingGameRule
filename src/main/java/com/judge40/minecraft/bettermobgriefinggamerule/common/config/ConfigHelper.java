@@ -52,6 +52,9 @@ public class ConfigHelper {
     }
   }
 
+  /**
+   * Synchronize the config file values to mod config reference values.
+   */
   public static void synchronizeCommon() {
     Config.defaultGlobalValue = COMMON_CONFIG.defaultGlobalBooleanValue
         .get();
@@ -60,13 +63,24 @@ public class ConfigHelper {
         .collect(Collectors.toMap(Entry::getKey, entry -> entry.getValue().get()));
   }
 
+  /**
+   * Update the global config value.
+   *
+   * @param value The global value to set.
+   */
   public static void updateGlobalMobGriefing(boolean value) {
     COMMON_CONFIG.defaultGlobalBooleanValue.set(value);
 
-    // TODO: The ModConfigEvent does not fire consistently despite the toml file being updated, manually synchronize as a workaround.
+    // TODO: The ModConfigEvent does not fire consistently despite the toml file being updated,
+    //  manually synchronize as a workaround.
     Config.defaultGlobalValue = value;
   }
 
+  /**
+   * Update the entity config values.
+   *
+   * @param entityIdToValue A map of entity ID to value to update the config with.
+   */
   public static void updateEntityMobGriefing(
       Map<ResourceLocation, MobGriefingValue> entityIdToValue) {
     entityIdToValue.forEach((entityId, value) -> {
@@ -74,7 +88,8 @@ public class ConfigHelper {
           .get(entityId);
       enumValue.set(value);
 
-      // TODO: The ModConfigEvent does not fire consistently despite the toml file being updated, manually synchronize as a workaround.
+      // TODO: The ModConfigEvent does not fire consistently despite the toml file being updated,
+      //  manually synchronize as a workaround.
       Config.entityIdsToDefaultEntityValue.put(entityId, value);
     });
   }

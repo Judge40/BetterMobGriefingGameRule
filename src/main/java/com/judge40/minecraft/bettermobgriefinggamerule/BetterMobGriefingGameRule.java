@@ -50,6 +50,9 @@ public class BetterMobGriefingGameRule {
 
   public static final String GLOBAL_RULE = "mobGriefing";
 
+  /**
+   * Register the mod config.
+   */
   public BetterMobGriefingGameRule() {
     // Register mod config.
     ModLoadingContext modLoadingContext = ModLoadingContext.get();

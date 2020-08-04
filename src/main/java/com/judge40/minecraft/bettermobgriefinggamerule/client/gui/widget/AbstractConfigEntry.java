@@ -131,26 +131,26 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
   }
 
   @Override
-  public void render(int p_render_1_, int p_render_2_, int p_render_3_, int p_render_4_,
-      int p_render_5_, int p_render_6_, int p_render_7_, boolean p_render_8_, float p_render_9_) {
-    float x = p_render_3_ + 90 - labelOffset;
-    float y = p_render_2_ + p_render_5_ / 2F - 4.5F;
+  public void render(int render1, int render2, int render3, int render4, int render5, int render6,
+      int render7, boolean render8, float render9) {
+    float x = render3 + 90 - labelOffset;
+    float y = render2 + render5 / 2F - 4.5F;
     fontRenderer.drawString(label, x, y, 16777215);
 
-    valueButton.x = p_render_3_ + 105;
-    valueButton.y = p_render_2_;
+    valueButton.x = render3 + 105;
+    valueButton.y = render2;
     valueButton.setMessage(currentValue.toString());
-    valueButton.render(p_render_6_, p_render_7_, p_render_9_);
+    valueButton.render(render6, render7, render9);
 
-    resetButton.x = p_render_3_ + 165;
-    resetButton.y = p_render_2_;
+    resetButton.x = render3 + 165;
+    resetButton.y = render2;
     resetButton.active = isChanged();
-    resetButton.render(p_render_6_, p_render_7_, p_render_9_);
+    resetButton.render(render6, render7, render9);
 
-    defaultButton.x = p_render_3_ + 215;
-    defaultButton.y = p_render_2_;
+    defaultButton.x = render3 + 215;
+    defaultButton.y = render2;
     defaultButton.active = !isDefault();
-    defaultButton.render(p_render_6_, p_render_7_, p_render_9_);
+    defaultButton.render(render6, render7, render9);
   }
 
   @Nonnull

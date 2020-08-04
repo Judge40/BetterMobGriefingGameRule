@@ -71,7 +71,8 @@ public class EntityMobGriefingData extends WorldSavedData {
    * which are not already in the {@code EntityMobGriefingData} will be populated.
    */
   public void populateFromConfiguration() {
-    Map<ResourceLocation, MobGriefingValue> configEntityIdsToMobGriefingValue = Config.entityIdsToDefaultEntityValue;
+    Map<ResourceLocation, MobGriefingValue>
+        configEntityIdsToMobGriefingValue = Config.entityIdsToDefaultEntityValue;
 
     // Set the MobGriefingValue for each entity in the configuration.
     for (Entry<ResourceLocation, MobGriefingValue> entry : configEntityIdsToMobGriefingValue

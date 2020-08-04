@@ -46,15 +46,15 @@ public class ConfigCategoryEntry extends AbstractEntry {
   }
 
   @Override
-  public void render(int p_render_1_, int p_render_2_, int p_render_3_, int p_render_4_,
-      int p_render_5_, int p_render_6_, int p_render_7_, boolean p_render_8_, float p_render_9_) {
+  public void render(int render1, int render2, int render3, int render4, int render5, int render6,
+      int render7, boolean render8, float render9) {
     float x = parentWidth / 2F - labelWidth / 2F;
-    float y = p_render_2_ + p_render_5_ - 10F;
+    float y = render2 + render5 - 10F;
     fontRenderer.drawString(labelText, x, y, 16777215);
   }
 
   @Override
-  public boolean changeFocus(boolean p_changeFocus_1_) {
+  public boolean changeFocus(boolean changeFocus) {
     return false;
   }
 

@@ -124,9 +124,9 @@ public class DefaultMobGriefingConfigGui extends Screen {
   }
 
   @Override
-  public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
+  public void render(int render1, int render2, float render3) {
     renderBackground();
-    configEntryList.render(p_render_1_, p_render_2_, p_render_3_);
+    configEntryList.render(render1, render2, render3);
     drawCenteredString(font, title.getFormattedText(), width / 2, 8, 16777215);
 
     boolean enableReset = false;
@@ -146,6 +146,6 @@ public class DefaultMobGriefingConfigGui extends Screen {
 
     resetButton.active = enableReset;
     defaultButton.active = enableDefault;
-    super.render(p_render_1_, p_render_2_, p_render_3_);
+    super.render(render1, render2, render3);
   }
 }

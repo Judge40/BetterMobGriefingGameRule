@@ -32,6 +32,8 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
+import com.mojang.datafixers.DataFixer;
+import java.io.File;
 import net.minecraft.command.Commands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
@@ -76,7 +78,8 @@ class BetterMobGriefingGameRuleTest {
     when(server.func_71218_a(any())).thenReturn(world);
     when(world.getGameTime()).thenReturn(1L);
     when(world.getGameRules()).thenReturn(gameRules);
-    when(world.getSavedData()).thenReturn(new DimensionSavedDataManager(null, null));
+    DataFixer dataFixer = mock(DataFixer.class);
+    when(world.getSavedData()).thenReturn(new DimensionSavedDataManager(new File(""), dataFixer));
   }
 
   @Test
@@ -95,7 +98,8 @@ class BetterMobGriefingGameRuleTest {
     }
   }
 
-  @ParameterizedTest(name = "Should override the global value when a new world is created and the config value is {0}")
+  @ParameterizedTest(name = "Should override the global value when a new world is created and the"
+      + " config value is {0}")
   @ValueSource(booleans = {true, false})
   void shouldOverrideGlobalValueWhenNewWorldCreation(boolean input) {
     // Given.
@@ -112,7 +116,8 @@ class BetterMobGriefingGameRuleTest {
     assertThat("Unexpected mobGriefing value.", mobGriefing, is(input));
   }
 
-  @ParameterizedTest(name = "Should not override the global value when an existing world is loaded and the config value is {0}")
+  @ParameterizedTest(name = "Should not override the global value when an existing world is loaded"
+      + " and the config value is {0}")
   @ValueSource(booleans = {true, false})
   void shouldNotOverrideGlobalWhenExistingWorld(boolean input) {
     // Given.
@@ -130,7 +135,9 @@ class BetterMobGriefingGameRuleTest {
     assertThat("Unexpected mobGriefing value.", mobGriefing, is(false));
   }
 
-  @ParameterizedTest(name = "Should set the entity values when the server is starting and the config value is {0}")
+  @ParameterizedTest(name =
+      "Should set the entity values when the server is starting and the config"
+          + " value is {0}")
   @EnumSource(MobGriefingValue.class)
   void shouldSetEntityValues(MobGriefingValue input) {
     // Given.

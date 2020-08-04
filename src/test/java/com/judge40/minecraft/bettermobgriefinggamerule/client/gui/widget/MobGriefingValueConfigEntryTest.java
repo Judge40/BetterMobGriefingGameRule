@@ -85,7 +85,8 @@ class MobGriefingValueConfigEntryTest {
     assertThat("Unexpected value for isDefault.", entry.isDefault(), is(expectedIsDefault));
   }
 
-  @ParameterizedTest(name = "Should restore initial value when value button pressed {index} times and Reset button pressed.")
+  @ParameterizedTest(name = "Should restore initial value when value button pressed {index} times"
+      + " and Reset button pressed.")
   @EnumSource(MobGriefingValue.class)
   void shouldRestoreInitialValueWhenResetButtonPressed(MobGriefingValue initialValue) {
     // Given.
@@ -107,7 +108,8 @@ class MobGriefingValueConfigEntryTest {
     assertThat("Unexpected value for isChanged.", entry.isChanged(), is(false));
   }
 
-  @ParameterizedTest(name = "Should restore default value when Default button pressed and current value is {0}")
+  @ParameterizedTest(name = "Should restore default value when Default button pressed and current"
+      + " value is {0}")
   @EnumSource(MobGriefingValue.class)
   void shouldRestoreDefaultValueWhenDefaultButtonPressed(MobGriefingValue initialValue) {
     // Given.
@@ -123,7 +125,8 @@ class MobGriefingValueConfigEntryTest {
     assertThat("Unexpected value for isDefault.", entry.isDefault(), is(true));
   }
 
-  @ParameterizedTest(name = "Should render buttons with correct state when the initial value is {0} and is unchanged")
+  @ParameterizedTest(name = "Should render buttons with correct state when the initial value is {0}"
+      + " and is unchanged")
   @EnumSource(MobGriefingValue.class)
   void shouldRenderButtonsWithCorrectStateWhenValueUnchanged(MobGriefingValue initialValue) {
     // Given.
@@ -155,7 +158,8 @@ class MobGriefingValueConfigEntryTest {
         is(expectedDefaultActive));
   }
 
-  @ParameterizedTest(name = "Should render buttons with correct state when the initial value is {0} and is changed")
+  @ParameterizedTest(name = "Should render buttons with correct state when the initial value is {0}"
+      + " and is changed")
   @EnumSource(MobGriefingValue.class)
   void shouldRenderButtonsWithCorrectStateWhenValueChanged(MobGriefingValue initialValue) {
     // Given.

@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.TestUtils;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
+import com.mojang.datafixers.DataFixer;
 import java.io.File;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -60,7 +61,9 @@ class MobGriefingEventHandlerTest {
   void setUp() {
     MinecraftServer server = mock(MinecraftServer.class);
     ServerWorld world = mock(ServerWorld.class);
-    DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""), null);
+    DataFixer dataFixer = mock(DataFixer.class);
+    DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""),
+        dataFixer);
 
     when(server.getGameRules()).thenReturn(new GameRules());
     when(server.func_71218_a(DimensionType.OVERWORLD)).thenReturn(world);

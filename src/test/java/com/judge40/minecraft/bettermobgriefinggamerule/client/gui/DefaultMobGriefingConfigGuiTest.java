@@ -95,7 +95,8 @@ class DefaultMobGriefingConfigGuiTest {
     assertThat("Unexpected done button active state.", doneButton.active, is(true));
   }
 
-  @ParameterizedTest(name = "Should render buttons with correct state when initial value is {0} and the value is changed.")
+  @ParameterizedTest(name = "Should render buttons with correct state when initial value is {0} and"
+      + " the value is changed.")
   @ValueSource(booleans = {true, false})
   void shouldRenderButtonsWithCorrectStateWhenValueChanged(boolean initialValue)
       throws IllegalAccessException {

@@ -56,8 +56,8 @@ class ConfigHelperTest {
     MobGriefingValue mobGriefingValue = Config.entityIdsToDefaultEntityValue.get(entityId);
     assertThat("Unexpected mobGriefing value.", mobGriefingValue, is(input));
 
-    EnumValue<MobGriefingValue> mobGriefingEnumValue = COMMON_CONFIG.entityIdsToDefaultEntityEnumValue
-        .get(entityId);
+    EnumValue<MobGriefingValue> mobGriefingEnumValue =
+        COMMON_CONFIG.entityIdsToDefaultEntityEnumValue.get(entityId);
     assertThat("Unexpected mobGriefing value.", mobGriefingEnumValue.get(), is(input));
   }
 
@@ -79,8 +79,8 @@ class ConfigHelperTest {
   void shouldSynchronizeEntityConfig(MobGriefingValue input) {
     // Given.
     ResourceLocation entityId = new ResourceLocation("test:entity1");
-    EnumValue<MobGriefingValue> mobGriefingEnumValue = COMMON_CONFIG.entityIdsToDefaultEntityEnumValue
-        .get(entityId);
+    EnumValue<MobGriefingValue> mobGriefingEnumValue =
+        COMMON_CONFIG.entityIdsToDefaultEntityEnumValue.get(entityId);
     mobGriefingEnumValue.set(input);
 
     // When.
@@ -91,7 +91,8 @@ class ConfigHelperTest {
     assertThat("Unexpected mobGriefing value.", mobGriefingValue, is(input));
   }
 
-  @ParameterizedTest(name = "Should synchronize the global config with value {0} when ModConfig event is fired")
+  @ParameterizedTest(name = "Should synchronize the global config with value {0} when ModConfig"
+      + " event is fired")
   @ValueSource(booleans = {true, false})
   void shouldSynchronizeGlobalConfigOnModConfigEvent(boolean input) throws Exception {
     // Given.
@@ -111,13 +112,14 @@ class ConfigHelperTest {
     assertThat("Unexpected mobGriefing value.", Config.defaultGlobalValue, is(input));
   }
 
-  @ParameterizedTest(name = "Should synchronize the entity config with value {0} when ModConfig event is fired")
+  @ParameterizedTest(name = "Should synchronize the entity config with value {0} when ModConfig"
+      + " event is fired")
   @EnumSource(MobGriefingValue.class)
   void shouldSynchronizeEntityConfigOnModConfigEvent(MobGriefingValue input) throws Exception {
     // Given.
     ResourceLocation entityId = new ResourceLocation("test:entity1");
-    EnumValue<MobGriefingValue> mobGriefingEnumValue = COMMON_CONFIG.entityIdsToDefaultEntityEnumValue
-        .get(entityId);
+    EnumValue<MobGriefingValue> mobGriefingEnumValue =
+        COMMON_CONFIG.entityIdsToDefaultEntityEnumValue.get(entityId);
     mobGriefingEnumValue.set(input);
 
     ModConfig modConfig = mock(ModConfig.class);

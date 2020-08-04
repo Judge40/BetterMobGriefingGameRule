@@ -37,6 +37,11 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 
 public class TestUtils {
 
+  /**
+   * Initialize the test environment, including Locale and default config.
+   *
+   * @throws IllegalAccessException If environment could not be initialized.
+   */
   public static void initializeTestEnvironment() throws IllegalAccessException {
     // Bootstrap registries so loading the config first does not cause failures.
     Bootstrap.func_218816_b();
@@ -48,6 +53,15 @@ public class TestUtils {
     initializeConfig(true, MobGriefingValue.INHERIT);
   }
 
+  /**
+   * Initialize the config with the given values.
+   *
+   * @param mobGriefing       The global value to use.
+   * @param mobGriefingValues The entity values to use, entity ID will match
+   *                          <code>test:entity*</code> where <code>*</code> is a number for each
+   *                          value starting at 1.
+   * @throws IllegalAccessException If the config could not be initialized.
+   */
   public static void initializeConfig(boolean mobGriefing, MobGriefingValue... mobGriefingValues)
       throws IllegalAccessException {
     Config.defaultGlobalValue = mobGriefing;
@@ -57,9 +71,9 @@ public class TestUtils {
 
     Builder configBuilder = new Builder();
 
-    Map<ResourceLocation, EnumValue<MobGriefingValue>> entityIdsToDefaultEntityEnumValue = new HashMap<>();
+    Map<ResourceLocation, EnumValue<MobGriefingValue>> entityIdsToEntityEnumValue = new HashMap<>();
     FieldUtils.writeField(ConfigHolder.COMMON_CONFIG, "entityIdsToDefaultEntityEnumValue",
-        entityIdsToDefaultEntityEnumValue, true);
+        entityIdsToEntityEnumValue, true);
 
     for (int i = 0; i < mobGriefingValues.length; ) {
       MobGriefingValue mobGriefingValue = mobGriefingValues[i++];
@@ -69,7 +83,7 @@ public class TestUtils {
       EnumValue<MobGriefingValue> mobGriefingValueEnum = configBuilder
           .defineEnum(entityId.toString(), mobGriefingValue);
       FieldUtils.writeField(mobGriefingValueEnum, "spec", ConfigHolder.COMMON_SPEC, true);
-      entityIdsToDefaultEntityEnumValue.put(entityId, mobGriefingValueEnum);
+      entityIdsToEntityEnumValue.put(entityId, mobGriefingValueEnum);
     }
   }
 
@@ -81,7 +95,7 @@ public class TestUtils {
 
     @Override
     public AbstractCommentedConfig clone() {
-      return null;
+      throw new AssertionError("Not implemented.");
     }
 
     @Override
@@ -91,7 +105,7 @@ public class TestUtils {
 
     @Override
     public ConfigFormat<?> configFormat() {
-      return null;
+      throw new AssertionError("Not implemented.");
     }
   }
 }

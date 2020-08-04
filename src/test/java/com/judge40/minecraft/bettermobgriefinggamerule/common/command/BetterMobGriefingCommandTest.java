@@ -40,6 +40,8 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
+import com.mojang.datafixers.DataFixer;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,15 +51,15 @@ import java.util.function.Predicate;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.GameRules.BooleanValue;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import org.hamcrest.CoreMatchers;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -72,16 +74,11 @@ class BetterMobGriefingCommandTest {
   private CommandNode<CommandSource> mobGriefingCommand;
 
   private MinecraftServer server;
+  private ServerWorld world;
   private CommandSource commandSource;
   private CommandContext<CommandSource> commandContext;
 
   private Map<String, ParsedArgument<CommandSource, ?>> commandArguments;
-
-  @BeforeAll
-  static void setUpBeforeAll() {
-    // Load dimension type here to avoid console errors during test run.
-    Registry<DimensionType> dimensionType = Registry.DIMENSION_TYPE;
-  }
 
   @BeforeEach
   void setUp() {
@@ -94,13 +91,14 @@ class BetterMobGriefingCommandTest {
 
     server = mock(MinecraftServer.class);
     when(server.getGameRules()).thenReturn(new GameRules());
-    ServerWorld world = mock(ServerWorld.class);
+    world = mock(ServerWorld.class);
     when(server.func_71218_a(any())).thenReturn(world);
 
-    when(world.getSavedData()).thenReturn(new DimensionSavedDataManager(null, null));
+    DataFixer dataFixer = mock(DataFixer.class);
+    when(world.getSavedData()).thenReturn(new DimensionSavedDataManager(new File(""), dataFixer));
 
-    commandSource = new CommandSource(server, null, null, null, 2, null, null, server,
-        null);
+    commandSource = new CommandSource(server, Vec3d.ZERO, Vec2f.ZERO, world, 2, "",
+        new StringTextComponent(""), server, null);
     commandSource = spy(commandSource);
 
     commandArguments = new HashMap<>();
@@ -115,8 +113,8 @@ class BetterMobGriefingCommandTest {
     // Given.
     Predicate<CommandSource> commandRequirement = mobGriefingCommand.getRequirement();
 
-    CommandSource commandSource = new CommandSource(null, null, null, null, permissionLevel, null,
-        null, null, null);
+    CommandSource commandSource = new CommandSource(server, Vec3d.ZERO, Vec2f.ZERO, world,
+        permissionLevel, "", new StringTextComponent(""), server, null);
 
     // When.
     boolean result = commandRequirement.test(commandSource);
@@ -228,7 +226,8 @@ class BetterMobGriefingCommandTest {
     assertThat("Unexpected suggestion size.", suggestions.size(), CoreMatchers.is(count));
   }
 
-  @ParameterizedTest(name = "Should show the entity mobGriefing value when the argument is {0} and value is {1}")
+  @ParameterizedTest(name = "Should show the entity mobGriefing value when the argument is {0} and"
+      + " value is {1}")
   @CsvSource({"test:entity1, FALSE", "test:entity2, TRUE", "test:entity3, INHERIT"})
   void shouldShowEntityMobGriefingWhenEntity(String entityName, MobGriefingValue value)
       throws CommandSyntaxException {

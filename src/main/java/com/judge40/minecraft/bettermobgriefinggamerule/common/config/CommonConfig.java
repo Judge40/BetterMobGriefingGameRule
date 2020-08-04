@@ -47,10 +47,11 @@ class CommonConfig {
 
   private static final List<EntityType<? extends LivingEntity>> ENTITY_TYPES =
       Collections.unmodifiableList(Arrays.asList(
-          EntityType.BLAZE, EntityType.CREEPER, EntityType.ENDER_DRAGON, EntityType.ENDERMAN,
-          EntityType.EVOKER, EntityType.GHAST, EntityType.HUSK, EntityType.RABBIT, EntityType.SHEEP,
-          EntityType.SILVERFISH, EntityType.SNOW_GOLEM, EntityType.VILLAGER, EntityType.WITHER,
-          EntityType.ZOMBIE, EntityType.ZOMBIE_PIGMAN, EntityType.ZOMBIE_VILLAGER
+          EntityType.BLAZE, EntityType.CREEPER, EntityType.DROWNED, EntityType.ENDER_DRAGON,
+          EntityType.ENDERMAN, EntityType.EVOKER, EntityType.FOX, EntityType.GHAST, EntityType.HUSK,
+          EntityType.RABBIT, EntityType.RAVAGER, EntityType.SHEEP, EntityType.SILVERFISH,
+          EntityType.SNOW_GOLEM, EntityType.VILLAGER, EntityType.WITHER, EntityType.ZOMBIE,
+          EntityType.ZOMBIE_PIGMAN, EntityType.ZOMBIE_VILLAGER
       ));
 
   final BooleanValue defaultGlobalBooleanValue;

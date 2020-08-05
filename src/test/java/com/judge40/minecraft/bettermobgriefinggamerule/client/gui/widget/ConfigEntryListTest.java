@@ -26,10 +26,12 @@ import static org.mockito.Mockito.mock;
 import com.judge40.minecraft.bettermobgriefinggamerule.TestUtils;
 import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.DefaultMobGriefingConfigGui;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import java.lang.reflect.Field;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,12 +48,15 @@ class ConfigEntryListTest {
   }
 
   @BeforeEach
-  void setUp() {
+  void setUp() throws IllegalAccessException {
     Screen parentScreen = new DefaultMobGriefingConfigGui(null, null);
     parentScreen.setSize(100, 200);
 
     Minecraft minecraft = mock(Minecraft.class);
-    minecraft.fontRenderer = mock(FontRenderer.class);
+    FontRenderer fontRenderer = mock(FontRenderer.class);
+    Field fontRendererField = FieldUtils.getField(Minecraft.class, "fontRenderer");
+    FieldUtils.removeFinalModifier(fontRendererField);
+    FieldUtils.writeField(fontRendererField, minecraft, fontRenderer);
 
     entryList = new ConfigEntryList(parentScreen, minecraft);
   }

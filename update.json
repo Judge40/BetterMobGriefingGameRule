@@ -1,6 +1,8 @@
 {
   "homepage": "https://github.com/Judge40/BetterMobGriefingGameRule/",
   "promos": {
+    "1.15.2-latest": "1.15.2-8.0.1",
+    "1.15.2-recommended": "1.15.2-8.0.1",
     "1.14.4-latest": "1.14.4-8.0.0",
     "1.14.4-recommended": "1.14.4-8.0.0"
   }

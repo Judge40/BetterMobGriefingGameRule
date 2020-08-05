@@ -33,6 +33,7 @@ import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.ConfigE
 import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.MobGriefingValueConfigEntry;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,7 +66,10 @@ class DefaultMobGriefingConfigGuiTest {
   @BeforeEach
   void setUp() throws IllegalAccessException {
     Minecraft minecraft = mock(Minecraft.class);
-    minecraft.fontRenderer = mock(FontRenderer.class);
+    FontRenderer fontRenderer = mock(FontRenderer.class);
+    Field fontRendererField = FieldUtils.getField(Minecraft.class, "fontRenderer");
+    FieldUtils.removeFinalModifier(fontRendererField);
+    FieldUtils.writeField(fontRendererField, minecraft, fontRenderer);
     Screen parentScreen = mock(Screen.class);
     gui = spy(new DefaultMobGriefingConfigGui(minecraft, parentScreen));
 

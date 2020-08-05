@@ -33,9 +33,7 @@ world creation as well as any missing entity rules when loading existing worlds.
 
 A number of entities will automatically be included in the configuration file,
 consisting of the entities in the "Mob Specific", "Active Actions" and
-"Projectiles" sub-sections of the "Mob Griefing Effects" section. Additional
-entities can be added to the configuration file manually and will then function
-the same as the default entities.
+"Projectiles" sub-sections of the "Mob Griefing Effects" section.
 
 Entity configuration entries are in the format `"namespace:entity" =
 "INHERIT|TRUE|FALSE"`.

@@ -5,7 +5,7 @@ showAsResourcePack=false
 
 [[mods]]
 modId="bettermobgriefinggamerule"
-version="1.14.4-8.0.0"
+version="1.15.2-8.0.1"
 displayName="Better mobGriefing GameRule"
 updateJSONURL="https://github.com/Judge40/BetterMobGriefingGameRule/update.json"
 displayURL="https://github.com/Judge40/BetterMobGriefingGameRule"

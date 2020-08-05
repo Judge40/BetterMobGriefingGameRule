@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
+import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -134,9 +134,9 @@ class BooleanConfigEntryTest {
         false);
 
     // Override visibility of buttons so no attempt is made to actually render them.
-    List<GuiButtonExt> children = entry.children().stream()
-        .filter(child -> child instanceof GuiButtonExt)
-        .map(button -> (GuiButtonExt) button)
+    List<ExtendedButton> children = entry.children().stream()
+        .filter(child -> child instanceof ExtendedButton)
+        .map(button -> (ExtendedButton) button)
         .collect(Collectors.toList());
     children.forEach(button -> button.visible = false);
 
@@ -164,9 +164,9 @@ class BooleanConfigEntryTest {
     BooleanConfigEntry entry = new BooleanConfigEntry(fontRenderer, 100, "label", true, false);
 
     // Override visibility of buttons so no attempt is made to actually render them.
-    List<GuiButtonExt> children = entry.children().stream()
-        .filter(child -> child instanceof GuiButtonExt)
-        .map(button -> (GuiButtonExt) button)
+    List<ExtendedButton> children = entry.children().stream()
+        .filter(child -> child instanceof ExtendedButton)
+        .map(button -> (ExtendedButton) button)
         .collect(Collectors.toList());
     children.forEach(button -> button.visible = false);
 

@@ -35,7 +35,7 @@ import net.minecraft.client.gui.widget.list.AbstractOptionList.Entry;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
+import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 /**
  * The configuration GUI for setting the default value of mob griefing rules.
@@ -77,7 +77,7 @@ public class DefaultMobGriefingConfigGui extends Screen {
     final int x = width / 2 - 155;
     final int y = height - 29;
 
-    resetButton = addButton(new GuiButtonExt(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, RESET_ALL,
+    resetButton = addButton(new ExtendedButton(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, RESET_ALL,
         (button) -> {
           for (Entry child : configEntryList.children()) {
 
@@ -88,7 +88,7 @@ public class DefaultMobGriefingConfigGui extends Screen {
         }));
 
     defaultButton = addButton(
-        new GuiButtonExt(x + BUTTON_WIDTH, y, BUTTON_WIDTH, BUTTON_HEIGHT, DEFAULT_ALL,
+        new ExtendedButton(x + BUTTON_WIDTH, y, BUTTON_WIDTH, BUTTON_HEIGHT, DEFAULT_ALL,
             (button) -> {
               for (Entry child : configEntryList.children()) {
 
@@ -98,11 +98,12 @@ public class DefaultMobGriefingConfigGui extends Screen {
               }
             }));
 
-    addButton(new GuiButtonExt(x + 10 + BUTTON_WIDTH * 2, y, BUTTON_WIDTH * 2, BUTTON_HEIGHT, DONE,
-        (button) -> {
-          updateConfig();
-          minecraft.displayGuiScreen(parent);
-        }));
+    addButton(
+        new ExtendedButton(x + 10 + BUTTON_WIDTH * 2, y, BUTTON_WIDTH * 2, BUTTON_HEIGHT, DONE,
+            (button) -> {
+              updateConfig();
+              minecraft.displayGuiScreen(parent);
+            }));
   }
 
   private void updateConfig() {

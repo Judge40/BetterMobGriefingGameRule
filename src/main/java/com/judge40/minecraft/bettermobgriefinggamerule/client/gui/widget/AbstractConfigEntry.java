@@ -30,7 +30,7 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.client.config.GuiButtonExt;
+import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class AbstractConfigEntry<T> extends AbstractEntry {
@@ -72,13 +72,13 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
     this.initialValue = currentValue = initialValue;
     this.defaultValue = defaultValue;
 
-    valueButton = new GuiButtonExt(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, currentValue.toString(),
+    valueButton = new ExtendedButton(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, currentValue.toString(),
         (button) -> currentValue = getNextValue());
 
-    resetButton = new GuiButtonExt(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, RESET,
+    resetButton = new ExtendedButton(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, RESET,
         (button) -> restoreInitialValue());
 
-    defaultButton = new GuiButtonExt(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, DEFAULT,
+    defaultButton = new ExtendedButton(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, DEFAULT,
         (button) -> restoreDefaultValue());
   }
 

@@ -110,12 +110,16 @@ Effects which occur passively during roaming.
 #### Projectiles
 Effects attached to a projectile.
 
-| Name           | Effect                               | Used By | Version |
-| -------------- | ------------------------------------ | ------- | ------- |
-| Fireball       | Impact explosion can destroy blocks. | Ghast   | 1.7+    |
-|                | Impact explosion can start fires.    | Ghast   | 1.8+    |
-| Small Fireball | Impact can start fires.              | Blaze   | 1.8+    |
-| Wither Skull   | Impact explosion can destroy blocks. | Wither  | 1.8+    |
+| Name           | Effect               | Used By  | Version |
+| -------------- | -------------------- | -------- | ------- |
+| Fireball       | Can destroy blocks.  | Ghast    | 1.7+    |
+|                | Can start fires.     | Ghast    | 1.8+    |
+|                | Can light campfires. | Ghast    | 1.15+   |
+| Flaming Arrow  | Can light campfires. | Skeleton | 1.15+   |
+|                |                      | Stray    | 1.15+   |
+| Small Fireball | Can start fires.     | Blaze    | 1.8+    |
+|                | Can light campfires. | Blaze    | 1.15+   |
+| Wither Skull   | Can destroy blocks.  | Wither   | 1.8+    |
 
 ## Versioning
 The versioning used for this project uses a combination of the target Minecraft

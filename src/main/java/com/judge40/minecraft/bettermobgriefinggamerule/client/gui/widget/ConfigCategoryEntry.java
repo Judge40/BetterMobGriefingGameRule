@@ -19,6 +19,7 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -46,11 +47,11 @@ public class ConfigCategoryEntry extends AbstractEntry {
   }
 
   @Override
-  public void render(int render1, int render2, int render3, int render4, int render5, int render6,
-      int render7, boolean render8, float render9) {
+  public void render(@Nonnull MatrixStack matrixStack, int render1, int render2, int render3,
+      int render4, int render5, int render6, int render7, boolean render8, float render9) {
     float x = parentWidth / 2F - labelWidth / 2F;
     float y = render2 + render5 - 10F;
-    fontRenderer.drawString(labelText, x, y, 16777215);
+    fontRenderer.drawString(matrixStack, labelText, x, y, 16777215);
   }
 
   @Override
@@ -60,7 +61,7 @@ public class ConfigCategoryEntry extends AbstractEntry {
 
   @Nonnull
   @Override
-  public List<? extends IGuiEventListener> children() {
+  public List<? extends IGuiEventListener> getEventListeners() {
     return Collections.emptyList();
   }
 }

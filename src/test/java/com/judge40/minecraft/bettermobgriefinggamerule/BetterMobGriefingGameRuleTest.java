@@ -35,6 +35,7 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGri
 import com.mojang.datafixers.DataFixer;
 import java.io.File;
 import net.minecraft.command.Commands;
+import net.minecraft.command.Commands.EnvironmentType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.GameRules;
@@ -72,10 +73,10 @@ class BetterMobGriefingGameRuleTest {
     gameRules = new GameRules();
 
     server = mock(MinecraftServer.class);
-    when(server.getCommandManager()).thenReturn(new Commands(false));
+    when(server.getCommandManager()).thenReturn(new Commands(EnvironmentType.ALL));
 
     world = mock(ServerWorld.class);
-    when(server.func_71218_a(any())).thenReturn(world);
+    when(server.func_241755_D_()).thenReturn(world);
     when(world.getGameTime()).thenReturn(1L);
     when(world.getGameRules()).thenReturn(gameRules);
     DataFixer dataFixer = mock(DataFixer.class);

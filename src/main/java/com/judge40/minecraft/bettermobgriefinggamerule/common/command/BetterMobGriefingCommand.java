@@ -138,13 +138,13 @@ public class BetterMobGriefingCommand {
     CommandSource source = context.getSource();
     GameRules gameRules = source.getServer().getGameRules();
     BooleanValue mobGriefing = gameRules.get(GameRules.MOB_GRIEFING);
-    mobGriefing.func_223554_b(context, RULE_VALUE);
+    mobGriefing.updateValue(context, RULE_VALUE);
 
     TranslationTextComponent message = new TranslationTextComponent(RULE_SET_KEY, RULE_NAME,
         mobGriefing);
     source.sendFeedback(message, true);
 
-    return mobGriefing.func_223557_c();
+    return mobGriefing.intValue();
   }
 
   /**

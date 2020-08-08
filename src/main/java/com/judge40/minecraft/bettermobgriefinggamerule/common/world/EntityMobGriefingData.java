@@ -30,10 +30,10 @@ import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraft.world.storage.WorldSavedData;
@@ -61,7 +61,7 @@ public class EntityMobGriefingData extends WorldSavedData {
    * @return The {@code EntityMobGriefingData} for the {@code MinecraftServer}.
    */
   public static EntityMobGriefingData forServer(MinecraftServer server) {
-    ServerWorld world = server.func_71218_a(DimensionType.OVERWORLD);
+    ServerWorld world = server.func_241755_D_();
     DimensionSavedDataManager savedData = world.getSavedData();
     return savedData.getOrCreate(EntityMobGriefingData::new, ModInfoConstants.ID);
   }
@@ -104,8 +104,9 @@ public class EntityMobGriefingData extends WorldSavedData {
     }
   }
 
+  @Nonnull
   @Override
-  public CompoundNBT write(CompoundNBT nbt) {
+  public CompoundNBT write(@Nonnull CompoundNBT nbt) {
     // Add the entity name and MobGriefingValue from each world data entry to the NBT.
     entityIdsToMobGriefingValue.forEach((k, v) -> nbt.putString(k.toString(), v.toString()));
     return nbt;

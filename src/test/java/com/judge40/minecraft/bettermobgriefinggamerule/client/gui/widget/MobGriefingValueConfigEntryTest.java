@@ -24,8 +24,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.TestUtils;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.minecraft.client.gui.FontRenderer;
@@ -33,17 +33,11 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 class MobGriefingValueConfigEntryTest {
-
-  @BeforeAll
-  static void setUpBeforeAll() throws IllegalAccessException {
-    TestUtils.initializeTestEnvironment();
-  }
 
   @Test
   void shouldReturnEntityId() {
@@ -68,7 +62,7 @@ class MobGriefingValueConfigEntryTest {
         new ResourceLocation("test:entity"), initialValue);
 
     // When.
-    Button valueButton = (Button) entry.children().get(0);
+    Button valueButton = (Button) entry.getEventListeners().get(0);
 
     for (int i = 0; i <= targetValue.ordinal(); i++) {
       valueButton.onPress();
@@ -94,13 +88,13 @@ class MobGriefingValueConfigEntryTest {
         new ResourceLocation("test:entity"), initialValue);
 
     // When.
-    Button valueButton = (Button) entry.children().get(0);
+    Button valueButton = (Button) entry.getEventListeners().get(0);
 
     for (int i = 0; i <= initialValue.ordinal(); i++) {
       valueButton.onPress();
     }
 
-    Button resetButton = (Button) entry.children().get(1);
+    Button resetButton = (Button) entry.getEventListeners().get(1);
     resetButton.onPress();
 
     // Then.
@@ -117,7 +111,7 @@ class MobGriefingValueConfigEntryTest {
         new ResourceLocation("test:entity"), initialValue);
 
     // When.
-    Button defaultButton = (Button) entry.children().get(2);
+    Button defaultButton = (Button) entry.getEventListeners().get(2);
     defaultButton.onPress();
 
     // Then.
@@ -135,18 +129,18 @@ class MobGriefingValueConfigEntryTest {
         new ResourceLocation("test:entity"), initialValue);
 
     // Override visibility of buttons so no attempt is made to actually render them.
-    List<Button> children = entry.children().stream()
+    List<Button> children = entry.getEventListeners().stream()
         .filter(child -> child instanceof Button)
         .map(button -> (Button) button)
         .collect(Collectors.toList());
     children.forEach(button -> button.visible = false);
 
     // When.
-    entry.render(0, 0, 0, 0, 0, 0, 0, true, 0);
+    entry.render(new MatrixStack(), 0, 0, 0, 0, 0, 0, 0, true, 0);
 
     // Then.
     Button valueButton = children.get(0);
-    assertThat("Unexpected button message.", valueButton.getMessage(),
+    assertThat("Unexpected button message.", valueButton.getMessage().getString(),
         is(initialValue.toString()));
 
     Button resetButton = children.get(1);
@@ -168,7 +162,7 @@ class MobGriefingValueConfigEntryTest {
         new ResourceLocation("test:entity"), initialValue);
 
     // Override visibility of buttons so no attempt is made to actually render them.
-    List<ExtendedButton> children = entry.children().stream()
+    List<ExtendedButton> children = entry.getEventListeners().stream()
         .filter(child -> child instanceof ExtendedButton)
         .map(button -> (ExtendedButton) button)
         .collect(Collectors.toList());
@@ -177,11 +171,11 @@ class MobGriefingValueConfigEntryTest {
     // When.
     Button valueButton = children.get(0);
     valueButton.onPress();
-    entry.render(0, 0, 0, 0, 0, 0, 0, true, 0);
+    entry.render(new MatrixStack(), 0, 0, 0, 0, 0, 0, 0, true, 0);
 
     // Then.
     MobGriefingValue currentValue = entry.getCurrentValue();
-    assertThat("Unexpected button message.", valueButton.getMessage(),
+    assertThat("Unexpected button message.", valueButton.getMessage().getString(),
         is(currentValue.toString()));
 
     Button resetButton = children.get(1);
@@ -201,17 +195,19 @@ class MobGriefingValueConfigEntryTest {
         new ResourceLocation("test:entity"), MobGriefingValue.INHERIT);
 
     // Override visibility of buttons so no attempt is made to actually render them.
-    List<ExtendedButton> children = entry.children().stream()
+    List<ExtendedButton> children = entry.getEventListeners().stream()
         .filter(child -> child instanceof ExtendedButton)
         .map(button -> (ExtendedButton) button)
         .collect(Collectors.toList());
     children.forEach(button -> button.visible = false);
 
+    MatrixStack matrixStack = new MatrixStack();
+
     // When.
-    entry.render(10, 20, 30, 40, 50, 60, 70, true, 90);
+    entry.render(matrixStack, 10, 20, 30, 40, 50, 60, 70, true, 90);
 
     // Then.
     int colorCode = TextFormatting.WHITE.getColor();
-    verify(fontRenderer).drawString("test:entity", 20, 40.5F, colorCode);
+    verify(fontRenderer).drawString(matrixStack, "test:entity", 20, 40.5F, colorCode);
   }
 }

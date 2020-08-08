@@ -33,9 +33,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,6 +46,11 @@ class EntityMobGriefingDataTest {
 
   private EntityMobGriefingData data;
 
+  @BeforeAll
+  static void setUpBeforeAll() throws IllegalAccessException {
+    TestUtils.initializeTestEnvironment();
+  }
+
   @BeforeEach
   void setUp() {
     MinecraftServer server = mock(MinecraftServer.class);
@@ -54,7 +59,7 @@ class EntityMobGriefingDataTest {
     DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""),
         dataFixer);
 
-    when(server.func_71218_a(DimensionType.OVERWORLD)).thenReturn(world);
+    when(server.func_241755_D_()).thenReturn(world);
     when(world.getSavedData()).thenReturn(savedDataManager);
 
     data = EntityMobGriefingData.forServer(server);

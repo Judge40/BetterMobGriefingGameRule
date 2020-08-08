@@ -14,7 +14,7 @@ apply plugin: "net.minecraftforge.gradle"
 apply plugin: "pmd"
 
 // Mod information.
-version = "1.15.2-8.0.1"
+version = "1.16.1-8.0.2-alpha"
 group= "com.judge40.minecraft.bettermobgriefinggamerule"
 archivesBaseName = "bettermobgriefinggamerule"
 
@@ -23,7 +23,7 @@ targetCompatibility = 1.8
 
 minecraft {
   // MCP mappings version.
-  mappings channel: "stable", version: "60-1.15"
+  mappings channel: "snapshot", version: "20200723-1.16.1"
 
   // Default run configurations.
   runs {
@@ -84,7 +84,7 @@ repositories {
 }
 
 dependencies {
-  minecraft "net.minecraftforge:forge:1.15.2-31.2.0"
+  minecraft "net.minecraftforge:forge:1.16.1-32.0.107"
 
   // Test dependencies.
   ext.junitVersion = "5.6.2"

@@ -28,6 +28,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.judge40.minecraft.bettermobgriefinggamerule.TestUtils;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 import com.mojang.brigadier.Command;
@@ -51,8 +52,8 @@ import java.util.function.Predicate;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.GameRules;
@@ -60,6 +61,7 @@ import net.minecraft.world.GameRules.BooleanValue;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import org.hamcrest.CoreMatchers;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -80,6 +82,11 @@ class BetterMobGriefingCommandTest {
 
   private Map<String, ParsedArgument<CommandSource, ?>> commandArguments;
 
+  @BeforeAll
+  static void setUpBeforeAll() throws IllegalAccessException {
+    TestUtils.initializeTestEnvironment();
+  }
+
   @BeforeEach
   void setUp() {
     CommandDispatcher<CommandSource> dispatcher = new CommandDispatcher<>();
@@ -92,12 +99,12 @@ class BetterMobGriefingCommandTest {
     server = mock(MinecraftServer.class);
     when(server.getGameRules()).thenReturn(new GameRules());
     world = mock(ServerWorld.class);
-    when(server.func_71218_a(any())).thenReturn(world);
+    when(server.func_241755_D_()).thenReturn(world);
 
     DataFixer dataFixer = mock(DataFixer.class);
     when(world.getSavedData()).thenReturn(new DimensionSavedDataManager(new File(""), dataFixer));
 
-    commandSource = new CommandSource(server, Vec3d.ZERO, Vec2f.ZERO, world, 2, "",
+    commandSource = new CommandSource(server, Vector3d.ZERO, Vector2f.ZERO, world, 2, "",
         new StringTextComponent(""), server, null);
     commandSource = spy(commandSource);
 
@@ -113,7 +120,7 @@ class BetterMobGriefingCommandTest {
     // Given.
     Predicate<CommandSource> commandRequirement = mobGriefingCommand.getRequirement();
 
-    CommandSource commandSource = new CommandSource(server, Vec3d.ZERO, Vec2f.ZERO, world,
+    CommandSource commandSource = new CommandSource(server, Vector3d.ZERO, Vector2f.ZERO, world,
         permissionLevel, "", new StringTextComponent(""), server, null);
 
     // When.
@@ -211,7 +218,7 @@ class BetterMobGriefingCommandTest {
   }
 
   @ParameterizedTest(name = "Should suggest {1} entity names when the argument is {0}")
-  @CsvSource({"ender, 4", "'', 101", "xyz, 0"})
+  @CsvSource({"ender, 5", "'', 105", "xyz, 0"})
   void shouldSuggestEntityNames(String input, int count)
       throws CommandSyntaxException, ExecutionException, InterruptedException {
     // Given.

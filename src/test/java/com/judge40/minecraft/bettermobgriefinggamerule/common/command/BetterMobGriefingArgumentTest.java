@@ -38,6 +38,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class BetterMobGriefingArgumentTest {
 
@@ -88,8 +89,8 @@ class BetterMobGriefingArgumentTest {
   }
 
   @ParameterizedTest(name = "Should not list suggestions when input is {0}")
-  @CsvSource({"false, false", "true, true", "inherit, inherit"})
-  void shouldNotListSuggestionWhenFullMatch(String input, String expected)
+  @ValueSource(strings = {"false", "true", "inherit"})
+  void shouldNotListSuggestionWhenFullMatch(String input)
       throws ExecutionException, InterruptedException {
     // Given.
     SuggestionsBuilder builder = new SuggestionsBuilder(input, 0);

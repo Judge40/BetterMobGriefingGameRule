@@ -25,12 +25,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.TestUtils;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import java.util.List;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.util.text.TextFormatting;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,11 +38,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 class ConfigCategoryEntryTest {
 
   private ConfigCategoryEntry entry;
-
-  @BeforeAll
-  static void setUpBeforeAll() throws IllegalAccessException {
-    TestUtils.initializeTestEnvironment();
-  }
 
   @BeforeEach
   void setUp() {
@@ -58,12 +52,14 @@ class ConfigCategoryEntryTest {
     when(fontRenderer.getStringWidth("labelKey")).thenReturn(100);
     ConfigCategoryEntry entry = new ConfigCategoryEntry(fontRenderer, 200, "labelKey");
 
+    MatrixStack matrixStack = new MatrixStack();
+
     // When.
-    entry.render(10, 20, 30, 40, 50, 60, 70, true, 90);
+    entry.render(matrixStack, 10, 20, 30, 40, 50, 60, 70, true, 90);
 
     // Then.
     int colorCode = TextFormatting.WHITE.getColor();
-    verify(fontRenderer).drawString("labelKey", 50, 60, colorCode);
+    verify(fontRenderer).drawString(matrixStack, "labelKey", 50, 60, colorCode);
   }
 
   @ParameterizedTest(name = "Should not change focus when input is {0}.")
@@ -79,7 +75,7 @@ class ConfigCategoryEntryTest {
   @Test
   void shouldNotHaveChildren() {
     // When.
-    List<? extends IGuiEventListener> children = entry.children();
+    List<? extends IGuiEventListener> children = entry.getEventListeners();
 
     // Then.
     assertThat("Unexpected number of children.", children.size(), is(0));

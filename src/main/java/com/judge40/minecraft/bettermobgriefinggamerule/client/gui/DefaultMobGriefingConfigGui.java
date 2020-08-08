@@ -26,15 +26,17 @@ import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.MobGrie
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.ModInfoConstants;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHelper;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.AbstractOptionList.Entry;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 
 /**
@@ -42,11 +44,11 @@ import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
  */
 public class DefaultMobGriefingConfigGui extends Screen {
 
-  private static final String DEFAULT_ALL = I18n
-      .format("bettermobgriefinggamerule.config.gui.defaultAll");
-  private static final String DONE = I18n.format("gui.done");
-  private static final String RESET_ALL = I18n
-      .format("bettermobgriefinggamerule.config.gui.resetAll");
+  private static final TranslationTextComponent DEFAULT_ALL = new TranslationTextComponent(
+      "bettermobgriefinggamerule.config.gui.defaultAll");
+  private static final TranslationTextComponent DONE = new TranslationTextComponent("gui.done");
+  private static final TranslationTextComponent RESET_ALL = new TranslationTextComponent(
+      "bettermobgriefinggamerule.config.gui.resetAll");
 
   private static final int BUTTON_HEIGHT = 20;
   private static final int BUTTON_WIDTH = 75;
@@ -79,7 +81,7 @@ public class DefaultMobGriefingConfigGui extends Screen {
 
     resetButton = addButton(new ExtendedButton(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, RESET_ALL,
         (button) -> {
-          for (Entry child : configEntryList.children()) {
+          for (Entry child : configEntryList.getEventListeners()) {
 
             if (child instanceof AbstractConfigEntry) {
               ((AbstractConfigEntry) child).restoreInitialValue();
@@ -90,7 +92,7 @@ public class DefaultMobGriefingConfigGui extends Screen {
     defaultButton = addButton(
         new ExtendedButton(x + BUTTON_WIDTH, y, BUTTON_WIDTH, BUTTON_HEIGHT, DEFAULT_ALL,
             (button) -> {
-              for (Entry child : configEntryList.children()) {
+              for (Entry child : configEntryList.getEventListeners()) {
 
                 if (child instanceof AbstractConfigEntry) {
                   ((AbstractConfigEntry) child).restoreDefaultValue();
@@ -125,15 +127,15 @@ public class DefaultMobGriefingConfigGui extends Screen {
   }
 
   @Override
-  public void render(int render1, int render2, float render3) {
-    renderBackground();
-    configEntryList.render(render1, render2, render3);
-    drawCenteredString(font, title.getFormattedText(), width / 2, 8, 16777215);
+  public void render(@Nonnull MatrixStack matrixStack, int render1, int render2, float render3) {
+    renderBackground(matrixStack);
+    configEntryList.render(matrixStack, render1, render2, render3);
+    drawCenteredString(matrixStack, font, title.getString(), width / 2, 8, 16777215);
 
     boolean enableReset = false;
     boolean enableDefault = false;
 
-    for (Entry child : configEntryList.children()) {
+    for (Entry child : configEntryList.getEventListeners()) {
 
       if (child instanceof AbstractConfigEntry) {
         enableReset |= ((AbstractConfigEntry) child).isChanged();
@@ -147,6 +149,6 @@ public class DefaultMobGriefingConfigGui extends Screen {
 
     resetButton.active = enableReset;
     defaultButton.active = enableDefault;
-    super.render(render1, render2, render3);
+    super.render(matrixStack, render1, render2, render3);
   }
 }

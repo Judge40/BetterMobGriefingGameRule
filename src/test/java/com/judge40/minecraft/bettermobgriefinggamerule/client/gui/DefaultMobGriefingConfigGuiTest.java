@@ -21,6 +21,7 @@ package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
@@ -33,6 +34,7 @@ import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.ConfigE
 import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.MobGriefingValueConfigEntry;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,16 +88,16 @@ class DefaultMobGriefingConfigGuiTest {
     reinitializeGui();
 
     // When.
-    gui.render(0, 0, 0);
+    gui.render(new MatrixStack(), 0, 0, 0);
 
     // Then.
-    Button resetButton = (Button) gui.children().get(1);
+    Button resetButton = (Button) gui.getEventListeners().get(1);
     assertThat("Unexpected reset button active state.", resetButton.active, is(false));
 
-    Button defaultButton = (Button) gui.children().get(2);
+    Button defaultButton = (Button) gui.getEventListeners().get(2);
     assertThat("Unexpected default button active state.", defaultButton.active, is(!initialValue));
 
-    Button doneButton = (Button) gui.children().get(3);
+    Button doneButton = (Button) gui.getEventListeners().get(3);
     assertThat("Unexpected done button active state.", doneButton.active, is(true));
   }
 
@@ -108,21 +110,21 @@ class DefaultMobGriefingConfigGuiTest {
     TestUtils.initializeConfig(initialValue);
     reinitializeGui();
 
-    BooleanConfigEntry globalEntry = (BooleanConfigEntry) entryList.children().get(1);
-    Button globalValueButton = (Button) globalEntry.children().get(0);
+    BooleanConfigEntry globalEntry = (BooleanConfigEntry) entryList.getEventListeners().get(1);
+    Button globalValueButton = (Button) globalEntry.getEventListeners().get(0);
     globalValueButton.onPress();
 
     // When.
-    gui.render(0, 0, 0);
+    gui.render(new MatrixStack(), 0, 0, 0);
 
     // Then.
-    Button resetButton = (Button) gui.children().get(1);
+    Button resetButton = (Button) gui.getEventListeners().get(1);
     assertThat("Unexpected reset button active state.", resetButton.active, is(true));
 
-    Button defaultButton = (Button) gui.children().get(2);
+    Button defaultButton = (Button) gui.getEventListeners().get(2);
     assertThat("Unexpected default button active state.", defaultButton.active, is(initialValue));
 
-    Button doneButton = (Button) gui.children().get(3);
+    Button doneButton = (Button) gui.getEventListeners().get(3);
     assertThat("Unexpected done button active state.", doneButton.active, is(true));
   }
 
@@ -132,19 +134,19 @@ class DefaultMobGriefingConfigGuiTest {
     TestUtils.initializeConfig(true, MobGriefingValue.TRUE);
     reinitializeGui();
 
-    BooleanConfigEntry globalEntry = (BooleanConfigEntry) entryList.children().get(1);
-    Button globalValueButton = (Button) globalEntry.children().get(0);
+    BooleanConfigEntry globalEntry = (BooleanConfigEntry) entryList.getEventListeners().get(1);
+    Button globalValueButton = (Button) globalEntry.getEventListeners().get(0);
     globalValueButton.onPress();
 
-    MobGriefingValueConfigEntry entityEntry = (MobGriefingValueConfigEntry) entryList.children()
-        .get(3);
-    Button entityValueButton = (Button) entityEntry.children().get(0);
+    MobGriefingValueConfigEntry entityEntry = (MobGriefingValueConfigEntry) entryList
+        .getEventListeners().get(3);
+    Button entityValueButton = (Button) entityEntry.getEventListeners().get(0);
     entityValueButton.onPress();
 
     // When.
-    Button resetButton = (Button) gui.children().get(1);
+    Button resetButton = (Button) gui.getEventListeners().get(1);
     resetButton.onPress();
-    gui.render(0, 0, 0);
+    gui.render(new MatrixStack(), 0, 0, 0);
 
     // Then.
     assertThat("Unexpected value for isChanged.", globalEntry.isChanged(), is(false));
@@ -154,10 +156,10 @@ class DefaultMobGriefingConfigGuiTest {
 
     assertThat("Unexpected reset button active state.", resetButton.active, is(false));
 
-    Button defaultButton = (Button) gui.children().get(2);
+    Button defaultButton = (Button) gui.getEventListeners().get(2);
     assertThat("Unexpected default button active state.", defaultButton.active, is(true));
 
-    Button doneButton = (Button) gui.children().get(3);
+    Button doneButton = (Button) gui.getEventListeners().get(3);
     assertThat("Unexpected done button active state.", doneButton.active, is(true));
   }
 
@@ -168,26 +170,26 @@ class DefaultMobGriefingConfigGuiTest {
     reinitializeGui();
 
     // When.
-    Button defaultButton = (Button) gui.children().get(2);
+    Button defaultButton = (Button) gui.getEventListeners().get(2);
     defaultButton.onPress();
-    gui.render(0, 0, 0);
+    gui.render(new MatrixStack(), 0, 0, 0);
 
     // Then.
-    BooleanConfigEntry globalEntry = (BooleanConfigEntry) entryList.children().get(1);
+    BooleanConfigEntry globalEntry = (BooleanConfigEntry) entryList.getEventListeners().get(1);
     assertThat("Unexpected value for isChanged.", globalEntry.isChanged(), is(true));
     assertThat("Unexpected value for isDefault.", globalEntry.isDefault(), is(true));
 
-    MobGriefingValueConfigEntry entityEntry = (MobGriefingValueConfigEntry) entryList.children()
-        .get(3);
+    MobGriefingValueConfigEntry entityEntry = (MobGriefingValueConfigEntry) entryList
+        .getEventListeners().get(3);
     assertThat("Unexpected value for isChanged.", entityEntry.isChanged(), is(false));
     assertThat("Unexpected value for isDefault.", entityEntry.isDefault(), is(true));
 
-    Button resetButton = (Button) gui.children().get(1);
+    Button resetButton = (Button) gui.getEventListeners().get(1);
     assertThat("Unexpected reset button active state.", resetButton.active, is(true));
 
     assertThat("Unexpected default button active state.", defaultButton.active, is(false));
 
-    Button doneButton = (Button) gui.children().get(3);
+    Button doneButton = (Button) gui.getEventListeners().get(3);
     assertThat("Unexpected done button active state.", doneButton.active, is(true));
   }
 
@@ -199,7 +201,7 @@ class DefaultMobGriefingConfigGuiTest {
     reinitializeGui();
 
     // When.
-    Button doneButton = (Button) gui.children().get(3);
+    Button doneButton = (Button) gui.getEventListeners().get(3);
     doneButton.onPress();
 
     // Then.
@@ -222,23 +224,23 @@ class DefaultMobGriefingConfigGuiTest {
     TestUtils.initializeConfig(true, MobGriefingValue.INHERIT, MobGriefingValue.INHERIT);
     reinitializeGui();
 
-    BooleanConfigEntry globalEntry = (BooleanConfigEntry) entryList.children().get(1);
-    Button globalValueButton = (Button) globalEntry.children().get(0);
+    BooleanConfigEntry globalEntry = (BooleanConfigEntry) entryList.getEventListeners().get(1);
+    Button globalValueButton = (Button) globalEntry.getEventListeners().get(0);
     globalValueButton.onPress();
 
-    MobGriefingValueConfigEntry entityEntry1 = (MobGriefingValueConfigEntry) entryList.children()
-        .get(3);
-    Button entityValueButton1 = (Button) entityEntry1.children().get(0);
+    MobGriefingValueConfigEntry entityEntry1 = (MobGriefingValueConfigEntry) entryList
+        .getEventListeners().get(3);
+    Button entityValueButton1 = (Button) entityEntry1.getEventListeners().get(0);
     entityValueButton1.onPress();
 
-    MobGriefingValueConfigEntry entityEntry2 = (MobGriefingValueConfigEntry) entryList.children()
-        .get(4);
-    Button entityValueButton2 = (Button) entityEntry2.children().get(0);
+    MobGriefingValueConfigEntry entityEntry2 = (MobGriefingValueConfigEntry) entryList
+        .getEventListeners().get(4);
+    Button entityValueButton2 = (Button) entityEntry2.getEventListeners().get(0);
     entityValueButton2.onPress();
     entityValueButton2.onPress();
 
     // When.
-    Button doneButton = (Button) gui.children().get(3);
+    Button doneButton = (Button) gui.getEventListeners().get(3);
     doneButton.onPress();
 
     // Then.
@@ -261,7 +263,7 @@ class DefaultMobGriefingConfigGuiTest {
    * @throws IllegalAccessException If rendering could not be disabled.
    */
   private void reinitializeGui() throws IllegalAccessException {
-    gui.children().clear();
+    gui.getEventListeners().clear();
     gui.init();
     disableRendering();
   }
@@ -273,21 +275,21 @@ class DefaultMobGriefingConfigGuiTest {
    */
   private void disableRendering() throws IllegalAccessException {
     // Swap entry list out for a spy.
-    entryList = (ConfigEntryList) spy(gui.children().get(0));
+    entryList = (ConfigEntryList) spy(gui.getEventListeners().get(0));
     FieldUtils.writeField(gui, "configEntryList", entryList, true);
 
     // Swap buttons out for spies.
-    Button resetButton = (Button) spy(gui.children().get(1));
-    Button defaultButton = (Button) spy(gui.children().get(2));
-    Button doneButton = (Button) spy(gui.children().get(3));
+    Button resetButton = (Button) spy(gui.getEventListeners().get(1));
+    Button defaultButton = (Button) spy(gui.getEventListeners().get(2));
+    Button doneButton = (Button) spy(gui.getEventListeners().get(3));
     List<Button> buttons = new ArrayList<>(Arrays.asList(resetButton, defaultButton, doneButton));
     FieldUtils.writeField(gui, "buttons", buttons, true);
 
     // Disable rendering of gui children.
-    doNothing().when(gui).renderBackground();
-    doNothing().when(entryList).render(anyInt(), anyInt(), anyFloat());
-    doNothing().when(resetButton).render(anyInt(), anyInt(), anyFloat());
-    doNothing().when(defaultButton).render(anyInt(), anyInt(), anyFloat());
-    doNothing().when(doneButton).render(anyInt(), anyInt(), anyFloat());
+    doNothing().when(gui).renderBackground(any(MatrixStack.class));
+    doNothing().when(entryList).render(any(MatrixStack.class), anyInt(), anyInt(), anyFloat());
+    doNothing().when(resetButton).render(any(MatrixStack.class), anyInt(), anyInt(), anyFloat());
+    doNothing().when(defaultButton).render(any(MatrixStack.class), anyInt(), anyInt(), anyFloat());
+    doNothing().when(doneButton).render(any(MatrixStack.class), anyInt(), anyInt(), anyFloat());
   }
 }

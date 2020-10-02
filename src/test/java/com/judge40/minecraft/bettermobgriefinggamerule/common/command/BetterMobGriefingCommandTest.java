@@ -218,7 +218,7 @@ class BetterMobGriefingCommandTest {
   }
 
   @ParameterizedTest(name = "Should suggest {1} entity names when the argument is {0}")
-  @CsvSource({"ender, 5", "'', 105", "xyz, 0"})
+  @CsvSource({"ender, 5", "'', 106", "xyz, 0"})
   void shouldSuggestEntityNames(String input, int count)
       throws CommandSyntaxException, ExecutionException, InterruptedException {
     // Given.

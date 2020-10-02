@@ -2,6 +2,7 @@ modLoader="javafml"
 loaderVersion="[28,)"
 issueTrackerURL="https://github.com/Judge40/BetterMobGriefingGameRule/issues"
 showAsResourcePack=false
+license="MIT"
 
 [[mods]]
 modId="bettermobgriefinggamerule"

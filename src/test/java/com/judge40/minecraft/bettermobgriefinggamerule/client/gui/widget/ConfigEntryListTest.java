@@ -56,7 +56,7 @@ class ConfigEntryListTest {
     FontRenderer fontRenderer = mock(FontRenderer.class);
     Field fontRendererField = FieldUtils.getField(Minecraft.class, "fontRenderer");
     FieldUtils.removeFinalModifier(fontRendererField);
-    FieldUtils.writeField(fontRendererField, minecraft, fontRenderer);
+    FieldUtils.writeField(fontRendererField, minecraft, fontRenderer, true);
 
     entryList = new ConfigEntryList(parentScreen, minecraft);
   }

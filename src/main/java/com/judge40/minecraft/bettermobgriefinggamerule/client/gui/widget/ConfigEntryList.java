@@ -49,12 +49,12 @@ public class ConfigEntryList extends AbstractOptionList<AbstractEntry> {
    */
   public ConfigEntryList(Screen parent, Minecraft minecraft) {
     super(minecraft, parent.width + 45, parent.height, 43, parent.height - 32, 20);
-    FontRenderer fontRenderer = minecraft.fontRenderer;
+    FontRenderer fontRenderer = minecraft.font;
 
-    int globalLabelWidth = fontRenderer.getStringWidth(BetterMobGriefingGameRule.GLOBAL_RULE);
+    int globalLabelWidth = fontRenderer.width(BetterMobGriefingGameRule.GLOBAL_RULE);
 
     final int maxLabelWidth = Config.entityIdsToDefaultEntityValue.keySet().stream()
-        .mapToInt(entityId -> fontRenderer.getStringWidth(entityId.toString()))
+        .mapToInt(entityId -> fontRenderer.width(entityId.toString()))
         .filter(width -> width > globalLabelWidth)
         .max()
         .orElse(globalLabelWidth);

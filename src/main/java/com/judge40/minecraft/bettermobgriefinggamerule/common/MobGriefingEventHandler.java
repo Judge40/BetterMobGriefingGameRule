@@ -79,8 +79,8 @@ public class MobGriefingEventHandler {
 
     // If no entity rule was found then default to the global value.
     if (mobGriefingEnabled == null) {
-      World entityWorld = entity.getEntityWorld();
-      mobGriefingEnabled = entityWorld.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
+      World entityWorld = entity.level;
+      mobGriefingEnabled = entityWorld.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
     }
 
     return mobGriefingEnabled;

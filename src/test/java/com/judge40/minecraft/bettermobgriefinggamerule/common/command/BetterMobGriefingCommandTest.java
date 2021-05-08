@@ -99,10 +99,10 @@ class BetterMobGriefingCommandTest {
     server = mock(MinecraftServer.class);
     when(server.getGameRules()).thenReturn(new GameRules());
     world = mock(ServerWorld.class);
-    when(server.func_241755_D_()).thenReturn(world);
+    when(server.overworld()).thenReturn(world);
 
     DataFixer dataFixer = mock(DataFixer.class);
-    when(world.getSavedData()).thenReturn(new DimensionSavedDataManager(new File(""), dataFixer));
+    when(world.getDataStorage()).thenReturn(new DimensionSavedDataManager(new File(""), dataFixer));
 
     commandSource = new CommandSource(server, Vector3d.ZERO, Vector2f.ZERO, world, 2, "",
         new StringTextComponent(""), server, null);
@@ -145,7 +145,7 @@ class BetterMobGriefingCommandTest {
 
     // Then.
     assertThat("Unexpected command result.", result, is(3));
-    verify(commandSource).sendFeedback(any(ITextComponent.class), eq(true));
+    verify(commandSource).sendSuccess(any(ITextComponent.class), eq(true));
   }
 
   @ParameterizedTest(name = "Should suggest {1} when the argument is {0}")
@@ -195,9 +195,9 @@ class BetterMobGriefingCommandTest {
 
     // Then.
     assertThat("Unexpected command result.", result, is(input ? 1 : 0));
-    BooleanValue mobGriefing = server.getGameRules().get(GameRules.MOB_GRIEFING);
+    BooleanValue mobGriefing = server.getGameRules().getRule(GameRules.RULE_MOBGRIEFING);
     assertThat("Unexpected mob griefing value.", mobGriefing.get(), is(input));
-    verify(commandSource).sendFeedback(any(ITextComponent.class), eq(true));
+    verify(commandSource).sendSuccess(any(ITextComponent.class), eq(true));
   }
 
   @ParameterizedTest(name = "Should suggest {1} when the argument is {0}")
@@ -253,7 +253,7 @@ class BetterMobGriefingCommandTest {
 
     // Then.
     assertThat("Unexpected command result.", result, is(value.ordinal()));
-    verify(commandSource).sendFeedback(any(ITextComponent.class), eq(true));
+    verify(commandSource).sendSuccess(any(ITextComponent.class), eq(true));
   }
 
   @ParameterizedTest(name = "Should suggest {1} when the argument is {0}")
@@ -313,6 +313,6 @@ class BetterMobGriefingCommandTest {
     // Then.
     assertThat("Unexpected command result.", result, is(value.ordinal()));
     assertThat("Unexpected mob griefing value.", data.getMobGriefingValue(entityId), is(value));
-    verify(commandSource).sendFeedback(any(ITextComponent.class), eq(true));
+    verify(commandSource).sendSuccess(any(ITextComponent.class), eq(true));
   }
 }

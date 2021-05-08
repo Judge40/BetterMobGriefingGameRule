@@ -140,7 +140,7 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
       int render4, int render5, int render6, int render7, boolean render8, float render9) {
     float x = render3 + 90 - labelOffset;
     float y = render2 + render5 / 2F - 4.5F;
-    fontRenderer.drawString(matrixStack, label, x, y, 16777215);
+    fontRenderer.draw(matrixStack, label, x, y, 16777215);
 
     valueButton.x = render3 + 105;
     valueButton.y = render2;
@@ -160,7 +160,7 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
 
   @Nonnull
   @Override
-  public List<? extends IGuiEventListener> getEventListeners() {
+  public List<? extends IGuiEventListener> children() {
     return Collections.unmodifiableList(Arrays.asList(valueButton, resetButton, defaultButton));
   }
 }

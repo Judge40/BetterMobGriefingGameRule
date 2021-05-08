@@ -61,9 +61,9 @@ public class EntityMobGriefingData extends WorldSavedData {
    * @return The {@code EntityMobGriefingData} for the {@code MinecraftServer}.
    */
   public static EntityMobGriefingData forServer(MinecraftServer server) {
-    ServerWorld world = server.func_241755_D_();
-    DimensionSavedDataManager savedData = world.getSavedData();
-    return savedData.getOrCreate(EntityMobGriefingData::new, ModInfoConstants.ID);
+    ServerWorld world = server.overworld();
+    DimensionSavedDataManager savedData = world.getDataStorage();
+    return savedData.computeIfAbsent(EntityMobGriefingData::new, ModInfoConstants.ID);
   }
 
   /**
@@ -87,9 +87,9 @@ public class EntityMobGriefingData extends WorldSavedData {
   }
 
   @Override
-  public void read(CompoundNBT nbt) {
+  public void load(CompoundNBT nbt) {
     // Add the entity name and MobGriefingValue from each NBT entry to the world data.
-    for (Iterator<String> iterator = nbt.keySet().iterator(); iterator.hasNext(); ) {
+    for (Iterator<String> iterator = nbt.getAllKeys().iterator(); iterator.hasNext(); ) {
       String key = iterator.next();
       ResourceLocation entityId = new ResourceLocation(key);
 
@@ -106,7 +106,7 @@ public class EntityMobGriefingData extends WorldSavedData {
 
   @Nonnull
   @Override
-  public CompoundNBT write(@Nonnull CompoundNBT nbt) {
+  public CompoundNBT save(@Nonnull CompoundNBT nbt) {
     // Add the entity name and MobGriefingValue from each world data entry to the NBT.
     entityIdsToMobGriefingValue.forEach((k, v) -> nbt.putString(k.toString(), v.toString()));
     return nbt;
@@ -133,7 +133,7 @@ public class EntityMobGriefingData extends WorldSavedData {
 
     // If the value was changed then mark the data as dirty so it will be stored.
     if (!Objects.equals(value, previousValue)) {
-      this.markDirty();
+      this.setDirty();
     }
   }
 

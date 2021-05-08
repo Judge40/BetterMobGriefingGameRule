@@ -44,7 +44,7 @@ class BooleanConfigEntryTest {
     BooleanConfigEntry entry = new BooleanConfigEntry(null, 0, "label", initialValue, false);
 
     // When.
-    Button valueButton = (Button) entry.getEventListeners().get(0);
+    Button valueButton = (Button) entry.children().get(0);
     valueButton.onPress();
 
     // Then.
@@ -61,10 +61,10 @@ class BooleanConfigEntryTest {
     BooleanConfigEntry entry = new BooleanConfigEntry(null, 0, "label", initialValue, true);
 
     // When.
-    Button valueButton = (Button) entry.getEventListeners().get(0);
+    Button valueButton = (Button) entry.children().get(0);
     valueButton.onPress();
 
-    Button resetButton = (Button) entry.getEventListeners().get(1);
+    Button resetButton = (Button) entry.children().get(1);
     resetButton.onPress();
 
     // Then.
@@ -80,7 +80,7 @@ class BooleanConfigEntryTest {
     BooleanConfigEntry entry = new BooleanConfigEntry(null, 0, "label", initialValue, true);
 
     // When.
-    Button defaultButton = (Button) entry.getEventListeners().get(2);
+    Button defaultButton = (Button) entry.children().get(2);
     defaultButton.onPress();
 
     // Then.
@@ -97,7 +97,7 @@ class BooleanConfigEntryTest {
     BooleanConfigEntry entry = new BooleanConfigEntry(fontRenderer, 0, "label", initialValue, true);
 
     // Override visibility of buttons so no attempt is made to actually render them.
-    List<Button> children = entry.getEventListeners().stream()
+    List<Button> children = entry.children().stream()
         .filter(child -> child instanceof Button)
         .map(button -> (Button) button)
         .collect(Collectors.toList());
@@ -128,7 +128,7 @@ class BooleanConfigEntryTest {
         false);
 
     // Override visibility of buttons so no attempt is made to actually render them.
-    List<ExtendedButton> children = entry.getEventListeners().stream()
+    List<ExtendedButton> children = entry.children().stream()
         .filter(child -> child instanceof ExtendedButton)
         .map(button -> (ExtendedButton) button)
         .collect(Collectors.toList());
@@ -158,7 +158,7 @@ class BooleanConfigEntryTest {
     BooleanConfigEntry entry = new BooleanConfigEntry(fontRenderer, 100, "label", true, false);
 
     // Override visibility of buttons so no attempt is made to actually render them.
-    List<ExtendedButton> children = entry.getEventListeners().stream()
+    List<ExtendedButton> children = entry.children().stream()
         .filter(child -> child instanceof ExtendedButton)
         .map(button -> (ExtendedButton) button)
         .collect(Collectors.toList());
@@ -171,6 +171,6 @@ class BooleanConfigEntryTest {
 
     // Then.
     int colorCode = TextFormatting.WHITE.getColor();
-    verify(fontRenderer).drawString(matrixStack, "label", 20, 40.5F, colorCode);
+    verify(fontRenderer).draw(matrixStack, "label", 20, 40.5F, colorCode);
   }
 }

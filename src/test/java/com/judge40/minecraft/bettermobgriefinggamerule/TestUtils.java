@@ -42,7 +42,7 @@ public class TestUtils {
    */
   public static void initializeTestEnvironment() throws IllegalAccessException {
     // Bootstrap registries so loading the config first does not cause failures.
-    Bootstrap.func_218816_b();
+    Bootstrap.bootStrap();
 
     FieldUtils.writeField(ConfigHolder.COMMON_SPEC, "childConfig", new CommentedConfigStub(), true);
     initializeConfig(true, MobGriefingValue.INHERIT);

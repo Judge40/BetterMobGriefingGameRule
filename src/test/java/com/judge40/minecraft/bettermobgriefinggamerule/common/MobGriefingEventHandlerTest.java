@@ -64,15 +64,14 @@ class MobGriefingEventHandlerTest {
     DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""),
         dataFixer);
 
-    when(server.func_241755_D_()).thenReturn(world);
-    when(world.getSavedData()).thenReturn(savedDataManager);
+    when(server.overworld()).thenReturn(world);
+    when(world.getDataStorage()).thenReturn(savedDataManager);
 
     data = EntityMobGriefingData.forServer(server);
 
     entity = mock(Entity.class);
+    entity.level = world;
     when(entity.getServer()).thenReturn(server);
-
-    when(entity.getEntityWorld()).thenReturn(world);
     when(world.getGameRules()).thenReturn(new GameRules());
 
     EntityType entityType = mock(EntityType.class);

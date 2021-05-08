@@ -59,8 +59,8 @@ class EntityMobGriefingDataTest {
     DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""),
         dataFixer);
 
-    when(server.func_241755_D_()).thenReturn(world);
-    when(world.getSavedData()).thenReturn(savedDataManager);
+    when(server.overworld()).thenReturn(world);
+    when(world.getDataStorage()).thenReturn(savedDataManager);
 
     data = EntityMobGriefingData.forServer(server);
   }
@@ -125,7 +125,7 @@ class EntityMobGriefingDataTest {
     nbt.putString(validEntityId.toString(), "true");
 
     // When.
-    data.read(nbt);
+    data.load(nbt);
 
     // Then.
     assertThat("Unexpected number of mobGriefing values.", data.size(), is(1));
@@ -152,7 +152,7 @@ class EntityMobGriefingDataTest {
     CompoundNBT nbt = new CompoundNBT();
 
     // When.
-    data.write(nbt);
+    data.save(nbt);
 
     // Then.
     assertThat("Unexpected NBT value.", nbt.getString("minecraft:path2"), is("false"));
@@ -166,10 +166,10 @@ class EntityMobGriefingDataTest {
     CompoundNBT nbt = new CompoundNBT();
 
     // When.
-    data.write(nbt);
+    data.save(nbt);
 
     // Then.
-    assertThat("Unexpected NBT.", nbt.keySet(), is(Collections.emptySet()));
+    assertThat("Unexpected NBT.", nbt.getAllKeys(), is(Collections.emptySet()));
   }
 
   @Test

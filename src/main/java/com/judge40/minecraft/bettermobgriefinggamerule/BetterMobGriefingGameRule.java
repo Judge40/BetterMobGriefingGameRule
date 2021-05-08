@@ -70,17 +70,17 @@ public class BetterMobGriefingGameRule {
   public static void onFmlServerStartingEvent(FMLServerStartingEvent event) {
     LOGGER.debug("Server starting.");
     MinecraftServer server = event.getServer();
-    BetterMobGriefingCommand.register(server.getCommandManager().getDispatcher());
+    BetterMobGriefingCommand.register(server.getCommands().getDispatcher());
 
     // Add new game rules to world data
-    World world = server.func_241755_D_();
+    World world = server.overworld();
 
     // Set the global mob griefing game rule value if this is a new world.
     if (world.getGameTime() == 0) {
       LOGGER.debug("New world detected, overwriting global mobGriefing rule.");
 
       boolean globalMobGriefingValue = Config.defaultGlobalValue;
-      BooleanValue mobGriefing = world.getGameRules().get(GameRules.MOB_GRIEFING);
+      BooleanValue mobGriefing = world.getGameRules().getRule(GameRules.RULE_MOBGRIEFING);
       mobGriefing.set(globalMobGriefingValue, server);
     } else {
       LOGGER.debug("Existing world detected, global mobGriefing rule not overwritten.");

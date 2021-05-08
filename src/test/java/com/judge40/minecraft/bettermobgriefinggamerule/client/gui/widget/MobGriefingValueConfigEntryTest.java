@@ -62,7 +62,7 @@ class MobGriefingValueConfigEntryTest {
         new ResourceLocation("test:entity"), initialValue);
 
     // When.
-    Button valueButton = (Button) entry.getEventListeners().get(0);
+    Button valueButton = (Button) entry.children().get(0);
 
     for (int i = 0; i <= targetValue.ordinal(); i++) {
       valueButton.onPress();
@@ -88,13 +88,13 @@ class MobGriefingValueConfigEntryTest {
         new ResourceLocation("test:entity"), initialValue);
 
     // When.
-    Button valueButton = (Button) entry.getEventListeners().get(0);
+    Button valueButton = (Button) entry.children().get(0);
 
     for (int i = 0; i <= initialValue.ordinal(); i++) {
       valueButton.onPress();
     }
 
-    Button resetButton = (Button) entry.getEventListeners().get(1);
+    Button resetButton = (Button) entry.children().get(1);
     resetButton.onPress();
 
     // Then.
@@ -111,7 +111,7 @@ class MobGriefingValueConfigEntryTest {
         new ResourceLocation("test:entity"), initialValue);
 
     // When.
-    Button defaultButton = (Button) entry.getEventListeners().get(2);
+    Button defaultButton = (Button) entry.children().get(2);
     defaultButton.onPress();
 
     // Then.
@@ -129,7 +129,7 @@ class MobGriefingValueConfigEntryTest {
         new ResourceLocation("test:entity"), initialValue);
 
     // Override visibility of buttons so no attempt is made to actually render them.
-    List<Button> children = entry.getEventListeners().stream()
+    List<Button> children = entry.children().stream()
         .filter(child -> child instanceof Button)
         .map(button -> (Button) button)
         .collect(Collectors.toList());
@@ -162,7 +162,7 @@ class MobGriefingValueConfigEntryTest {
         new ResourceLocation("test:entity"), initialValue);
 
     // Override visibility of buttons so no attempt is made to actually render them.
-    List<ExtendedButton> children = entry.getEventListeners().stream()
+    List<ExtendedButton> children = entry.children().stream()
         .filter(child -> child instanceof ExtendedButton)
         .map(button -> (ExtendedButton) button)
         .collect(Collectors.toList());
@@ -195,7 +195,7 @@ class MobGriefingValueConfigEntryTest {
         new ResourceLocation("test:entity"), MobGriefingValue.INHERIT);
 
     // Override visibility of buttons so no attempt is made to actually render them.
-    List<ExtendedButton> children = entry.getEventListeners().stream()
+    List<ExtendedButton> children = entry.children().stream()
         .filter(child -> child instanceof ExtendedButton)
         .map(button -> (ExtendedButton) button)
         .collect(Collectors.toList());
@@ -208,6 +208,6 @@ class MobGriefingValueConfigEntryTest {
 
     // Then.
     int colorCode = TextFormatting.WHITE.getColor();
-    verify(fontRenderer).drawString(matrixStack, "test:entity", 20, 40.5F, colorCode);
+    verify(fontRenderer).draw(matrixStack, "test:entity", 20, 40.5F, colorCode);
   }
 }

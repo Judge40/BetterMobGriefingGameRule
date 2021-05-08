@@ -49,7 +49,7 @@ class ConfigCategoryEntryTest {
   void shouldRenderCategoryLabel() {
     // Given.
     FontRenderer fontRenderer = mock(FontRenderer.class);
-    when(fontRenderer.getStringWidth("labelKey")).thenReturn(100);
+    when(fontRenderer.width("labelKey")).thenReturn(100);
     ConfigCategoryEntry entry = new ConfigCategoryEntry(fontRenderer, 200, "labelKey");
 
     MatrixStack matrixStack = new MatrixStack();
@@ -59,7 +59,7 @@ class ConfigCategoryEntryTest {
 
     // Then.
     int colorCode = TextFormatting.WHITE.getColor();
-    verify(fontRenderer).drawString(matrixStack, "labelKey", 50, 60, colorCode);
+    verify(fontRenderer).draw(matrixStack, "labelKey", 50, 60, colorCode);
   }
 
   @ParameterizedTest(name = "Should not change focus when input is {0}.")
@@ -75,7 +75,7 @@ class ConfigCategoryEntryTest {
   @Test
   void shouldNotHaveChildren() {
     // When.
-    List<? extends IGuiEventListener> children = entry.getEventListeners();
+    List<? extends IGuiEventListener> children = entry.children();
 
     // Then.
     assertThat("Unexpected number of children.", children.size(), is(0));

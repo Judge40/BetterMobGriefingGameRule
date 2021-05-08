@@ -42,8 +42,8 @@ public class ConfigCategoryEntry extends AbstractEntry {
     this.fontRenderer = fontRenderer;
     this.parentWidth = parentWidth;
 
-    labelText = I18n.format(labelKey);
-    labelWidth = fontRenderer.getStringWidth(labelText);
+    labelText = I18n.get(labelKey);
+    labelWidth = fontRenderer.width(labelText);
   }
 
   @Override
@@ -51,7 +51,7 @@ public class ConfigCategoryEntry extends AbstractEntry {
       int render4, int render5, int render6, int render7, boolean render8, float render9) {
     float x = parentWidth / 2F - labelWidth / 2F;
     float y = render2 + render5 - 10F;
-    fontRenderer.drawString(matrixStack, labelText, x, y, 16777215);
+    fontRenderer.draw(matrixStack, labelText, x, y, 16777215);
   }
 
   @Override
@@ -61,7 +61,7 @@ public class ConfigCategoryEntry extends AbstractEntry {
 
   @Nonnull
   @Override
-  public List<? extends IGuiEventListener> getEventListeners() {
+  public List<? extends IGuiEventListener> children() {
     return Collections.emptyList();
   }
 }

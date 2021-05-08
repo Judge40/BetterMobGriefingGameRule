@@ -81,7 +81,7 @@ public class DefaultMobGriefingConfigGui extends Screen {
 
     resetButton = addButton(new ExtendedButton(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, RESET_ALL,
         (button) -> {
-          for (Entry child : configEntryList.getEventListeners()) {
+          for (Entry child : configEntryList.children()) {
 
             if (child instanceof AbstractConfigEntry) {
               ((AbstractConfigEntry) child).restoreInitialValue();
@@ -92,7 +92,7 @@ public class DefaultMobGriefingConfigGui extends Screen {
     defaultButton = addButton(
         new ExtendedButton(x + BUTTON_WIDTH, y, BUTTON_WIDTH, BUTTON_HEIGHT, DEFAULT_ALL,
             (button) -> {
-              for (Entry child : configEntryList.getEventListeners()) {
+              for (Entry child : configEntryList.children()) {
 
                 if (child instanceof AbstractConfigEntry) {
                   ((AbstractConfigEntry) child).restoreDefaultValue();
@@ -104,7 +104,7 @@ public class DefaultMobGriefingConfigGui extends Screen {
         new ExtendedButton(x + 10 + BUTTON_WIDTH * 2, y, BUTTON_WIDTH * 2, BUTTON_HEIGHT, DONE,
             (button) -> {
               updateConfig();
-              minecraft.displayGuiScreen(parent);
+              minecraft.setScreen(parent);
             }));
   }
 
@@ -135,7 +135,7 @@ public class DefaultMobGriefingConfigGui extends Screen {
     boolean enableReset = false;
     boolean enableDefault = false;
 
-    for (Entry child : configEntryList.getEventListeners()) {
+    for (Entry child : configEntryList.children()) {
 
       if (child instanceof AbstractConfigEntry) {
         enableReset |= ((AbstractConfigEntry) child).isChanged();

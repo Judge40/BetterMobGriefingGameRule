@@ -50,11 +50,12 @@ class ConfigEntryListTest {
   @BeforeEach
   void setUp() throws IllegalAccessException {
     Screen parentScreen = new DefaultMobGriefingConfigGui(null, null);
-    parentScreen.setSize(100, 200);
+    parentScreen.width = 100;
+    parentScreen.height = 200;
 
     Minecraft minecraft = mock(Minecraft.class);
     FontRenderer fontRenderer = mock(FontRenderer.class);
-    Field fontRendererField = FieldUtils.getField(Minecraft.class, "fontRenderer");
+    Field fontRendererField = FieldUtils.getField(Minecraft.class, "font");
     FieldUtils.removeFinalModifier(fontRendererField);
     FieldUtils.writeField(fontRendererField, minecraft, fontRenderer, true);
 

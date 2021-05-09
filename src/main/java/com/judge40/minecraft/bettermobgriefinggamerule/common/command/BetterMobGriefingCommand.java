@@ -63,14 +63,14 @@ public class BetterMobGriefingCommand {
         literal(RULE_PARENT)
             .then(
                 literal(RULE_NAME)
-                    .requires(source -> source.hasPermissionLevel(2))
+                    .requires(source -> source.hasPermission(2))
                     .executes(BetterMobGriefingCommand::listMobGriefing)
                     .then(
                         argument(RULE_VALUE, BoolArgumentType.bool())
                             .executes(BetterMobGriefingCommand::setGlobalMobGriefing)
                     )
                     .then(
-                        argument(RULE_TARGET, EntitySummonArgument.entitySummon())
+                        argument(RULE_TARGET, EntitySummonArgument.id())
                             .executes(BetterMobGriefingCommand::showMobGriefing)
                             .suggests(SuggestionProviders.SUMMONABLE_ENTITIES)
                             .then(
@@ -93,12 +93,12 @@ public class BetterMobGriefingCommand {
     EntityMobGriefingData data = EntityMobGriefingData.forServer(source.getServer());
 
     GameRules gameRules = source.getServer().getGameRules();
-    BooleanValue mobGriefing = gameRules.get(GameRules.MOB_GRIEFING);
+    BooleanValue mobGriefing = gameRules.getRule(GameRules.RULE_MOBGRIEFING);
 
     String values = String.format("\n%s = %s\n%s", RULE_NAME, mobGriefing, data);
     TranslationTextComponent message = new TranslationTextComponent(RULE_QUERY_KEY, RULE_NAME,
         values);
-    source.sendFeedback(message, true);
+    source.sendSuccess(message, true);
 
     return data.size();
   }
@@ -122,7 +122,7 @@ public class BetterMobGriefingCommand {
 
     TranslationTextComponent message = new TranslationTextComponent(RULE_QUERY_KEY, ruleName,
         mobGriefingValue);
-    source.sendFeedback(message, true);
+    source.sendSuccess(message, true);
 
     return mobGriefingValue.ordinal();
   }
@@ -137,14 +137,14 @@ public class BetterMobGriefingCommand {
   private static int setGlobalMobGriefing(CommandContext<CommandSource> context) {
     CommandSource source = context.getSource();
     GameRules gameRules = source.getServer().getGameRules();
-    BooleanValue mobGriefing = gameRules.get(GameRules.MOB_GRIEFING);
-    mobGriefing.func_223554_b(context, RULE_VALUE);
+    BooleanValue mobGriefing = gameRules.getRule(GameRules.RULE_MOBGRIEFING);
+    mobGriefing.setFromArgument(context, RULE_VALUE);
 
     TranslationTextComponent message = new TranslationTextComponent(RULE_SET_KEY, RULE_NAME,
         mobGriefing);
-    source.sendFeedback(message, true);
+    source.sendSuccess(message, true);
 
-    return mobGriefing.func_223557_c();
+    return mobGriefing.getCommandResult();
   }
 
   /**
@@ -166,7 +166,7 @@ public class BetterMobGriefingCommand {
     String ruleName = String.format("%s %s", RULE_NAME, targetId);
     TranslationTextComponent message = new TranslationTextComponent(RULE_SET_KEY, ruleName,
         mobGriefingValue);
-    source.sendFeedback(message, true);
+    source.sendSuccess(message, true);
 
     return mobGriefingValue.ordinal();
   }

@@ -1,7 +1,7 @@
 ![Better mobGriefing GameRule](src/main/resources/logo.png)
 
-![Minecraft 1.15.2](https://img.shields.io/badge/Minecraft-1.15.2-lightgrey.svg)
-![Forge 1.15.2-31.2.0](https://img.shields.io/badge/Forge-1.15.2--31.2.0-lightgrey.svg)  
+![Minecraft 1.16.5](https://img.shields.io/badge/Minecraft-1.16.5-lightgrey.svg)
+![Forge 1.16.5-36.1.0](https://img.shields.io/badge/Forge-1.16.5--36.1.0-lightgrey.svg)
 [![License MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## About
@@ -104,8 +104,9 @@ Effects which occur passively during roaming.
 |                          | Drowned                             | 1.13+   |
 |                          | Fox                                 | 1.14+   |
 |                          | Panda                               | 1.14+   |
+|                          | Piglin                              | 1.16+   |
 |                          | Pillager                            | 1.14+   |
-| Can trample Turtle eggs. | All non-Turtle mobs.                | 1.13+   |
+| Can trample Turtle eggs. | All non-Turtle and Bat mobs.        | 1.13+   |
 
 #### Projectiles
 Effects attached to a projectile.

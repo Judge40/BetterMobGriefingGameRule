@@ -21,6 +21,7 @@ package com.judge40.minecraft.bettermobgriefinggamerule.client.gui;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
@@ -33,6 +34,7 @@ import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.ConfigE
 import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.MobGriefingValueConfigEntry;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,7 +69,7 @@ class DefaultMobGriefingConfigGuiTest {
   void setUp() throws IllegalAccessException {
     Minecraft minecraft = mock(Minecraft.class);
     FontRenderer fontRenderer = mock(FontRenderer.class);
-    Field fontRendererField = FieldUtils.getField(Minecraft.class, "fontRenderer");
+    Field fontRendererField = FieldUtils.getField(Minecraft.class, "font");
     FieldUtils.removeFinalModifier(fontRendererField);
     FieldUtils.writeField(fontRendererField, minecraft, fontRenderer, true);
     Screen parentScreen = mock(Screen.class);
@@ -86,7 +88,7 @@ class DefaultMobGriefingConfigGuiTest {
     reinitializeGui();
 
     // When.
-    gui.render(0, 0, 0);
+    gui.render(new MatrixStack(), 0, 0, 0);
 
     // Then.
     Button resetButton = (Button) gui.children().get(1);
@@ -113,7 +115,7 @@ class DefaultMobGriefingConfigGuiTest {
     globalValueButton.onPress();
 
     // When.
-    gui.render(0, 0, 0);
+    gui.render(new MatrixStack(), 0, 0, 0);
 
     // Then.
     Button resetButton = (Button) gui.children().get(1);
@@ -136,15 +138,15 @@ class DefaultMobGriefingConfigGuiTest {
     Button globalValueButton = (Button) globalEntry.children().get(0);
     globalValueButton.onPress();
 
-    MobGriefingValueConfigEntry entityEntry = (MobGriefingValueConfigEntry) entryList.children()
-        .get(3);
+    MobGriefingValueConfigEntry entityEntry = (MobGriefingValueConfigEntry) entryList
+        .children().get(3);
     Button entityValueButton = (Button) entityEntry.children().get(0);
     entityValueButton.onPress();
 
     // When.
     Button resetButton = (Button) gui.children().get(1);
     resetButton.onPress();
-    gui.render(0, 0, 0);
+    gui.render(new MatrixStack(), 0, 0, 0);
 
     // Then.
     assertThat("Unexpected value for isChanged.", globalEntry.isChanged(), is(false));
@@ -170,15 +172,15 @@ class DefaultMobGriefingConfigGuiTest {
     // When.
     Button defaultButton = (Button) gui.children().get(2);
     defaultButton.onPress();
-    gui.render(0, 0, 0);
+    gui.render(new MatrixStack(), 0, 0, 0);
 
     // Then.
     BooleanConfigEntry globalEntry = (BooleanConfigEntry) entryList.children().get(1);
     assertThat("Unexpected value for isChanged.", globalEntry.isChanged(), is(true));
     assertThat("Unexpected value for isDefault.", globalEntry.isDefault(), is(true));
 
-    MobGriefingValueConfigEntry entityEntry = (MobGriefingValueConfigEntry) entryList.children()
-        .get(3);
+    MobGriefingValueConfigEntry entityEntry = (MobGriefingValueConfigEntry) entryList
+        .children().get(3);
     assertThat("Unexpected value for isChanged.", entityEntry.isChanged(), is(false));
     assertThat("Unexpected value for isDefault.", entityEntry.isDefault(), is(true));
 
@@ -226,13 +228,13 @@ class DefaultMobGriefingConfigGuiTest {
     Button globalValueButton = (Button) globalEntry.children().get(0);
     globalValueButton.onPress();
 
-    MobGriefingValueConfigEntry entityEntry1 = (MobGriefingValueConfigEntry) entryList.children()
-        .get(3);
+    MobGriefingValueConfigEntry entityEntry1 = (MobGriefingValueConfigEntry) entryList
+        .children().get(3);
     Button entityValueButton1 = (Button) entityEntry1.children().get(0);
     entityValueButton1.onPress();
 
-    MobGriefingValueConfigEntry entityEntry2 = (MobGriefingValueConfigEntry) entryList.children()
-        .get(4);
+    MobGriefingValueConfigEntry entityEntry2 = (MobGriefingValueConfigEntry) entryList
+        .children().get(4);
     Button entityValueButton2 = (Button) entityEntry2.children().get(0);
     entityValueButton2.onPress();
     entityValueButton2.onPress();
@@ -284,10 +286,10 @@ class DefaultMobGriefingConfigGuiTest {
     FieldUtils.writeField(gui, "buttons", buttons, true);
 
     // Disable rendering of gui children.
-    doNothing().when(gui).renderBackground();
-    doNothing().when(entryList).render(anyInt(), anyInt(), anyFloat());
-    doNothing().when(resetButton).render(anyInt(), anyInt(), anyFloat());
-    doNothing().when(defaultButton).render(anyInt(), anyInt(), anyFloat());
-    doNothing().when(doneButton).render(anyInt(), anyInt(), anyFloat());
+    doNothing().when(gui).renderBackground(any(MatrixStack.class));
+    doNothing().when(entryList).render(any(MatrixStack.class), anyInt(), anyInt(), anyFloat());
+    doNothing().when(resetButton).render(any(MatrixStack.class), anyInt(), anyInt(), anyFloat());
+    doNothing().when(defaultButton).render(any(MatrixStack.class), anyInt(), anyInt(), anyFloat());
+    doNothing().when(doneButton).render(any(MatrixStack.class), anyInt(), anyInt(), anyFloat());
   }
 }

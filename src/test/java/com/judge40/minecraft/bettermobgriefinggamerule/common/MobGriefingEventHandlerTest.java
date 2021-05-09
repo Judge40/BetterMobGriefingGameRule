@@ -33,7 +33,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.GameRules;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
@@ -65,14 +64,15 @@ class MobGriefingEventHandlerTest {
     DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""),
         dataFixer);
 
-    when(server.getGameRules()).thenReturn(new GameRules());
-    when(server.func_71218_a(DimensionType.OVERWORLD)).thenReturn(world);
-    when(world.getSavedData()).thenReturn(savedDataManager);
+    when(server.overworld()).thenReturn(world);
+    when(world.getDataStorage()).thenReturn(savedDataManager);
 
     data = EntityMobGriefingData.forServer(server);
 
     entity = mock(Entity.class);
+    entity.level = world;
     when(entity.getServer()).thenReturn(server);
+    when(world.getGameRules()).thenReturn(new GameRules());
 
     EntityType entityType = mock(EntityType.class);
     when(entity.getType()).thenReturn(entityType);

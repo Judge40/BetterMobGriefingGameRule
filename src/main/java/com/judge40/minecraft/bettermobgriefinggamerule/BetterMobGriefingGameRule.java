@@ -25,10 +25,10 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.command.BetterMobG
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.GameRules.BooleanValue;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -69,25 +69,26 @@ public class BetterMobGriefingGameRule {
   @SubscribeEvent
   public static void onFmlServerStartingEvent(FMLServerStartingEvent event) {
     LOGGER.debug("Server starting.");
-    BetterMobGriefingCommand.register(event.getCommandDispatcher());
+    MinecraftServer server = event.getServer();
+    BetterMobGriefingCommand.register(server.getCommands().getDispatcher());
 
     // Add new game rules to world data
-    World world = event.getServer().func_71218_a(DimensionType.OVERWORLD);
+    World world = server.overworld();
 
     // Set the global mob griefing game rule value if this is a new world.
     if (world.getGameTime() == 0) {
       LOGGER.debug("New world detected, overwriting global mobGriefing rule.");
 
       boolean globalMobGriefingValue = Config.defaultGlobalValue;
-      BooleanValue mobGriefing = world.getGameRules().get(GameRules.MOB_GRIEFING);
-      mobGriefing.set(globalMobGriefingValue, event.getServer());
+      BooleanValue mobGriefing = world.getGameRules().getRule(GameRules.RULE_MOBGRIEFING);
+      mobGriefing.set(globalMobGriefingValue, server);
     } else {
       LOGGER.debug("Existing world detected, global mobGriefing rule not overwritten.");
     }
 
     // Add the entity mob griefing game rules.
     EntityMobGriefingData entityMobGriefingData = EntityMobGriefingData
-        .forServer(event.getServer());
+        .forServer(server);
     entityMobGriefingData.populateFromConfiguration();
   }
 }

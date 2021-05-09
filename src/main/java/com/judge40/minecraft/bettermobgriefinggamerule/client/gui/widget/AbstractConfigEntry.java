@@ -19,6 +19,7 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +28,8 @@ import javax.annotation.Nonnull;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
@@ -35,8 +37,10 @@ import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
 @OnlyIn(Dist.CLIENT)
 public abstract class AbstractConfigEntry<T> extends AbstractEntry {
 
-  private static final String DEFAULT = I18n.format("bettermobgriefinggamerule.config.gui.default");
-  private static final String RESET = I18n.format("bettermobgriefinggamerule.config.gui.reset");
+  private static final TranslationTextComponent DEFAULT = new TranslationTextComponent(
+      "bettermobgriefinggamerule.config.gui.default");
+  private static final TranslationTextComponent RESET = new TranslationTextComponent(
+      "bettermobgriefinggamerule.config.gui.reset");
 
   private static final int BUTTON_HEIGHT = 20;
   private static final int BUTTON_WIDTH = 50;
@@ -72,7 +76,8 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
     this.initialValue = currentValue = initialValue;
     this.defaultValue = defaultValue;
 
-    valueButton = new ExtendedButton(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, currentValue.toString(),
+    StringTextComponent currentValueText = new StringTextComponent(currentValue.toString());
+    valueButton = new ExtendedButton(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, currentValueText,
         (button) -> currentValue = getNextValue());
 
     resetButton = new ExtendedButton(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, RESET,
@@ -131,26 +136,26 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
   }
 
   @Override
-  public void render(int render1, int render2, int render3, int render4, int render5, int render6,
-      int render7, boolean render8, float render9) {
+  public void render(@Nonnull MatrixStack matrixStack, int render1, int render2, int render3,
+      int render4, int render5, int render6, int render7, boolean render8, float render9) {
     float x = render3 + 90 - labelOffset;
     float y = render2 + render5 / 2F - 4.5F;
-    fontRenderer.drawString(label, x, y, 16777215);
+    fontRenderer.draw(matrixStack, label, x, y, 16777215);
 
     valueButton.x = render3 + 105;
     valueButton.y = render2;
-    valueButton.setMessage(currentValue.toString());
-    valueButton.render(render6, render7, render9);
+    valueButton.setMessage(new StringTextComponent(currentValue.toString()));
+    valueButton.render(matrixStack, render6, render7, render9);
 
     resetButton.x = render3 + 165;
     resetButton.y = render2;
     resetButton.active = isChanged();
-    resetButton.render(render6, render7, render9);
+    resetButton.render(matrixStack, render6, render7, render9);
 
     defaultButton.x = render3 + 215;
     defaultButton.y = render2;
     defaultButton.active = !isDefault();
-    defaultButton.render(render6, render7, render9);
+    defaultButton.render(matrixStack, render6, render7, render9);
   }
 
   @Nonnull

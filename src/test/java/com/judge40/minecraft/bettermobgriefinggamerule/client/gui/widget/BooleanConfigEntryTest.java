@@ -24,24 +24,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.TestUtils;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class BooleanConfigEntryTest {
-
-  @BeforeAll
-  static void setUpBeforeAll() throws IllegalAccessException {
-    TestUtils.initializeTestEnvironment();
-  }
 
   @ParameterizedTest(name = "Should update current value when value button pressed {index} times.")
   @ValueSource(booleans = {true, false})
@@ -110,11 +104,11 @@ class BooleanConfigEntryTest {
     children.forEach(button -> button.visible = false);
 
     // When.
-    entry.render(0, 0, 0, 0, 0, 0, 0, true, 0);
+    entry.render(new MatrixStack(), 0, 0, 0, 0, 0, 0, 0, true, 0);
 
     // Then.
     Button valueButton = children.get(0);
-    assertThat("Unexpected button message.", valueButton.getMessage(),
+    assertThat("Unexpected button message.", valueButton.getMessage().getString(),
         is(Boolean.toString(initialValue)));
 
     Button resetButton = children.get(1);
@@ -143,11 +137,11 @@ class BooleanConfigEntryTest {
     // When.
     Button valueButton = children.get(0);
     valueButton.onPress();
-    entry.render(0, 0, 0, 0, 0, 0, 0, true, 0);
+    entry.render(new MatrixStack(), 0, 0, 0, 0, 0, 0, 0, true, 0);
 
     // Then.
     boolean currentValue = entry.getCurrentValue();
-    assertThat("Unexpected button message.", valueButton.getMessage(),
+    assertThat("Unexpected button message.", valueButton.getMessage().getString(),
         is(Boolean.toString(currentValue)));
 
     Button resetButton = children.get(1);
@@ -170,11 +164,13 @@ class BooleanConfigEntryTest {
         .collect(Collectors.toList());
     children.forEach(button -> button.visible = false);
 
+    MatrixStack matrixStack = new MatrixStack();
+
     // When.
-    entry.render(10, 20, 30, 40, 50, 60, 70, true, 90);
+    entry.render(matrixStack, 10, 20, 30, 40, 50, 60, 70, true, 90);
 
     // Then.
     int colorCode = TextFormatting.WHITE.getColor();
-    verify(fontRenderer).drawString("label", 20, 40.5F, colorCode);
+    verify(fontRenderer).draw(matrixStack, "label", 20, 40.5F, colorCode);
   }
 }

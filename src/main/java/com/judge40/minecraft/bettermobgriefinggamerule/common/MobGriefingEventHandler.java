@@ -24,6 +24,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -78,7 +79,8 @@ public class MobGriefingEventHandler {
 
     // If no entity rule was found then default to the global value.
     if (mobGriefingEnabled == null) {
-      mobGriefingEnabled = entityServer.getGameRules().getBoolean(GameRules.MOB_GRIEFING);
+      World entityWorld = entity.level;
+      mobGriefingEnabled = entityWorld.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
     }
 
     return mobGriefingEnabled;

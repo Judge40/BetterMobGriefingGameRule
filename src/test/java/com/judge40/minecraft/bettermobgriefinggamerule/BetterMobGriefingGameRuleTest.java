@@ -35,6 +35,7 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGri
 import com.mojang.datafixers.DataFixer;
 import java.io.File;
 import net.minecraft.command.Commands;
+import net.minecraft.command.Commands.EnvironmentType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.GameRules;
@@ -72,14 +73,14 @@ class BetterMobGriefingGameRuleTest {
     gameRules = new GameRules();
 
     server = mock(MinecraftServer.class);
-    when(server.getCommandManager()).thenReturn(new Commands(false));
+    when(server.getCommands()).thenReturn(new Commands(EnvironmentType.ALL));
 
     world = mock(ServerWorld.class);
-    when(server.func_71218_a(any())).thenReturn(world);
+    when(server.overworld()).thenReturn(world);
     when(world.getGameTime()).thenReturn(1L);
     when(world.getGameRules()).thenReturn(gameRules);
     DataFixer dataFixer = mock(DataFixer.class);
-    when(world.getSavedData()).thenReturn(new DimensionSavedDataManager(new File(""), dataFixer));
+    when(world.getDataStorage()).thenReturn(new DimensionSavedDataManager(new File(""), dataFixer));
   }
 
   @Test
@@ -112,7 +113,7 @@ class BetterMobGriefingGameRuleTest {
     BetterMobGriefingGameRule.onFmlServerStartingEvent(event);
 
     // Then.
-    boolean mobGriefing = gameRules.getBoolean(GameRules.MOB_GRIEFING);
+    boolean mobGriefing = gameRules.getBoolean(GameRules.RULE_MOBGRIEFING);
     assertThat("Unexpected mobGriefing value.", mobGriefing, is(input));
   }
 
@@ -124,14 +125,14 @@ class BetterMobGriefingGameRuleTest {
     Config.defaultGlobalValue = input;
     FMLServerStartingEvent event = new FMLServerStartingEvent(server);
 
-    BooleanValue booleanValue = gameRules.get(GameRules.MOB_GRIEFING);
+    BooleanValue booleanValue = gameRules.getRule(GameRules.RULE_MOBGRIEFING);
     booleanValue.set(false, server);
 
     // When.
     BetterMobGriefingGameRule.onFmlServerStartingEvent(event);
 
     // Then.
-    boolean mobGriefing = gameRules.getBoolean(GameRules.MOB_GRIEFING);
+    boolean mobGriefing = gameRules.getBoolean(GameRules.RULE_MOBGRIEFING);
     assertThat("Unexpected mobGriefing value.", mobGriefing, is(false));
   }
 

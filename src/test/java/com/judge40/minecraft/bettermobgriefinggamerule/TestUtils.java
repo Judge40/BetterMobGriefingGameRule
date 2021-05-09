@@ -27,8 +27,6 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder;
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.resources.Locale;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Bootstrap;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
@@ -44,10 +42,7 @@ public class TestUtils {
    */
   public static void initializeTestEnvironment() throws IllegalAccessException {
     // Bootstrap registries so loading the config first does not cause failures.
-    Bootstrap.func_218816_b();
-
-    // Initialize locale so calling I18n does not cause failures.
-    FieldUtils.writeStaticField(I18n.class, "i18nLocale", new Locale(), true);
+    Bootstrap.bootStrap();
 
     FieldUtils.writeField(ConfigHolder.COMMON_SPEC, "childConfig", new CommentedConfigStub(), true);
     initializeConfig(true, MobGriefingValue.INHERIT);

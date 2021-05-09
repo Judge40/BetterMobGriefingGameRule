@@ -33,9 +33,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,6 +46,11 @@ class EntityMobGriefingDataTest {
 
   private EntityMobGriefingData data;
 
+  @BeforeAll
+  static void setUpBeforeAll() throws IllegalAccessException {
+    TestUtils.initializeTestEnvironment();
+  }
+
   @BeforeEach
   void setUp() {
     MinecraftServer server = mock(MinecraftServer.class);
@@ -54,8 +59,8 @@ class EntityMobGriefingDataTest {
     DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""),
         dataFixer);
 
-    when(server.func_71218_a(DimensionType.OVERWORLD)).thenReturn(world);
-    when(world.getSavedData()).thenReturn(savedDataManager);
+    when(server.overworld()).thenReturn(world);
+    when(world.getDataStorage()).thenReturn(savedDataManager);
 
     data = EntityMobGriefingData.forServer(server);
   }
@@ -120,7 +125,7 @@ class EntityMobGriefingDataTest {
     nbt.putString(validEntityId.toString(), "true");
 
     // When.
-    data.read(nbt);
+    data.load(nbt);
 
     // Then.
     assertThat("Unexpected number of mobGriefing values.", data.size(), is(1));
@@ -147,7 +152,7 @@ class EntityMobGriefingDataTest {
     CompoundNBT nbt = new CompoundNBT();
 
     // When.
-    data.write(nbt);
+    data.save(nbt);
 
     // Then.
     assertThat("Unexpected NBT value.", nbt.getString("minecraft:path2"), is("false"));
@@ -161,10 +166,10 @@ class EntityMobGriefingDataTest {
     CompoundNBT nbt = new CompoundNBT();
 
     // When.
-    data.write(nbt);
+    data.save(nbt);
 
     // Then.
-    assertThat("Unexpected NBT.", nbt.keySet(), is(Collections.emptySet()));
+    assertThat("Unexpected NBT.", nbt.getAllKeys(), is(Collections.emptySet()));
   }
 
   @Test

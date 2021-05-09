@@ -104,8 +104,9 @@ Effects which occur passively during roaming.
 |                          | Drowned                             | 1.13+   |
 |                          | Fox                                 | 1.14+   |
 |                          | Panda                               | 1.14+   |
+|                          | Piglin                              | 1.16+   |
 |                          | Pillager                            | 1.14+   |
-| Can trample Turtle eggs. | All non-Turtle mobs.                | 1.13+   |
+| Can trample Turtle eggs. | All non-Turtle and Bat mobs.        | 1.13+   |
 
 #### Projectiles
 Effects attached to a projectile.

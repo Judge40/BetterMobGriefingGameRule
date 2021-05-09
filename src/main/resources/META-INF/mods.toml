@@ -6,7 +6,7 @@ license="MIT"
 
 [[mods]]
 modId="bettermobgriefinggamerule"
-version="1.16.1-8.0.2-alpha"
+version="1.16.5-9.0.0"
 displayName="Better mobGriefing GameRule"
 updateJSONURL="https://github.com/Judge40/BetterMobGriefingGameRule/update.json"
 displayURL="https://github.com/Judge40/BetterMobGriefingGameRule"

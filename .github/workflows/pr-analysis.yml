@@ -1,0 +1,55 @@
+name: PR Analysis
+
+on:
+  pull_request:
+
+jobs:
+  validate-wrapper:
+    name: Validate Gradle wrapper
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Gradle wrapper validation
+        uses: gradle/wrapper-validation-action@v1.0.4
+
+  cache-distribution:
+    name: Cache Gradle distribution
+    needs: validate-wrapper
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache Gradle distribution
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      - name: Download Gradle distribution
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./gradlew
+
+  test:
+    name: Test
+    needs: cache-distribution
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2.1.0
+        with:
+          distribution: adopt
+          java-version: 11
+
+      - name: Run tests
+        run: ./gradlew check

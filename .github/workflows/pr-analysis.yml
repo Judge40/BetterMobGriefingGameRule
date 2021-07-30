@@ -12,11 +12,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Gradle wrapper validation
+      - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1.0.4
 
-  cache-distribution:
-    name: Cache Gradle distribution
+  initialize-caches:
+    name: Initialize Gradle caches
     needs: validate-wrapper
     runs-on: ubuntu-latest
 
@@ -24,21 +24,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Cache Gradle distribution
-        id: cache
+      - name: Set up Gradle wrapper cache
+        id: wrapper-cache
         uses: actions/cache@v2
         with:
           path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-wrapper-
 
-      - name: Download Gradle distribution
-        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Set up Gradle dependency cache
+        id: dependency-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle-caches-
+
+      - name: Populate missing caches
+        if: steps.wrapper-cache.outputs.cache-hit != 'true' ||
+            steps.dependency-cache.outputs.cache-hit != 'true'
         run: ./gradlew
 
   test:
     name: Test
-    needs: cache-distribution
+    needs: initialize-caches
     runs-on: ubuntu-latest
 
     steps:
@@ -50,6 +59,22 @@ jobs:
         with:
           distribution: adopt
           java-version: 11
+
+      - name: Set up Gradle wrapper cache
+        id: wrapper-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-wrapper-
+
+      - name: Set up Gradle dependency cache
+        id: dependency-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle-caches-
 
       - name: Run tests
         run: ./gradlew check

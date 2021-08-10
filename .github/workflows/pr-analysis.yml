@@ -48,3 +48,49 @@ jobs:
 
       - name: Run tests
         run: ./gradlew check
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: reports
+          path: build/reports
+
+  assemble:
+    name: Assemble
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2.1.0
+        with:
+          distribution: adopt
+          java-version: 11
+
+      - name: Set up Gradle wrapper cache
+        id: wrapper-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-wrapper-
+
+      - name: Set up Gradle dependency cache
+        id: dependency-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle-caches-
+
+      - name: Assemble
+        run: ./gradlew assemble
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: jar
+          path: build/libs/*.jar

@@ -15,39 +15,9 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1.0.4
 
-  initialize-caches:
-    name: Initialize Gradle caches
-    needs: validate-wrapper
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Set up Gradle wrapper cache
-        id: wrapper-cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle-wrapper.properties') }}
-          restore-keys: ${{ runner.os }}-gradle-wrapper-
-
-      - name: Set up Gradle dependency cache
-        id: dependency-cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle-caches-
-
-      - name: Populate missing caches
-        if: steps.wrapper-cache.outputs.cache-hit != 'true' ||
-            steps.dependency-cache.outputs.cache-hit != 'true'
-        run: ./gradlew
-
   test:
     name: Test
-    needs: initialize-caches
+    needs: validate-wrapper
     runs-on: ubuntu-latest
 
     steps:

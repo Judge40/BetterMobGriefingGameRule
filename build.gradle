@@ -8,6 +8,10 @@ buildscript {
   }
 }
 
+plugins {
+  id "org.sonarqube" version "3.3"
+}
+
 apply plugin: "checkstyle"
 apply plugin: "net.minecraftforge.gradle"
 apply plugin: "pmd"
@@ -107,6 +111,14 @@ pmd {
 }
 
 jar.finalizedBy("reobfJar")
+
+sonarqube {
+  properties {
+    property "sonar.projectKey", "Judge40_BetterMobGriefingGameRule"
+    property "sonar.organization", "judge40"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
+}
 
 test {
   useJUnitPlatform()

@@ -117,6 +117,9 @@ sonarqube {
     property "sonar.projectKey", "Judge40_BetterMobGriefingGameRule"
     property "sonar.organization", "judge40"
     property "sonar.host.url", "https://sonarcloud.io"
+
+    property "sonar.java.checkstyle.reportPaths",
+      "build/reports/checkstyle/main.xml,build/reports/checkstyle/test.xml"
   }
 }
 

@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK
         uses: actions/setup-java@v2.1.0
@@ -60,12 +62,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew sonarqube
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: reports
-          path: build/reports
 
       - name: Assemble
         run: ./gradlew assemble

@@ -102,6 +102,10 @@ checkstyle {
   config = resources.text.fromArchiveEntry(configurations.checkstyle[0], "google_checks.xml")
 }
 
+pmd {
+  ignoreFailures = true
+}
+
 jar.finalizedBy("reobfJar")
 
 test {

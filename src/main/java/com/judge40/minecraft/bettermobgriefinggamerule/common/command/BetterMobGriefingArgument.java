@@ -46,12 +46,12 @@ public class BetterMobGriefingArgument implements ArgumentType<MobGriefingValue>
 
   @Override
   public MobGriefingValue parse(StringReader reader) throws CommandSyntaxException {
-    int cursor = reader.getCursor();
     String value = reader.readString();
+
     try {
       return MobGriefingValue.toEnumeration(value);
     } catch (IllegalArgumentException e) {
-      reader.setCursor(cursor);
+      reader.setCursor(reader.getCursor());
       throw INVALID_VALUE.createWithContext(reader, value);
     }
   }

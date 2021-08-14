@@ -4,12 +4,11 @@ buildscript {
     maven { url = "https://files.minecraftforge.net/maven" }
   }
   dependencies {
-    classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "3.+", changing: true
+    classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "5.+", changing: true
   }
 }
 
 apply plugin: "checkstyle"
-apply plugin: "findbugs"
 apply plugin: "net.minecraftforge.gradle"
 apply plugin: "pmd"
 
@@ -98,30 +97,13 @@ dependencies {
   testImplementation "org.mockito:mockito-inline:3.4.4"
 }
 
-
 checkstyle {
   toolVersion = "8.34"
   config = resources.text.fromArchiveEntry(configurations.checkstyle[0], "google_checks.xml")
 }
 
-findbugs {
-  effort = "max"
-  reportLevel = "low"
-}
-
-findbugsMain {
-  excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilterMain.xml")
-}
-
-findbugsTest {
-  excludeFilter = file("$rootProject.projectDir/config/findbugs/excludeFilterTest.xml")
-}
-
-tasks.withType(FindBugs) {
-  reports {
-    xml.enabled = false
-    html.enabled = true
-  }
+pmd {
+  ignoreFailures = true
 }
 
 jar.finalizedBy("reobfJar")

@@ -2,6 +2,9 @@ name: PR Analysis
 
 on:
   pull_request:
+  push:
+    branches:
+      - master
 
 jobs:
   validate-wrapper:
@@ -65,9 +68,11 @@ jobs:
 
       - name: Assemble
         run: ./gradlew assemble
+        if: github.ref == 'refs/heads/master'
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
+        if: github.ref == 'refs/heads/master'
         with:
           name: jar
           path: build/libs/*.jar

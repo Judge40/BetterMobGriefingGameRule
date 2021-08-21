@@ -78,13 +78,13 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
 
     StringTextComponent currentValueText = new StringTextComponent(currentValue.toString());
     valueButton = new ExtendedButton(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, currentValueText,
-        (button) -> currentValue = getNextValue());
+        button -> currentValue = getNextValue());
 
     resetButton = new ExtendedButton(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, RESET,
-        (button) -> restoreInitialValue());
+        button -> restoreInitialValue());
 
     defaultButton = new ExtendedButton(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, DEFAULT,
-        (button) -> restoreDefaultValue());
+        button -> restoreDefaultValue());
   }
 
   /**
@@ -138,7 +138,7 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
   @Override
   public void render(@Nonnull MatrixStack matrixStack, int render1, int render2, int render3,
       int render4, int render5, int render6, int render7, boolean render8, float render9) {
-    float x = render3 + 90 - labelOffset;
+    float x = (float) render3 + 90 - labelOffset;
     float y = render2 + render5 / 2F - 4.5F;
     fontRenderer.draw(matrixStack, label, x, y, 16777215);
 

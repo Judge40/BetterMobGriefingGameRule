@@ -38,7 +38,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 public class BetterMobGriefingArgument implements ArgumentType<MobGriefingValue> {
 
   private static final DynamicCommandExceptionType INVALID_VALUE = new DynamicCommandExceptionType(
-      (input) -> new TranslationTextComponent(
+      input -> new TranslationTextComponent(
           ModInfoConstants.ID + ".parsing.mobGriefingValue.invalid", input));
 
   private static final Collection<String> EXAMPLES = Arrays.stream(MobGriefingValue.values())

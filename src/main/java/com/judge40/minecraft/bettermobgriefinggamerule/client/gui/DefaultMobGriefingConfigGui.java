@@ -80,7 +80,7 @@ public class DefaultMobGriefingConfigGui extends Screen {
     final int y = height - 29;
 
     resetButton = addButton(new ExtendedButton(x, y, BUTTON_WIDTH, BUTTON_HEIGHT, RESET_ALL,
-        (button) -> {
+        button -> {
           for (Entry child : configEntryList.children()) {
 
             if (child instanceof AbstractConfigEntry) {
@@ -91,7 +91,7 @@ public class DefaultMobGriefingConfigGui extends Screen {
 
     defaultButton = addButton(
         new ExtendedButton(x + BUTTON_WIDTH, y, BUTTON_WIDTH, BUTTON_HEIGHT, DEFAULT_ALL,
-            (button) -> {
+            button -> {
               for (Entry child : configEntryList.children()) {
 
                 if (child instanceof AbstractConfigEntry) {
@@ -102,7 +102,7 @@ public class DefaultMobGriefingConfigGui extends Screen {
 
     addButton(
         new ExtendedButton(x + 10 + BUTTON_WIDTH * 2, y, BUTTON_WIDTH * 2, BUTTON_HEIGHT, DONE,
-            (button) -> {
+            button -> {
               updateConfig();
               minecraft.setScreen(parent);
             }));

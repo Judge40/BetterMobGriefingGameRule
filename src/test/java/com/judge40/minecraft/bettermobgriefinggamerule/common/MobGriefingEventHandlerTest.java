@@ -30,9 +30,11 @@ import com.mojang.datafixers.DataFixer;
 import java.io.File;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
@@ -66,17 +68,11 @@ class MobGriefingEventHandlerTest {
 
     when(server.overworld()).thenReturn(world);
     when(world.getDataStorage()).thenReturn(savedDataManager);
+    when(world.getGameRules()).thenReturn(new GameRules());
 
     data = EntityMobGriefingData.forServer(server);
 
-    entity = mock(Entity.class);
-    entity.level = world;
-    when(entity.getServer()).thenReturn(server);
-    when(world.getGameRules()).thenReturn(new GameRules());
-
-    EntityType entityType = mock(EntityType.class);
-    when(entity.getType()).thenReturn(entityType);
-    when(entityType.getRegistryName()).thenReturn(new ResourceLocation("test:entity1"));
+    entity = createMockEntity(server, world, Entity.class, "test:entity1");
   }
 
   @Test
@@ -117,5 +113,53 @@ class MobGriefingEventHandlerTest {
 
     // Then.
     assertThat("Unexpected result.", event.getResult(), is(Result.ALLOW));
+  }
+
+  @Test
+  void shouldUseSmallFireBallWhenOwnerNull() {
+    // Given.
+    SmallFireballEntity fireball = createMockEntity(entity.getServer(), entity.level,
+        SmallFireballEntity.class, "test:small_fireball");
+    when(fireball.getOwner()).thenReturn(null);
+
+    EntityMobGriefingEvent event = new EntityMobGriefingEvent(fireball);
+
+    // When.
+    MobGriefingEventHandler.onMobGriefing(event);
+
+    // Then.
+    assertThat("Unexpected result.", event.getResult(), is(Result.ALLOW));
+  }
+
+  @Test
+  void shouldUseSmallFireBallOwnerWhenOwnerNotNull() {
+    // Given.
+    ResourceLocation entityId = entity.getType().getRegistryName();
+    data.setMobGriefingValue(entityId, MobGriefingValue.FALSE);
+
+    SmallFireballEntity fireball = createMockEntity(entity.getServer(), entity.level,
+        SmallFireballEntity.class, "test:small_fireball");
+    when(fireball.getOwner()).thenReturn(entity);
+
+    EntityMobGriefingEvent event = new EntityMobGriefingEvent(fireball);
+
+    // When.
+    MobGriefingEventHandler.onMobGriefing(event);
+
+    // Then.
+    assertThat("Unexpected result.", event.getResult(), is(Result.DENY));
+  }
+
+  private <T extends Entity> T createMockEntity(MinecraftServer server, World world,
+      Class<T> entityClass, String resourceLocation) {
+    T entity = mock(entityClass);
+    entity.level = world;
+    when(entity.getServer()).thenReturn(server);
+
+    EntityType entityType = mock(EntityType.class);
+    when(entity.getType()).thenReturn(entityType);
+    when(entityType.getRegistryName()).thenReturn(new ResourceLocation(resourceLocation));
+
+    return entity;
   }
 }

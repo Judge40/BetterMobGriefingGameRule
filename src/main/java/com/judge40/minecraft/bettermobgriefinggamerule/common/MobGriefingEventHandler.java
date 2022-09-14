@@ -21,6 +21,7 @@ package com.judge40.minecraft.bettermobgriefinggamerule.common;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.GameRules;
@@ -48,6 +49,15 @@ public class MobGriefingEventHandler {
     Entity griefingEntity = mobGriefingEvent.getEntity();
 
     if (griefingEntity != null) {
+      // TODO: Workaround for MinecraftForge bug, remove when PR #9038 merged.
+      if (griefingEntity instanceof SmallFireballEntity) {
+        Entity owner = ((SmallFireballEntity) griefingEntity).getOwner();
+
+        if (owner != null) {
+          griefingEntity = owner;
+        }
+      }
+
       if (isMobGriefingEnabled(griefingEntity)) {
         mobGriefingEvent.setResult(Result.ALLOW);
       } else {

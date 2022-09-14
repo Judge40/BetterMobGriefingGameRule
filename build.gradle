@@ -21,7 +21,7 @@ repositories {
 }
 
 // Mod information.
-version = "1.16.5-9.0.0"
+version = "1.16.5-9.0.1"
 group = "com.judge40.minecraft.bettermobgriefinggamerule"
 archivesBaseName = "bettermobgriefinggamerule"
 

@@ -49,17 +49,16 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
-import net.minecraft.command.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.GameRules.BooleanValue;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DimensionSavedDataManager;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.GameRules.BooleanValue;
+import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,14 +72,14 @@ import org.junit.jupiter.params.provider.ValueSource;
  */
 class BetterMobGriefingCommandTest {
 
-  private CommandNode<CommandSource> mobGriefingCommand;
+  private CommandNode<CommandSourceStack> mobGriefingCommand;
 
   private MinecraftServer server;
-  private ServerWorld world;
-  private CommandSource commandSource;
-  private CommandContext<CommandSource> commandContext;
+  private ServerLevel level;
+  private CommandSourceStack commandSource;
+  private CommandContext<CommandSourceStack> commandContext;
 
-  private Map<String, ParsedArgument<CommandSource, ?>> commandArguments;
+  private Map<String, ParsedArgument<CommandSourceStack, ?>> commandArguments;
 
   @BeforeAll
   static void setUpBeforeAll() throws IllegalAccessException {
@@ -89,23 +88,23 @@ class BetterMobGriefingCommandTest {
 
   @BeforeEach
   void setUp() {
-    CommandDispatcher<CommandSource> dispatcher = new CommandDispatcher<>();
+    CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
     BetterMobGriefingCommand.register(dispatcher);
 
-    RootCommandNode<CommandSource> rootCommand = dispatcher.getRoot();
-    CommandNode<CommandSource> gameRuleCommand = rootCommand.getChild("gamerule");
+    RootCommandNode<CommandSourceStack> rootCommand = dispatcher.getRoot();
+    CommandNode<CommandSourceStack> gameRuleCommand = rootCommand.getChild("gamerule");
     mobGriefingCommand = gameRuleCommand.getChild("mobGriefing");
 
     server = mock(MinecraftServer.class);
     when(server.getGameRules()).thenReturn(new GameRules());
-    world = mock(ServerWorld.class);
-    when(server.overworld()).thenReturn(world);
+    level = mock(ServerLevel.class);
+    when(server.overworld()).thenReturn(level);
 
     DataFixer dataFixer = mock(DataFixer.class);
-    when(world.getDataStorage()).thenReturn(new DimensionSavedDataManager(new File(""), dataFixer));
+    when(level.getDataStorage()).thenReturn(new DimensionDataStorage(new File(""), dataFixer));
 
-    commandSource = new CommandSource(server, Vector3d.ZERO, Vector2f.ZERO, world, 2, "",
-        new StringTextComponent(""), server, null);
+    commandSource = new CommandSourceStack(server, Vec3.ZERO, Vec2.ZERO, level, 2, "",
+        new TranslatableComponent(""), server, null);
     commandSource = spy(commandSource);
 
     commandArguments = new HashMap<>();
@@ -118,10 +117,10 @@ class BetterMobGriefingCommandTest {
   @CsvSource({"0, false", "1, false", "2, true", "3, true"})
   void shouldRequirePermissionLevelTwo(int permissionLevel, boolean hasPermission) {
     // Given.
-    Predicate<CommandSource> commandRequirement = mobGriefingCommand.getRequirement();
+    Predicate<CommandSourceStack> commandRequirement = mobGriefingCommand.getRequirement();
 
-    CommandSource commandSource = new CommandSource(server, Vector3d.ZERO, Vector2f.ZERO, world,
-        permissionLevel, "", new StringTextComponent(""), server, null);
+    CommandSourceStack commandSource = new CommandSourceStack(server, Vec3.ZERO, Vec2.ZERO, level,
+        permissionLevel, "", new TranslatableComponent(""), server, null);
 
     // When.
     boolean result = commandRequirement.test(commandSource);
@@ -138,14 +137,14 @@ class BetterMobGriefingCommandTest {
     data.setMobGriefingValue(new ResourceLocation("test:entity2"), MobGriefingValue.TRUE);
     data.setMobGriefingValue(new ResourceLocation("test:entity3"), MobGriefingValue.INHERIT);
 
-    Command<CommandSource> command = mobGriefingCommand.getCommand();
+    Command<CommandSourceStack> command = mobGriefingCommand.getCommand();
 
     // When.
     int result = command.run(commandContext);
 
     // Then.
     assertThat("Unexpected command result.", result, is(3));
-    verify(commandSource).sendSuccess(any(ITextComponent.class), eq(true));
+    verify(commandSource).sendSuccess(any(TranslatableComponent.class), eq(true));
   }
 
   @ParameterizedTest(name = "Should suggest {1} when the argument is {0}")
@@ -153,7 +152,7 @@ class BetterMobGriefingCommandTest {
   void shouldSuggestGlobalMobGriefingValue(String input, String suggestion)
       throws CommandSyntaxException, ExecutionException, InterruptedException {
     // Given.
-    CommandNode<CommandSource> valueArgument = mobGriefingCommand.getChild("value");
+    CommandNode<CommandSourceStack> valueArgument = mobGriefingCommand.getChild("value");
 
     // When.
     CompletableFuture<Suggestions> completableFuture = valueArgument
@@ -170,7 +169,7 @@ class BetterMobGriefingCommandTest {
   void shouldSuggestGlobalMobGriefingValues(String input, int count)
       throws CommandSyntaxException, ExecutionException, InterruptedException {
     // Given.
-    CommandNode<CommandSource> valueArgument = mobGriefingCommand.getChild("value");
+    CommandNode<CommandSourceStack> valueArgument = mobGriefingCommand.getChild("value");
 
     // When.
     CompletableFuture<Suggestions> completableFuture = valueArgument
@@ -185,8 +184,8 @@ class BetterMobGriefingCommandTest {
   @ValueSource(booleans = {true, false})
   void shouldSetGlobalMobGriefingWhenBoolean(boolean input) throws CommandSyntaxException {
     // Given.
-    CommandNode<CommandSource> valueArgument = mobGriefingCommand.getChild("value");
-    Command<CommandSource> command = valueArgument.getCommand();
+    CommandNode<CommandSourceStack> valueArgument = mobGriefingCommand.getChild("value");
+    Command<CommandSourceStack> command = valueArgument.getCommand();
 
     commandArguments.put("value", new ParsedArgument<>(0, 0, input));
 
@@ -197,7 +196,7 @@ class BetterMobGriefingCommandTest {
     assertThat("Unexpected command result.", result, is(input ? 1 : 0));
     BooleanValue mobGriefing = server.getGameRules().getRule(GameRules.RULE_MOBGRIEFING);
     assertThat("Unexpected mob griefing value.", mobGriefing.get(), is(input));
-    verify(commandSource).sendSuccess(any(ITextComponent.class), eq(true));
+    verify(commandSource).sendSuccess(any(TranslatableComponent.class), eq(true));
   }
 
   @ParameterizedTest(name = "Should suggest {1} when the argument is {0}")
@@ -205,7 +204,7 @@ class BetterMobGriefingCommandTest {
   void shouldSuggestEntityName(String input, String suggestion)
       throws CommandSyntaxException, ExecutionException, InterruptedException {
     // Given.
-    CommandNode<CommandSource> entityArgument = mobGriefingCommand.getChild("entity");
+    CommandNode<CommandSourceStack> entityArgument = mobGriefingCommand.getChild("entity");
 
     // When.
     CompletableFuture<Suggestions> completableFuture = entityArgument
@@ -218,11 +217,11 @@ class BetterMobGriefingCommandTest {
   }
 
   @ParameterizedTest(name = "Should suggest {1} entity names when the argument is {0}")
-  @CsvSource({"ender, 5", "'', 106", "xyz, 0"})
+  @CsvSource({"ender, 5", "'', 111", "xyz, 0"})
   void shouldSuggestEntityNames(String input, int count)
       throws CommandSyntaxException, ExecutionException, InterruptedException {
     // Given.
-    CommandNode<CommandSource> entityArgument = mobGriefingCommand.getChild("entity");
+    CommandNode<CommandSourceStack> entityArgument = mobGriefingCommand.getChild("entity");
 
     // When.
     CompletableFuture<Suggestions> completableFuture = entityArgument
@@ -243,8 +242,8 @@ class BetterMobGriefingCommandTest {
     ResourceLocation entityId = new ResourceLocation(entityName);
     data.setMobGriefingValue(entityId, value);
 
-    CommandNode<CommandSource> entityArgument = mobGriefingCommand.getChild("entity");
-    Command<CommandSource> command = entityArgument.getCommand();
+    CommandNode<CommandSourceStack> entityArgument = mobGriefingCommand.getChild("entity");
+    Command<CommandSourceStack> command = entityArgument.getCommand();
 
     commandArguments.put("entity", new ParsedArgument<>(0, 0, entityId));
 
@@ -253,7 +252,7 @@ class BetterMobGriefingCommandTest {
 
     // Then.
     assertThat("Unexpected command result.", result, is(value.ordinal()));
-    verify(commandSource).sendSuccess(any(ITextComponent.class), eq(true));
+    verify(commandSource).sendSuccess(any(TranslatableComponent.class), eq(true));
   }
 
   @ParameterizedTest(name = "Should suggest {1} when the argument is {0}")
@@ -261,8 +260,8 @@ class BetterMobGriefingCommandTest {
   void shouldSuggestEntityMobGriefingValue(String input, String suggestion)
       throws CommandSyntaxException, ExecutionException, InterruptedException {
     // Given.
-    CommandNode<CommandSource> entityArgument = mobGriefingCommand.getChild("entity");
-    CommandNode<CommandSource> valueArgument = entityArgument.getChild("value");
+    CommandNode<CommandSourceStack> entityArgument = mobGriefingCommand.getChild("entity");
+    CommandNode<CommandSourceStack> valueArgument = entityArgument.getChild("value");
 
     // When.
     CompletableFuture<Suggestions> completableFuture = valueArgument
@@ -279,8 +278,8 @@ class BetterMobGriefingCommandTest {
   void shouldSuggestEntityMobGriefingValues(String input, int count)
       throws CommandSyntaxException, ExecutionException, InterruptedException {
     // Given.
-    CommandNode<CommandSource> entityArgument = mobGriefingCommand.getChild("entity");
-    CommandNode<CommandSource> valueArgument = entityArgument.getChild("value");
+    CommandNode<CommandSourceStack> entityArgument = mobGriefingCommand.getChild("entity");
+    CommandNode<CommandSourceStack> valueArgument = entityArgument.getChild("value");
 
     // When.
     CompletableFuture<Suggestions> completableFuture = valueArgument
@@ -300,9 +299,9 @@ class BetterMobGriefingCommandTest {
     ResourceLocation entityId = new ResourceLocation(entityName);
     data.setMobGriefingValue(entityId, MobGriefingValue.INHERIT);
 
-    CommandNode<CommandSource> entityArgument = mobGriefingCommand.getChild("entity");
-    CommandNode<CommandSource> valueArgument = entityArgument.getChild("value");
-    Command<CommandSource> command = valueArgument.getCommand();
+    CommandNode<CommandSourceStack> entityArgument = mobGriefingCommand.getChild("entity");
+    CommandNode<CommandSourceStack> valueArgument = entityArgument.getChild("value");
+    Command<CommandSourceStack> command = valueArgument.getCommand();
 
     commandArguments.put("entity", new ParsedArgument<>(0, 0, entityId));
     commandArguments.put("value", new ParsedArgument<>(0, 0, value));
@@ -313,6 +312,6 @@ class BetterMobGriefingCommandTest {
     // Then.
     assertThat("Unexpected command result.", result, is(value.ordinal()));
     assertThat("Unexpected mob griefing value.", data.getMobGriefingValue(entityId), is(value));
-    verify(commandSource).sendSuccess(any(ITextComponent.class), eq(true));
+    verify(commandSource).sendSuccess(any(TranslatableComponent.class), eq(true));
   }
 }

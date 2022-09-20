@@ -29,8 +29,8 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import java.lang.reflect.Field;
 import java.util.List;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,10 +54,10 @@ class ConfigEntryListTest {
     parentScreen.height = 200;
 
     Minecraft minecraft = mock(Minecraft.class);
-    FontRenderer fontRenderer = mock(FontRenderer.class);
-    Field fontRendererField = FieldUtils.getField(Minecraft.class, "font");
-    FieldUtils.removeFinalModifier(fontRendererField);
-    FieldUtils.writeField(fontRendererField, minecraft, fontRenderer, true);
+    Font font = mock(Font.class);
+    Field fontField = FieldUtils.getField(Minecraft.class, "font");
+    FieldUtils.removeFinalModifier(fontField);
+    FieldUtils.writeField(fontField, minecraft, font, true);
 
     entryList = new ConfigEntryList(parentScreen, minecraft);
   }

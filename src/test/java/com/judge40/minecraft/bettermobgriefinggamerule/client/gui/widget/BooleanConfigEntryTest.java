@@ -24,13 +24,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
+import net.minecraftforge.fmlclient.gui.widget.ExtendedButton;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -93,8 +93,8 @@ class BooleanConfigEntryTest {
   @ValueSource(booleans = {true, false})
   void shouldRenderButtonsWithCorrectStateWhenValueUnchanged(boolean initialValue) {
     // Given.
-    FontRenderer fontRenderer = mock(FontRenderer.class);
-    BooleanConfigEntry entry = new BooleanConfigEntry(fontRenderer, 0, "label", initialValue, true);
+    Font font = mock(Font.class);
+    BooleanConfigEntry entry = new BooleanConfigEntry(font, 0, "label", initialValue, true);
 
     // Override visibility of buttons so no attempt is made to actually render them.
     List<Button> children = entry.children().stream()
@@ -104,7 +104,7 @@ class BooleanConfigEntryTest {
     children.forEach(button -> button.visible = false);
 
     // When.
-    entry.render(new MatrixStack(), 0, 0, 0, 0, 0, 0, 0, true, 0);
+    entry.render(new PoseStack(), 0, 0, 0, 0, 0, 0, 0, true, 0);
 
     // Then.
     Button valueButton = children.get(0);
@@ -123,8 +123,8 @@ class BooleanConfigEntryTest {
   @ValueSource(booleans = {true, false})
   void shouldRenderButtonsWithCorrectStateWhenValueChanged(boolean initialValue) {
     // Given.
-    FontRenderer fontRenderer = mock(FontRenderer.class);
-    BooleanConfigEntry entry = new BooleanConfigEntry(fontRenderer, 0, "label", initialValue,
+    Font font = mock(Font.class);
+    BooleanConfigEntry entry = new BooleanConfigEntry(font, 0, "label", initialValue,
         false);
 
     // Override visibility of buttons so no attempt is made to actually render them.
@@ -137,7 +137,7 @@ class BooleanConfigEntryTest {
     // When.
     Button valueButton = children.get(0);
     valueButton.onPress();
-    entry.render(new MatrixStack(), 0, 0, 0, 0, 0, 0, 0, true, 0);
+    entry.render(new PoseStack(), 0, 0, 0, 0, 0, 0, 0, true, 0);
 
     // Then.
     boolean currentValue = entry.getCurrentValue();
@@ -154,8 +154,8 @@ class BooleanConfigEntryTest {
   @Test
   void shouldRenderEntryLabel() {
     // Given.
-    FontRenderer fontRenderer = mock(FontRenderer.class);
-    BooleanConfigEntry entry = new BooleanConfigEntry(fontRenderer, 100, "label", true, false);
+    Font font = mock(Font.class);
+    BooleanConfigEntry entry = new BooleanConfigEntry(font, 100, "label", true, false);
 
     // Override visibility of buttons so no attempt is made to actually render them.
     List<ExtendedButton> children = entry.children().stream()
@@ -164,13 +164,13 @@ class BooleanConfigEntryTest {
         .collect(Collectors.toList());
     children.forEach(button -> button.visible = false);
 
-    MatrixStack matrixStack = new MatrixStack();
+    PoseStack poseStack = new PoseStack();
 
     // When.
-    entry.render(matrixStack, 10, 20, 30, 40, 50, 60, 70, true, 90);
+    entry.render(poseStack, 10, 20, 30, 40, 50, 60, 70, true, 90);
 
     // Then.
-    int colorCode = TextFormatting.WHITE.getColor();
-    verify(fontRenderer).draw(matrixStack, "label", 20, 40.5F, colorCode);
+    int colorCode = ChatFormatting.WHITE.getColor();
+    verify(font).draw(poseStack, "label", 20, 40.5F, colorCode);
   }
 }

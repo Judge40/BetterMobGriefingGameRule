@@ -27,15 +27,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.list.AbstractOptionList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-public class ConfigEntryList extends AbstractOptionList<AbstractEntry> {
+public class ConfigEntryList extends ContainerObjectSelectionList<AbstractEntry> {
 
   private BooleanConfigEntry globalEntry;
   private List<MobGriefingValueConfigEntry> entityEntries = new ArrayList<>();
@@ -49,28 +49,28 @@ public class ConfigEntryList extends AbstractOptionList<AbstractEntry> {
    */
   public ConfigEntryList(Screen parent, Minecraft minecraft) {
     super(minecraft, parent.width + 45, parent.height, 43, parent.height - 32, 20);
-    FontRenderer fontRenderer = minecraft.font;
+    Font font = minecraft.font;
 
-    int globalLabelWidth = fontRenderer.width(BetterMobGriefingGameRule.GLOBAL_RULE);
+    int globalLabelWidth = font.width(BetterMobGriefingGameRule.GLOBAL_RULE);
 
     final int maxLabelWidth = Config.entityIdsToDefaultEntityValue.keySet().stream()
-        .mapToInt(entityId -> fontRenderer.width(entityId.toString()))
+        .mapToInt(entityId -> font.width(entityId.toString()))
         .filter(width -> width > globalLabelWidth)
         .max()
         .orElse(globalLabelWidth);
 
-    addEntry(new ConfigCategoryEntry(fontRenderer, width,
+    addEntry(new ConfigCategoryEntry(font, width,
         ModInfoConstants.ID + ".config.defaultGlobalRule.title"));
-    globalEntry = new BooleanConfigEntry(fontRenderer, maxLabelWidth,
+    globalEntry = new BooleanConfigEntry(font, maxLabelWidth,
         BetterMobGriefingGameRule.GLOBAL_RULE, Config.defaultGlobalValue, true);
     addEntry(globalEntry);
 
-    addEntry(new ConfigCategoryEntry(fontRenderer, width,
+    addEntry(new ConfigCategoryEntry(font, width,
         ModInfoConstants.ID + ".config.defaultEntityRules.title"));
     Config.entityIdsToDefaultEntityValue.entrySet().stream()
         .sorted(Map.Entry.comparingByKey(Comparator.comparing(ResourceLocation::toString)))
         .forEach(entry -> {
-          MobGriefingValueConfigEntry entityEntry = new MobGriefingValueConfigEntry(fontRenderer,
+          MobGriefingValueConfigEntry entityEntry = new MobGriefingValueConfigEntry(font,
               maxLabelWidth, entry.getKey(), entry.getValue());
           entityEntries.add(entityEntry);
           addEntry(entityEntry);

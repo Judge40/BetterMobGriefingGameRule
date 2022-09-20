@@ -34,16 +34,15 @@ import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.ConfigE
 import com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget.MobGriefingValueConfigEntry;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,10 +67,20 @@ class DefaultMobGriefingConfigGuiTest {
   @BeforeEach
   void setUp() throws IllegalAccessException {
     Minecraft minecraft = mock(Minecraft.class);
-    FontRenderer fontRenderer = mock(FontRenderer.class);
-    Field fontRendererField = FieldUtils.getField(Minecraft.class, "font");
-    FieldUtils.removeFinalModifier(fontRendererField);
-    FieldUtils.writeField(fontRendererField, minecraft, fontRenderer, true);
+
+    Field instanceField = FieldUtils.getField(Minecraft.class, "instance", true);
+    FieldUtils.writeStaticField(instanceField, minecraft, true);
+
+    Font font = mock(Font.class);
+    Field fontField = FieldUtils.getField(Minecraft.class, "font");
+    FieldUtils.removeFinalModifier(fontField);
+    FieldUtils.writeField(fontField, minecraft, font, true);
+
+    Options options = mock(Options.class);
+    Field optionsField = FieldUtils.getField(Minecraft.class, "options");
+    FieldUtils.removeFinalModifier(optionsField);
+    FieldUtils.writeField(optionsField, minecraft, options, true);
+
     Screen parentScreen = mock(Screen.class);
     gui = spy(new DefaultMobGriefingConfigGui(minecraft, parentScreen));
 
@@ -88,7 +97,7 @@ class DefaultMobGriefingConfigGuiTest {
     reinitializeGui();
 
     // When.
-    gui.render(new MatrixStack(), 0, 0, 0);
+    gui.render(new PoseStack(), 0, 0, 0);
 
     // Then.
     Button resetButton = (Button) gui.children().get(1);
@@ -115,7 +124,7 @@ class DefaultMobGriefingConfigGuiTest {
     globalValueButton.onPress();
 
     // When.
-    gui.render(new MatrixStack(), 0, 0, 0);
+    gui.render(new PoseStack(), 0, 0, 0);
 
     // Then.
     Button resetButton = (Button) gui.children().get(1);
@@ -146,7 +155,7 @@ class DefaultMobGriefingConfigGuiTest {
     // When.
     Button resetButton = (Button) gui.children().get(1);
     resetButton.onPress();
-    gui.render(new MatrixStack(), 0, 0, 0);
+    gui.render(new PoseStack(), 0, 0, 0);
 
     // Then.
     assertThat("Unexpected value for isChanged.", globalEntry.isChanged(), is(false));
@@ -172,7 +181,7 @@ class DefaultMobGriefingConfigGuiTest {
     // When.
     Button defaultButton = (Button) gui.children().get(2);
     defaultButton.onPress();
-    gui.render(new MatrixStack(), 0, 0, 0);
+    gui.render(new PoseStack(), 0, 0, 0);
 
     // Then.
     BooleanConfigEntry globalEntry = (BooleanConfigEntry) entryList.children().get(1);
@@ -282,14 +291,14 @@ class DefaultMobGriefingConfigGuiTest {
     Button resetButton = (Button) spy(gui.children().get(1));
     Button defaultButton = (Button) spy(gui.children().get(2));
     Button doneButton = (Button) spy(gui.children().get(3));
-    List<Button> buttons = new ArrayList<>(Arrays.asList(resetButton, defaultButton, doneButton));
-    FieldUtils.writeField(gui, "buttons", buttons, true);
+    gui.renderables.clear();
+    gui.renderables.addAll(Arrays.asList(resetButton, defaultButton, doneButton));
 
     // Disable rendering of gui children.
-    doNothing().when(gui).renderBackground(any(MatrixStack.class));
-    doNothing().when(entryList).render(any(MatrixStack.class), anyInt(), anyInt(), anyFloat());
-    doNothing().when(resetButton).render(any(MatrixStack.class), anyInt(), anyInt(), anyFloat());
-    doNothing().when(defaultButton).render(any(MatrixStack.class), anyInt(), anyInt(), anyFloat());
-    doNothing().when(doneButton).render(any(MatrixStack.class), anyInt(), anyInt(), anyFloat());
+    doNothing().when(gui).renderBackground(any(PoseStack.class));
+    doNothing().when(entryList).render(any(PoseStack.class), anyInt(), anyInt(), anyFloat());
+    doNothing().when(resetButton).render(any(PoseStack.class), anyInt(), anyInt(), anyFloat());
+    doNothing().when(defaultButton).render(any(PoseStack.class), anyInt(), anyInt(), anyFloat());
+    doNothing().when(doneButton).render(any(PoseStack.class), anyInt(), anyInt(), anyFloat());
   }
 }

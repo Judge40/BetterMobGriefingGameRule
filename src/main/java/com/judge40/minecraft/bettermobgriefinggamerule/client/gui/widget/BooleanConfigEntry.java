@@ -19,7 +19,10 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget;
 
-import net.minecraft.client.gui.FontRenderer;
+import java.util.Collections;
+import java.util.List;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -29,20 +32,25 @@ public class BooleanConfigEntry extends AbstractConfigEntry<Boolean> {
   /**
    * A configuration entry with a label, boolean value selection, reset button and default button.
    *
-   * @param fontRenderer The font renderer to use to draw labels.
+   * @param font         The font to use to draw labels.
    * @param labelOffset  The offset from center to use for the entry's label, should match the
    *                     longest label in a list.
    * @param label        The label to display for the entry.
    * @param initialValue The entry's initial value.
    * @param defaultValue The entry's default value, used when setting a changed value to default.
    */
-  BooleanConfigEntry(FontRenderer fontRenderer, int labelOffset, String label, boolean initialValue,
+  BooleanConfigEntry(Font font, int labelOffset, String label, boolean initialValue,
       boolean defaultValue) {
-    super(fontRenderer, labelOffset, label, initialValue, defaultValue);
+    super(font, labelOffset, label, initialValue, defaultValue);
   }
 
   @Override
   protected Boolean getNextValue() {
     return !getCurrentValue();
+  }
+
+  @Override
+  public List<? extends NarratableEntry> narratables() {
+    return Collections.emptyList();
   }
 }

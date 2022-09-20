@@ -19,21 +19,21 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.common.command;
 
-import static net.minecraft.command.Commands.argument;
-import static net.minecraft.command.Commands.literal;
+import static net.minecraft.commands.Commands.argument;
+import static net.minecraft.commands.Commands.literal;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.arguments.EntitySummonArgument;
-import net.minecraft.command.arguments.SuggestionProviders;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.GameRules.BooleanValue;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.EntitySummonArgument;
+import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.GameRules.BooleanValue;
 
 /**
  * A custom command handler for the mob griefing game rule, it allows auto-completion and assignment
@@ -58,7 +58,7 @@ public class BetterMobGriefingCommand {
    *
    * @param dispatcher The command dispatcher to register with.
    */
-  public static void register(CommandDispatcher<CommandSource> dispatcher) {
+  public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
     dispatcher.register(
         literal(RULE_PARENT)
             .then(
@@ -88,16 +88,15 @@ public class BetterMobGriefingCommand {
    * @param context The command context to process.
    * @return The number of targets.
    */
-  private static int listMobGriefing(CommandContext<CommandSource> context) {
-    CommandSource source = context.getSource();
+  private static int listMobGriefing(CommandContext<CommandSourceStack> context) {
+    CommandSourceStack source = context.getSource();
     EntityMobGriefingData data = EntityMobGriefingData.forServer(source.getServer());
 
     GameRules gameRules = source.getServer().getGameRules();
     BooleanValue mobGriefing = gameRules.getRule(GameRules.RULE_MOBGRIEFING);
 
     String values = String.format("\n%s = %s\n%s", RULE_NAME, mobGriefing, data);
-    TranslationTextComponent message = new TranslationTextComponent(RULE_QUERY_KEY, RULE_NAME,
-        values);
+    TranslatableComponent message = new TranslatableComponent(RULE_QUERY_KEY, RULE_NAME, values);
     source.sendSuccess(message, true);
 
     return data.size();
@@ -112,15 +111,15 @@ public class BetterMobGriefingCommand {
    * @return The int representation of the current value where 0 is false, 1 is true and 2 is
    *     inherit.
    */
-  private static int showMobGriefing(CommandContext<CommandSource> context) {
-    CommandSource source = context.getSource();
+  private static int showMobGriefing(CommandContext<CommandSourceStack> context) {
+    CommandSourceStack source = context.getSource();
     EntityMobGriefingData data = EntityMobGriefingData.forServer(source.getServer());
 
     ResourceLocation targetId = context.getArgument(RULE_TARGET, ResourceLocation.class);
     String ruleName = String.format("%s %s", RULE_NAME, targetId);
     MobGriefingValue mobGriefingValue = data.getMobGriefingValue(targetId);
 
-    TranslationTextComponent message = new TranslationTextComponent(RULE_QUERY_KEY, ruleName,
+    TranslatableComponent message = new TranslatableComponent(RULE_QUERY_KEY, ruleName,
         mobGriefingValue);
     source.sendSuccess(message, true);
 
@@ -134,13 +133,13 @@ public class BetterMobGriefingCommand {
    * @param context The command context to process.
    * @return The int representation of the set value where 0 is false, 1 is true.
    */
-  private static int setGlobalMobGriefing(CommandContext<CommandSource> context) {
-    CommandSource source = context.getSource();
+  private static int setGlobalMobGriefing(CommandContext<CommandSourceStack> context) {
+    CommandSourceStack source = context.getSource();
     GameRules gameRules = source.getServer().getGameRules();
     BooleanValue mobGriefing = gameRules.getRule(GameRules.RULE_MOBGRIEFING);
     mobGriefing.setFromArgument(context, RULE_VALUE);
 
-    TranslationTextComponent message = new TranslationTextComponent(RULE_SET_KEY, RULE_NAME,
+    TranslatableComponent message = new TranslatableComponent(RULE_SET_KEY, RULE_NAME,
         mobGriefing);
     source.sendSuccess(message, true);
 
@@ -155,16 +154,16 @@ public class BetterMobGriefingCommand {
    * @param context The command context to process.
    * @return The int representation of the set value where 0 is false, 1 is true and 2 is inherit.
    */
-  private static int setEntityMobGriefing(CommandContext<CommandSource> context) {
+  private static int setEntityMobGriefing(CommandContext<CommandSourceStack> context) {
     ResourceLocation targetId = context.getArgument(RULE_TARGET, ResourceLocation.class);
     MobGriefingValue mobGriefingValue = context.getArgument(RULE_VALUE, MobGriefingValue.class);
 
-    CommandSource source = context.getSource();
+    CommandSourceStack source = context.getSource();
     EntityMobGriefingData data = EntityMobGriefingData.forServer(source.getServer());
     data.setMobGriefingValue(targetId, mobGriefingValue);
 
     String ruleName = String.format("%s %s", RULE_NAME, targetId);
-    TranslationTextComponent message = new TranslationTextComponent(RULE_SET_KEY, ruleName,
+    TranslatableComponent message = new TranslatableComponent(RULE_SET_KEY, ruleName,
         mobGriefingValue);
     source.sendSuccess(message, true);
 

@@ -34,18 +34,18 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolde
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 import com.mojang.datafixers.DataFixer;
 import java.io.File;
-import net.minecraft.command.Commands;
-import net.minecraft.command.Commands.EnvironmentType;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.Commands.CommandSelection;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.GameRules.BooleanValue;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DimensionSavedDataManager;
-import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.GameRules.BooleanValue;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig.Type;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fmlclient.ConfigGuiHandler.ConfigGuiFactory;
+import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +60,7 @@ import org.mockito.MockedStatic;
 class BetterMobGriefingGameRuleTest {
 
   private MinecraftServer server;
-  private ServerWorld world;
+  private ServerLevel level;
   private GameRules gameRules;
 
   @BeforeAll
@@ -73,14 +73,14 @@ class BetterMobGriefingGameRuleTest {
     gameRules = new GameRules();
 
     server = mock(MinecraftServer.class);
-    when(server.getCommands()).thenReturn(new Commands(EnvironmentType.ALL));
+    when(server.getCommands()).thenReturn(new Commands(CommandSelection.ALL));
 
-    world = mock(ServerWorld.class);
-    when(server.overworld()).thenReturn(world);
-    when(world.getGameTime()).thenReturn(1L);
-    when(world.getGameRules()).thenReturn(gameRules);
+    level = mock(ServerLevel.class);
+    when(server.overworld()).thenReturn(level);
+    when(level.getGameTime()).thenReturn(1L);
+    when(level.getGameRules()).thenReturn(gameRules);
     DataFixer dataFixer = mock(DataFixer.class);
-    when(world.getDataStorage()).thenReturn(new DimensionSavedDataManager(new File(""), dataFixer));
+    when(level.getDataStorage()).thenReturn(new DimensionDataStorage(new File(""), dataFixer));
   }
 
   @Test
@@ -95,7 +95,7 @@ class BetterMobGriefingGameRuleTest {
 
       // Then.
       verify(modLoadingContext).registerConfig(Type.COMMON, ConfigHolder.COMMON_SPEC);
-      verify(modLoadingContext).registerExtensionPoint(eq(ExtensionPoint.CONFIGGUIFACTORY), any());
+      verify(modLoadingContext).registerExtensionPoint(eq(ConfigGuiFactory.class), any());
     }
   }
 
@@ -107,7 +107,7 @@ class BetterMobGriefingGameRuleTest {
     Config.defaultGlobalValue = input;
     FMLServerStartingEvent event = new FMLServerStartingEvent(server);
 
-    when(world.getGameTime()).thenReturn(0L);
+    when(level.getGameTime()).thenReturn(0L);
 
     // When.
     BetterMobGriefingGameRule.onFmlServerStartingEvent(event);

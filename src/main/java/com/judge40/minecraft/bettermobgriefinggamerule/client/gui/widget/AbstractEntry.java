@@ -19,11 +19,11 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget;
 
-import net.minecraft.client.gui.widget.list.AbstractOptionList;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
-abstract class AbstractEntry extends AbstractOptionList.Entry<AbstractEntry> {
+abstract class AbstractEntry extends ContainerObjectSelectionList.Entry<AbstractEntry> {
 
 }

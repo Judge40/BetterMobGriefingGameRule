@@ -19,39 +19,40 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nonnull;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class ConfigCategoryEntry extends AbstractEntry {
 
-  private final FontRenderer fontRenderer;
+  private final Font font;
   private final int parentWidth;
 
   private final String labelText;
   private final int labelWidth;
 
-  ConfigCategoryEntry(FontRenderer fontRenderer, int parentWidth, String labelKey) {
-    this.fontRenderer = fontRenderer;
+  ConfigCategoryEntry(Font font, int parentWidth, String labelKey) {
+    this.font = font;
     this.parentWidth = parentWidth;
 
     labelText = I18n.get(labelKey);
-    labelWidth = fontRenderer.width(labelText);
+    labelWidth = font.width(labelText);
   }
 
   @Override
-  public void render(@Nonnull MatrixStack matrixStack, int render1, int render2, int render3,
+  public void render(@Nonnull PoseStack poseStack, int render1, int render2, int render3,
       int render4, int render5, int render6, int render7, boolean render8, float render9) {
     float x = parentWidth / 2F - labelWidth / 2F;
     float y = render2 + render5 - 10F;
-    fontRenderer.draw(matrixStack, labelText, x, y, 16777215);
+    font.draw(poseStack, labelText, x, y, 16777215);
   }
 
   @Override
@@ -60,8 +61,12 @@ public class ConfigCategoryEntry extends AbstractEntry {
   }
 
   @Nonnull
+  public List<? extends GuiEventListener> children() {
+    return Collections.emptyList();
+  }
+
   @Override
-  public List<? extends IGuiEventListener> children() {
+  public List<? extends NarratableEntry> narratables() {
     return Collections.emptyList();
   }
 }

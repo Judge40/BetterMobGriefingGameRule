@@ -19,33 +19,33 @@
 
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.Nonnull;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraftforge.fmlclient.gui.widget.ExtendedButton;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class AbstractConfigEntry<T> extends AbstractEntry {
 
-  private static final TranslationTextComponent DEFAULT = new TranslationTextComponent(
+  private static final TranslatableComponent DEFAULT = new TranslatableComponent(
       "bettermobgriefinggamerule.config.gui.default");
-  private static final TranslationTextComponent RESET = new TranslationTextComponent(
+  private static final TranslatableComponent RESET = new TranslatableComponent(
       "bettermobgriefinggamerule.config.gui.reset");
 
   private static final int BUTTON_HEIGHT = 20;
   private static final int BUTTON_WIDTH = 50;
 
-  private final FontRenderer fontRenderer;
+  private final Font font;
   private final int labelOffset;
   private final String label;
 
@@ -60,23 +60,23 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
   /**
    * A configuration entry with a label, value selection, reset button and default button.
    *
-   * @param fontRenderer The font renderer to use to draw labels.
+   * @param font         The font to use to draw labels.
    * @param labelOffset  The offset from center to use for the entry's label, should match the
    *                     longest label in a list.
    * @param label        The label to display for the entry.
    * @param initialValue The entry's initial value.
    * @param defaultValue The entry's default value, used when setting a changed value to default.
    */
-  AbstractConfigEntry(FontRenderer fontRenderer, int labelOffset, String label, T initialValue,
+  AbstractConfigEntry(Font font, int labelOffset, String label, T initialValue,
       T defaultValue) {
-    this.fontRenderer = fontRenderer;
+    this.font = font;
     this.labelOffset = labelOffset;
     this.label = label;
 
     this.initialValue = currentValue = initialValue;
     this.defaultValue = defaultValue;
 
-    StringTextComponent currentValueText = new StringTextComponent(currentValue.toString());
+    TextComponent currentValueText = new TextComponent(currentValue.toString());
     valueButton = new ExtendedButton(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT, currentValueText,
         button -> currentValue = getNextValue());
 
@@ -136,31 +136,30 @@ public abstract class AbstractConfigEntry<T> extends AbstractEntry {
   }
 
   @Override
-  public void render(@Nonnull MatrixStack matrixStack, int render1, int render2, int render3,
+  public void render(@Nonnull PoseStack poseStack, int render1, int render2, int render3,
       int render4, int render5, int render6, int render7, boolean render8, float render9) {
     float x = (float) render3 + 90 - labelOffset;
     float y = render2 + render5 / 2F - 4.5F;
-    fontRenderer.draw(matrixStack, label, x, y, 16777215);
+    font.draw(poseStack, label, x, y, 16777215);
 
     valueButton.x = render3 + 105;
     valueButton.y = render2;
-    valueButton.setMessage(new StringTextComponent(currentValue.toString()));
-    valueButton.render(matrixStack, render6, render7, render9);
+    valueButton.setMessage(new TextComponent(currentValue.toString()));
+    valueButton.render(poseStack, render6, render7, render9);
 
     resetButton.x = render3 + 165;
     resetButton.y = render2;
     resetButton.active = isChanged();
-    resetButton.render(matrixStack, render6, render7, render9);
+    resetButton.render(poseStack, render6, render7, render9);
 
     defaultButton.x = render3 + 215;
     defaultButton.y = render2;
     defaultButton.active = !isDefault();
-    defaultButton.render(matrixStack, render6, render7, render9);
+    defaultButton.render(poseStack, render6, render7, render9);
   }
 
   @Nonnull
-  @Override
-  public List<? extends IGuiEventListener> children() {
+  public List<? extends GuiEventListener> children() {
     return Collections.unmodifiableList(Arrays.asList(valueButton, resetButton, defaultButton));
   }
 }

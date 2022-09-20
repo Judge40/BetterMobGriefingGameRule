@@ -28,15 +28,15 @@ import com.judge40.minecraft.bettermobgriefinggamerule.TestUtils;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 import com.mojang.datafixers.DataFixer;
 import java.io.File;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.projectile.SmallFireballEntity;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DimensionSavedDataManager;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import org.junit.jupiter.api.BeforeAll;
@@ -61,18 +61,18 @@ class MobGriefingEventHandlerTest {
   @BeforeEach
   void setUp() {
     MinecraftServer server = mock(MinecraftServer.class);
-    ServerWorld world = mock(ServerWorld.class);
+    ServerLevel level = mock(ServerLevel.class);
     DataFixer dataFixer = mock(DataFixer.class);
-    DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""),
+    DimensionDataStorage dataStorage = new DimensionDataStorage(new File(""),
         dataFixer);
 
-    when(server.overworld()).thenReturn(world);
-    when(world.getDataStorage()).thenReturn(savedDataManager);
-    when(world.getGameRules()).thenReturn(new GameRules());
+    when(server.overworld()).thenReturn(level);
+    when(level.getDataStorage()).thenReturn(dataStorage);
+    when(level.getGameRules()).thenReturn(new GameRules());
 
     data = EntityMobGriefingData.forServer(server);
 
-    entity = createMockEntity(server, world, Entity.class, "test:entity1");
+    entity = createMockEntity(server, level, Entity.class, "test:entity1");
   }
 
   @Test
@@ -118,8 +118,8 @@ class MobGriefingEventHandlerTest {
   @Test
   void shouldUseSmallFireBallWhenOwnerNull() {
     // Given.
-    SmallFireballEntity fireball = createMockEntity(entity.getServer(), entity.level,
-        SmallFireballEntity.class, "test:small_fireball");
+    SmallFireball fireball = createMockEntity(entity.getServer(), entity.level,
+        SmallFireball.class, "test:small_fireball");
     when(fireball.getOwner()).thenReturn(null);
 
     EntityMobGriefingEvent event = new EntityMobGriefingEvent(fireball);
@@ -137,8 +137,8 @@ class MobGriefingEventHandlerTest {
     ResourceLocation entityId = entity.getType().getRegistryName();
     data.setMobGriefingValue(entityId, MobGriefingValue.FALSE);
 
-    SmallFireballEntity fireball = createMockEntity(entity.getServer(), entity.level,
-        SmallFireballEntity.class, "test:small_fireball");
+    SmallFireball fireball = createMockEntity(entity.getServer(), entity.level,
+        SmallFireball.class, "test:small_fireball");
     when(fireball.getOwner()).thenReturn(entity);
 
     EntityMobGriefingEvent event = new EntityMobGriefingEvent(fireball);
@@ -150,10 +150,10 @@ class MobGriefingEventHandlerTest {
     assertThat("Unexpected result.", event.getResult(), is(Result.DENY));
   }
 
-  private <T extends Entity> T createMockEntity(MinecraftServer server, World world,
+  private <T extends Entity> T createMockEntity(MinecraftServer server, Level level,
       Class<T> entityClass, String resourceLocation) {
     T entity = mock(entityClass);
-    entity.level = world;
+    entity.level = level;
     when(entity.getServer()).thenReturn(server);
 
     EntityType entityType = mock(EntityType.class);

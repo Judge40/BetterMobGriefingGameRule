@@ -25,11 +25,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.List;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,25 +41,25 @@ class ConfigCategoryEntryTest {
 
   @BeforeEach
   void setUp() {
-    FontRenderer fontRenderer = mock(FontRenderer.class);
-    entry = new ConfigCategoryEntry(fontRenderer, 200, "labelKey");
+    Font font = mock(Font.class);
+    entry = new ConfigCategoryEntry(font, 200, "labelKey");
   }
 
   @Test
   void shouldRenderCategoryLabel() {
     // Given.
-    FontRenderer fontRenderer = mock(FontRenderer.class);
-    when(fontRenderer.width("labelKey")).thenReturn(100);
-    ConfigCategoryEntry entry = new ConfigCategoryEntry(fontRenderer, 200, "labelKey");
+    Font font = mock(Font.class);
+    when(font.width("labelKey")).thenReturn(100);
+    ConfigCategoryEntry entry = new ConfigCategoryEntry(font, 200, "labelKey");
 
-    MatrixStack matrixStack = new MatrixStack();
+    PoseStack poseStack = new PoseStack();
 
     // When.
-    entry.render(matrixStack, 10, 20, 30, 40, 50, 60, 70, true, 90);
+    entry.render(poseStack, 10, 20, 30, 40, 50, 60, 70, true, 90);
 
     // Then.
-    int colorCode = TextFormatting.WHITE.getColor();
-    verify(fontRenderer).draw(matrixStack, "labelKey", 50, 60, colorCode);
+    int colorCode = ChatFormatting.WHITE.getColor();
+    verify(font).draw(poseStack, "labelKey", 50, 60, colorCode);
   }
 
   @ParameterizedTest(name = "Should not change focus when input is {0}.")
@@ -75,7 +75,7 @@ class ConfigCategoryEntryTest {
   @Test
   void shouldNotHaveChildren() {
     // When.
-    List<? extends IGuiEventListener> children = entry.children();
+    List<? extends GuiEventListener> children = entry.children();
 
     // Then.
     assertThat("Unexpected number of children.", children.size(), is(0));

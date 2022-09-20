@@ -26,16 +26,16 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.GameRules.BooleanValue;
-import net.minecraft.world.World;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.GameRules.BooleanValue;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.config.ModConfig.Type;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fmlclient.ConfigGuiHandler.ConfigGuiFactory;
+import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,8 +57,8 @@ public class BetterMobGriefingGameRule {
     // Register mod config.
     ModLoadingContext modLoadingContext = ModLoadingContext.get();
     modLoadingContext.registerConfig(Type.COMMON, ConfigHolder.COMMON_SPEC);
-    modLoadingContext.registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY,
-        () -> DefaultMobGriefingConfigGui::new);
+    modLoadingContext.registerExtensionPoint(ConfigGuiFactory.class,
+        () -> new ConfigGuiFactory(DefaultMobGriefingConfigGui::new));
   }
 
   /**
@@ -73,14 +73,14 @@ public class BetterMobGriefingGameRule {
     BetterMobGriefingCommand.register(server.getCommands().getDispatcher());
 
     // Add new game rules to world data
-    World world = server.overworld();
+    Level level = server.overworld();
 
     // Set the global mob griefing game rule value if this is a new world.
-    if (world.getGameTime() == 0) {
+    if (level.getGameTime() == 0) {
       LOGGER.debug("New world detected, overwriting global mobGriefing rule.");
 
       boolean globalMobGriefingValue = Config.defaultGlobalValue;
-      BooleanValue mobGriefing = world.getGameRules().getRule(GameRules.RULE_MOBGRIEFING);
+      BooleanValue mobGriefing = level.getGameRules().getRule(GameRules.RULE_MOBGRIEFING);
       mobGriefing.set(globalMobGriefingValue, server);
     } else {
       LOGGER.debug("Existing world detected, global mobGriefing rule not overwritten.");

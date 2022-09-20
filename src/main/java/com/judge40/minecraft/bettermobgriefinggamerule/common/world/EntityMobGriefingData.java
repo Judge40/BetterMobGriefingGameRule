@@ -31,25 +31,25 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DimensionSavedDataManager;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
- * A custom {@link WorldSavedData} which stores the entity specific {@link MobGriefingValue
+ * A custom {@link SavedData} which stores the entity specific {@link MobGriefingValue
  * MobGriefingValues} for a {@link MinecraftServer}.
  */
-public class EntityMobGriefingData extends WorldSavedData {
+public class EntityMobGriefingData extends SavedData {
 
   private SortedMap<ResourceLocation, MobGriefingValue> entityIdsToMobGriefingValue = new TreeMap<>(
       Comparator.comparing(ResourceLocation::toString));
 
   private EntityMobGriefingData() {
-    super(ModInfoConstants.ID);
+
   }
 
   /**
@@ -61,9 +61,9 @@ public class EntityMobGriefingData extends WorldSavedData {
    * @return The {@code EntityMobGriefingData} for the {@code MinecraftServer}.
    */
   public static EntityMobGriefingData forServer(MinecraftServer server) {
-    ServerWorld world = server.overworld();
-    DimensionSavedDataManager savedData = world.getDataStorage();
-    return savedData.computeIfAbsent(EntityMobGriefingData::new, ModInfoConstants.ID);
+    ServerLevel level = server.overworld();
+    DimensionDataStorage savedData = level.getDataStorage();
+    return savedData.computeIfAbsent(nbt -> new EntityMobGriefingData().load(nbt), EntityMobGriefingData::new, ModInfoConstants.ID);
   }
 
   /**
@@ -86,8 +86,7 @@ public class EntityMobGriefingData extends WorldSavedData {
     }
   }
 
-  @Override
-  public void load(CompoundNBT nbt) {
+  public EntityMobGriefingData load(CompoundTag nbt) {
     // Add the entity name and MobGriefingValue from each NBT entry to the world data.
     for (Iterator<String> iterator = nbt.getAllKeys().iterator(); iterator.hasNext(); ) {
       String key = iterator.next();
@@ -102,11 +101,13 @@ public class EntityMobGriefingData extends WorldSavedData {
         iterator.remove();
       }
     }
+
+    return this;
   }
 
   @Nonnull
   @Override
-  public CompoundNBT save(@Nonnull CompoundNBT nbt) {
+  public CompoundTag save(@Nonnull CompoundTag nbt) {
     // Add the entity name and MobGriefingValue from each world data entry to the NBT.
     entityIdsToMobGriefingValue.forEach((k, v) -> nbt.putString(k.toString(), v.toString()));
     return nbt;

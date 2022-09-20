@@ -21,13 +21,13 @@ repositories {
 }
 
 // Mod information.
-version = "1.16.5-9.0.1"
+version = "1.17.1-9.0.1"
 group = "com.judge40.minecraft.bettermobgriefinggamerule"
 archivesBaseName = "bettermobgriefinggamerule"
 
 minecraft {
   // MCP mappings version.
-  mappings channel: "official", version: "1.16.5"
+  mappings channel: "official", version: "1.17.1"
 
   // Default run configurations.
   runs {
@@ -84,7 +84,7 @@ minecraft {
 }
 
 dependencies {
-  minecraft "net.minecraftforge:forge:1.16.5-36.2.34"
+  minecraft "net.minecraftforge:forge:1.17.1-37.1.1"
 
   // Test dependencies.
   ext.junitVersion = "5.9.0"
@@ -102,7 +102,7 @@ checkstyle {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(8)
+    languageVersion = JavaLanguageVersion.of(17)
     vendor = JvmVendorSpec.ADOPTIUM
   }
 }

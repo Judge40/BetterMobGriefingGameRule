@@ -29,12 +29,12 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import com.mojang.datafixers.DataFixer;
 import java.io.File;
 import java.util.Collections;
-import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.DimensionSavedDataManager;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,13 +54,12 @@ class EntityMobGriefingDataTest {
   @BeforeEach
   void setUp() {
     MinecraftServer server = mock(MinecraftServer.class);
-    ServerWorld world = mock(ServerWorld.class);
+    ServerLevel level = mock(ServerLevel.class);
     DataFixer dataFixer = mock(DataFixer.class);
-    DimensionSavedDataManager savedDataManager = new DimensionSavedDataManager(new File(""),
-        dataFixer);
+    DimensionDataStorage dataStorage = new DimensionDataStorage(new File(""), dataFixer);
 
-    when(server.overworld()).thenReturn(world);
-    when(world.getDataStorage()).thenReturn(savedDataManager);
+    when(server.overworld()).thenReturn(level);
+    when(level.getDataStorage()).thenReturn(dataStorage);
 
     data = EntityMobGriefingData.forServer(server);
   }
@@ -116,7 +115,7 @@ class EntityMobGriefingDataTest {
   @Test
   void shouldReadFromNbt() {
     // Given.
-    CompoundNBT nbt = new CompoundNBT();
+    CompoundTag nbt = new CompoundTag();
 
     ResourceLocation invalidEntityId = new ResourceLocation("invalid-entity");
     nbt.putString(invalidEntityId.toString(), "inherit");
@@ -149,7 +148,7 @@ class EntityMobGriefingDataTest {
     ResourceLocation entityResource3 = new ResourceLocation("namespace1:path1");
     data.setMobGriefingValue(entityResource3, MobGriefingValue.INHERIT);
 
-    CompoundNBT nbt = new CompoundNBT();
+    CompoundTag nbt = new CompoundTag();
 
     // When.
     data.save(nbt);
@@ -163,7 +162,7 @@ class EntityMobGriefingDataTest {
   @Test
   void shouldNotWriteToNbtWhenEntityDataNotPopulated() {
     // Given.
-    CompoundNBT nbt = new CompoundNBT();
+    CompoundTag nbt = new CompoundTag();
 
     // When.
     data.save(nbt);

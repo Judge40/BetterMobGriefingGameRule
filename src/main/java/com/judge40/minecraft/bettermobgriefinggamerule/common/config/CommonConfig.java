@@ -51,7 +51,7 @@ class CommonConfig {
           EntityType.ENDERMAN, EntityType.EVOKER, EntityType.FOX, EntityType.GHAST, EntityType.HUSK,
           EntityType.RABBIT, EntityType.RAVAGER, EntityType.SHEEP, EntityType.SILVERFISH,
           EntityType.SKELETON, EntityType.SNOW_GOLEM, EntityType.STRAY, EntityType.VILLAGER,
-          EntityType.WITHER, EntityType.ZOMBIE, EntityType.ZOMBIFIED_PIGLIN,
+          EntityType.VINDICATOR, EntityType.WITHER, EntityType.ZOMBIE, EntityType.ZOMBIFIED_PIGLIN,
           EntityType.ZOMBIE_VILLAGER
       ));
 

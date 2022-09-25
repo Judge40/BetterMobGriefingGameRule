@@ -80,6 +80,7 @@ Effects which occur due to an action actively taken by a mob.
 | --------------------------------------------- | -------------------- | ------- |
 | Can eat grass.                                | Sheep                | 1.7+    |
 | Can break doors.                              | Husk                 | 1.11+   |
+|                                               | Vindicator           | 1.14+   |
 |                                               | Zombie               | 1.7+    |
 |                                               | Zombie Villager      | 1.11+   |
 |                                               | Zombified Piglin     | 1.8+    |

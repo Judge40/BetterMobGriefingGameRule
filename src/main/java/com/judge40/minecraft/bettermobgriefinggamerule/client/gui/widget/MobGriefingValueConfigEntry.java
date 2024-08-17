@@ -20,8 +20,11 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.client.gui.widget;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.util.ResourceLocation;
+import java.util.Collections;
+import java.util.List;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -35,15 +38,15 @@ public class MobGriefingValueConfigEntry extends AbstractConfigEntry<MobGriefing
   /**
    * A configuration entry with a label, value selection, reset button and default button.
    *
-   * @param fontRenderer The font renderer to use to draw labels.
+   * @param font         The font to use to draw labels.
    * @param labelOffset  The offset from center to use for the entry's label, should match the
    *                     longest label in a list.
    * @param entityId     The ID of entity controlled by this entry.
    * @param initialValue The entry's initial value.
    */
-  MobGriefingValueConfigEntry(FontRenderer fontRenderer, int labelOffset, ResourceLocation entityId,
+  MobGriefingValueConfigEntry(Font font, int labelOffset, ResourceLocation entityId,
       MobGriefingValue initialValue) {
-    super(fontRenderer, labelOffset, entityId.toString(), initialValue, MobGriefingValue.INHERIT);
+    super(font, labelOffset, entityId.toString(), initialValue, MobGriefingValue.INHERIT);
     this.entityId = entityId;
   }
 
@@ -60,5 +63,10 @@ public class MobGriefingValueConfigEntry extends AbstractConfigEntry<MobGriefing
    */
   public ResourceLocation getEntityId() {
     return entityId;
+  }
+
+  @Override
+  public List<? extends NarratableEntry> narratables() {
+    return Collections.emptyList();
   }
 }

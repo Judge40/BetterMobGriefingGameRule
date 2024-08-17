@@ -33,12 +33,12 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public class BetterMobGriefingArgument implements ArgumentType<MobGriefingValue> {
 
   private static final DynamicCommandExceptionType INVALID_VALUE = new DynamicCommandExceptionType(
-      input -> new TranslationTextComponent(
+      input -> new TranslatableComponent(
           ModInfoConstants.ID + ".parsing.mobGriefingValue.invalid", input));
 
   private static final Collection<String> EXAMPLES = Arrays.stream(MobGriefingValue.values())

@@ -26,12 +26,12 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.config.ModConfig.Loading;
+import net.minecraftforge.fml.event.config.ModConfigEvent.Loading;
 
 @EventBusSubscriber(bus = MOD)
 public class ConfigHelper {

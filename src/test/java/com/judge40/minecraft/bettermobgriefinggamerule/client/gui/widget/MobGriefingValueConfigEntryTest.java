@@ -25,14 +25,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmlclient.gui.widget.ExtendedButton;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -124,8 +124,8 @@ class MobGriefingValueConfigEntryTest {
   @EnumSource(MobGriefingValue.class)
   void shouldRenderButtonsWithCorrectStateWhenValueUnchanged(MobGriefingValue initialValue) {
     // Given.
-    FontRenderer fontRenderer = mock(FontRenderer.class);
-    MobGriefingValueConfigEntry entry = new MobGriefingValueConfigEntry(fontRenderer, 0,
+    Font font = mock(Font.class);
+    MobGriefingValueConfigEntry entry = new MobGriefingValueConfigEntry(font, 0,
         new ResourceLocation("test:entity"), initialValue);
 
     // Override visibility of buttons so no attempt is made to actually render them.
@@ -136,7 +136,7 @@ class MobGriefingValueConfigEntryTest {
     children.forEach(button -> button.visible = false);
 
     // When.
-    entry.render(new MatrixStack(), 0, 0, 0, 0, 0, 0, 0, true, 0);
+    entry.render(new PoseStack(), 0, 0, 0, 0, 0, 0, 0, true, 0);
 
     // Then.
     Button valueButton = children.get(0);
@@ -157,8 +157,8 @@ class MobGriefingValueConfigEntryTest {
   @EnumSource(MobGriefingValue.class)
   void shouldRenderButtonsWithCorrectStateWhenValueChanged(MobGriefingValue initialValue) {
     // Given.
-    FontRenderer fontRenderer = mock(FontRenderer.class);
-    MobGriefingValueConfigEntry entry = new MobGriefingValueConfigEntry(fontRenderer, 0,
+    Font font = mock(Font.class);
+    MobGriefingValueConfigEntry entry = new MobGriefingValueConfigEntry(font, 0,
         new ResourceLocation("test:entity"), initialValue);
 
     // Override visibility of buttons so no attempt is made to actually render them.
@@ -171,7 +171,7 @@ class MobGriefingValueConfigEntryTest {
     // When.
     Button valueButton = children.get(0);
     valueButton.onPress();
-    entry.render(new MatrixStack(), 0, 0, 0, 0, 0, 0, 0, true, 0);
+    entry.render(new PoseStack(), 0, 0, 0, 0, 0, 0, 0, true, 0);
 
     // Then.
     MobGriefingValue currentValue = entry.getCurrentValue();
@@ -190,8 +190,8 @@ class MobGriefingValueConfigEntryTest {
   @Test
   void shouldRenderEntryLabel() {
     // Given.
-    FontRenderer fontRenderer = mock(FontRenderer.class);
-    MobGriefingValueConfigEntry entry = new MobGriefingValueConfigEntry(fontRenderer, 100,
+    Font font = mock(Font.class);
+    MobGriefingValueConfigEntry entry = new MobGriefingValueConfigEntry(font, 100,
         new ResourceLocation("test:entity"), MobGriefingValue.INHERIT);
 
     // Override visibility of buttons so no attempt is made to actually render them.
@@ -201,13 +201,13 @@ class MobGriefingValueConfigEntryTest {
         .collect(Collectors.toList());
     children.forEach(button -> button.visible = false);
 
-    MatrixStack matrixStack = new MatrixStack();
+    PoseStack poseStack = new PoseStack();
 
     // When.
-    entry.render(matrixStack, 10, 20, 30, 40, 50, 60, 70, true, 90);
+    entry.render(poseStack, 10, 20, 30, 40, 50, 60, 70, true, 90);
 
     // Then.
-    int colorCode = TextFormatting.WHITE.getColor();
-    verify(fontRenderer).draw(matrixStack, "test:entity", 20, 40.5F, colorCode);
+    int colorCode = ChatFormatting.WHITE.getColor();
+    verify(font).draw(poseStack, "test:entity", 20, 40.5F, colorCode);
   }
 }

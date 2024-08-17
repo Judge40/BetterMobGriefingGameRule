@@ -20,12 +20,12 @@
 package com.judge40.minecraft.bettermobgriefinggamerule.common;
 
 import com.judge40.minecraft.bettermobgriefinggamerule.common.world.EntityMobGriefingData;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.projectile.SmallFireballEntity;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -50,8 +50,8 @@ public class MobGriefingEventHandler {
 
     if (griefingEntity != null) {
       // TODO: Workaround for MinecraftForge bug, remove when PR #9038 merged.
-      if (griefingEntity instanceof SmallFireballEntity) {
-        Entity owner = ((SmallFireballEntity) griefingEntity).getOwner();
+      if (griefingEntity instanceof SmallFireball) {
+        Entity owner = ((SmallFireball) griefingEntity).getOwner();
 
         if (owner != null) {
           griefingEntity = owner;
@@ -89,8 +89,8 @@ public class MobGriefingEventHandler {
 
     // If no entity rule was found then default to the global value.
     if (mobGriefingEnabled == null) {
-      World entityWorld = entity.level;
-      mobGriefingEnabled = entityWorld.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+      Level entityLevel = entity.level;
+      mobGriefingEnabled = entityLevel.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
     }
 
     return mobGriefingEnabled;

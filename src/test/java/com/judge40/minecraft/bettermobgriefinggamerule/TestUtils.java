@@ -27,12 +27,16 @@ import com.judge40.minecraft.bettermobgriefinggamerule.common.config.Config;
 import com.judge40.minecraft.bettermobgriefinggamerule.common.config.ConfigHolder;
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Bootstrap;
+import net.minecraft.SharedConstants;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.Bootstrap;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
+/**
+ * Utilities for testing.
+ */
 public class TestUtils {
 
   /**
@@ -42,6 +46,7 @@ public class TestUtils {
    */
   public static void initializeTestEnvironment() throws IllegalAccessException {
     // Bootstrap registries so loading the config first does not cause failures.
+    SharedConstants.CHECK_DATA_FIXER_SCHEMA = false;
     Bootstrap.bootStrap();
 
     FieldUtils.writeField(ConfigHolder.COMMON_SPEC, "childConfig", new CommentedConfigStub(), true);

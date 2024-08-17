@@ -27,9 +27,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
@@ -51,7 +51,7 @@ class CommonConfig {
           EntityType.ENDERMAN, EntityType.EVOKER, EntityType.FOX, EntityType.GHAST, EntityType.HUSK,
           EntityType.RABBIT, EntityType.RAVAGER, EntityType.SHEEP, EntityType.SILVERFISH,
           EntityType.SKELETON, EntityType.SNOW_GOLEM, EntityType.STRAY, EntityType.VILLAGER,
-          EntityType.WITHER, EntityType.ZOMBIE, EntityType.ZOMBIFIED_PIGLIN,
+          EntityType.VINDICATOR, EntityType.WITHER, EntityType.ZOMBIE, EntityType.ZOMBIFIED_PIGLIN,
           EntityType.ZOMBIE_VILLAGER
       ));
 

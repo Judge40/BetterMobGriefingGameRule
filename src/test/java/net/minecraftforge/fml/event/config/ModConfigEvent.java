@@ -1,5 +1,5 @@
 /*
- * Better mobGriefing GameRule Copyright (c) 2020 Judge40
+ * Better mobGriefing GameRule Copyright (c) 2022 Judge40
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -17,19 +17,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.judge40.minecraft.bettermobgriefinggamerule.common.config;
+package net.minecraftforge.fml.event.config;
 
-import com.judge40.minecraft.bettermobgriefinggamerule.common.MobGriefingValue;
-import java.util.Map;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fml.config.IConfigEvent.ConfigConfig;
+import net.minecraftforge.fml.config.ModConfig;
 
 /**
- * A custom {@code Configuration} which adds convenience methods for retrieving default mob griefing
- * configurations.
+ * Test stub for Loading event as {@link ConfigConfig} causes issues with mocking.
  */
-public class Config {
+public class ModConfigEvent {
 
-  public static boolean defaultGlobalValue;
+  /**
+   * A test stuv of the Loading event.
+   */
+  public static class Loading extends ModConfigEvent {
 
-  public static Map<ResourceLocation, MobGriefingValue> entityIdsToDefaultEntityValue;
+    private final ModConfig config;
+
+    public Loading(final ModConfig config) {
+      this.config = config;
+    }
+
+    public ModConfig getConfig() {
+      return config;
+    }
+  }
 }

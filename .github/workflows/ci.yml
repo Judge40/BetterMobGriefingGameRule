@@ -33,7 +33,7 @@ jobs:
         uses: actions/setup-java@v2.1.0
         with:
           distribution: adopt
-          java-version: 11
+          java-version: 17
 
       - name: Set up Gradle wrapper cache
         id: wrapper-cache
